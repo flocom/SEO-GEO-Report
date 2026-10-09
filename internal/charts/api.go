@@ -29,6 +29,10 @@ type LineOpts struct {
 	InvertY bool // lower is better (average position): axis reversed
 	YMin    *float64
 	Title   string // accessible title (<title>)
+
+	// Optional locale hooks (nil = built-in, locale-neutral behaviour).
+	XFormat        func(label string) string // x tick label; default: YYYY-MM-DD -> "DD/MM"
+	TooltipXFormat func(label string) string // x label in tooltips; default: "DD/MM/YYYY"
 }
 
 // BarItem is one bar.
@@ -46,6 +50,14 @@ type BarsOpts struct {
 	Format    Formatter
 	ShowDelta bool // show +x% badge when Previous is set
 	Title     string
+
+	// DeltaFormat formats the delta badge from a relative change in percent
+	// (12.3 -> "+12 %"). nil = FormatDelta.
+	DeltaFormat Formatter
+	// Height is an optional minimum viewBox height: rows are spaced out (up
+	// to a comfortable limit) to fill it, e.g. to match a neighbouring card.
+	// 0 = compact height from the number of rows.
+	Height float64
 }
 
 // ColumnsOpts configures vertical grouped columns comparing two periods.
@@ -58,6 +70,11 @@ type ColumnsOpts struct {
 	Width, Height float64
 	Format        Formatter
 	Title         string
+
+	// Optional (zero value = defaults).
+	Color         string    // current-period columns; default Palette[0]
+	PreviousColor string    // previous-period columns; default ColorPrevious
+	DeltaFormat   Formatter // relative change in tooltips; nil = FormatDelta
 }
 
 // Slice is one donut slice.
@@ -70,11 +87,15 @@ type Slice struct {
 // DonutOpts configures Donut. The legend is rendered next to the ring.
 type DonutOpts struct {
 	Slices      []Slice
-	CenterValue string // big text in the hole
-	CenterLabel string // small text under it
+	CenterValue string  // big text in the hole
+	CenterLabel string  // small text under it
 	Size        float64 // default 220 (ring), legend extends width
 	Format      Formatter
 	Title       string
+
+	// PctFormat formats legend shares, given in percent (6.6 -> "6,6 %").
+	// nil = FormatPct.
+	PctFormat Formatter
 }
 
 // GaugeOpts configures a semicircular gauge.
@@ -82,9 +103,13 @@ type GaugeOpts struct {
 	Value    float64 // within [Min, Max]
 	Min, Max float64 // default 0..100
 	Label    string
-	Display  string // text shown instead of the raw value
+	Display  string      // text shown instead of the raw value
 	Bands    []GaugeBand // colored zones; default red/orange/green thirds
 	Title    string
+
+	// Format formats the min/max labels and the value when Display is empty.
+	// nil = FormatCompact.
+	Format Formatter
 }
 
 // GaugeBand is a colored zone of a gauge.
@@ -106,6 +131,10 @@ type StackedOpts struct {
 	Width    float64 // default 720
 	Format   Formatter
 	Title    string
+
+	// PctFormat formats shares, given in percent (6.6 -> "6,6 %").
+	// nil = FormatPct.
+	PctFormat Formatter
 }
 
 // SparkOpts configures a tiny trend line for KPI cards.
@@ -114,32 +143,36 @@ type SparkOpts struct {
 	Color         string
 	Width, Height float64 // default 120x36
 	InvertY       bool
+
+	// Format formats the first/last values in the accessible title.
+	// nil = FormatCompact.
+	Format Formatter
 }
 
 // DeltaArrow returns a small inline SVG arrow (up, down or flat) colored by
 // tone: "positive", "negative" or "neutral".
-func DeltaArrow(direction, tone string) template.HTML { return "" }
+func DeltaArrow(direction, tone string) template.HTML { return deltaArrow(direction, tone) }
 
 // Line renders a multi-series line/area chart with axes, gridlines and legend.
-func Line(o LineOpts) template.HTML { return "" }
+func Line(o LineOpts) template.HTML { return line(o) }
 
 // Bars renders labelled horizontal bars sorted as given.
-func Bars(o BarsOpts) template.HTML { return "" }
+func Bars(o BarsOpts) template.HTML { return bars(o) }
 
 // Columns renders vertical grouped columns (current vs previous).
-func Columns(o ColumnsOpts) template.HTML { return "" }
+func Columns(o ColumnsOpts) template.HTML { return columns(o) }
 
 // Donut renders a donut chart with legend and percentages.
-func Donut(o DonutOpts) template.HTML { return "" }
+func Donut(o DonutOpts) template.HTML { return donut(o) }
 
 // Gauge renders a semicircular gauge.
-func Gauge(o GaugeOpts) template.HTML { return "" }
+func Gauge(o GaugeOpts) template.HTML { return gauge(o) }
 
 // Stacked renders a 100% stacked horizontal bar with legend.
-func Stacked(o StackedOpts) template.HTML { return "" }
+func Stacked(o StackedOpts) template.HTML { return stacked(o) }
 
 // Sparkline renders a minimal trend line without axes.
-func Sparkline(o SparkOpts) template.HTML { return "" }
+func Sparkline(o SparkOpts) template.HTML { return sparkline(o) }
 
 // Palette is the default categorical palette (colorblind-friendly order).
 var Palette = []string{"#2563eb", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#84cc16"}

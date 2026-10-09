@@ -1,0 +1,4102 @@
+{
+  "meta": {
+    "title": "SEO & GEO visibility report — Q3 2026",
+    "site_name": "Maison Lumen",
+    "site_url": "https://www.maison-lumen.fr",
+    "language": "en",
+    "period": {
+      "start": "2026-07-01",
+      "end": "2026-09-28"
+    },
+    "comparison_period": {
+      "start": "2026-04-02",
+      "end": "2026-06-30"
+    },
+    "comparison_label": "vs previous period (Apr 2 – Jun 30, 2026)",
+    "prepared_by": "Studio Halo",
+    "prepared_for": "Maison Lumen",
+    "brand_color": "#b45309",
+    "currency": "EUR"
+  },
+  "search_console": {
+    "totals": {
+      "clicks": {
+        "current": 46470,
+        "previous": 34134
+      },
+      "impressions": {
+        "current": 1627098,
+        "previous": 1122143
+      },
+      "ctr": {
+        "current": 2.86,
+        "previous": 3.04
+      },
+      "position": {
+        "current": 13,
+        "previous": 14.8
+      }
+    },
+    "daily": [
+      {
+        "date": "2026-07-01",
+        "clicks": 513,
+        "impressions": 17254,
+        "ctr": 2.97,
+        "position": 13.3
+      },
+      {
+        "date": "2026-07-02",
+        "clicks": 480,
+        "impressions": 16493,
+        "ctr": 2.91,
+        "position": 13.6
+      },
+      {
+        "date": "2026-07-03",
+        "clicks": 435,
+        "impressions": 14485,
+        "ctr": 3,
+        "position": 13.5
+      },
+      {
+        "date": "2026-07-04",
+        "clicks": 416,
+        "impressions": 13799,
+        "ctr": 3.01,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-05",
+        "clicks": 471,
+        "impressions": 15822,
+        "ctr": 2.98,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-06",
+        "clicks": 517,
+        "impressions": 18102,
+        "ctr": 2.86,
+        "position": 13.2
+      },
+      {
+        "date": "2026-07-07",
+        "clicks": 552,
+        "impressions": 19083,
+        "ctr": 2.89,
+        "position": 13.7
+      },
+      {
+        "date": "2026-07-08",
+        "clicks": 500,
+        "impressions": 16358,
+        "ctr": 3.06,
+        "position": 13.6
+      },
+      {
+        "date": "2026-07-09",
+        "clicks": 464,
+        "impressions": 16285,
+        "ctr": 2.85,
+        "position": 13.5
+      },
+      {
+        "date": "2026-07-10",
+        "clicks": 440,
+        "impressions": 14855,
+        "ctr": 2.96,
+        "position": 13.8
+      },
+      {
+        "date": "2026-07-11",
+        "clicks": 410,
+        "impressions": 13766,
+        "ctr": 2.98,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-12",
+        "clicks": 487,
+        "impressions": 16741,
+        "ctr": 2.91,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-13",
+        "clicks": 513,
+        "impressions": 17691,
+        "ctr": 2.9,
+        "position": 13.1
+      },
+      {
+        "date": "2026-07-14",
+        "clicks": 553,
+        "impressions": 19518,
+        "ctr": 2.83,
+        "position": 13.2
+      },
+      {
+        "date": "2026-07-15",
+        "clicks": 506,
+        "impressions": 17973,
+        "ctr": 2.82,
+        "position": 13.2
+      },
+      {
+        "date": "2026-07-16",
+        "clicks": 506,
+        "impressions": 16975,
+        "ctr": 2.98,
+        "position": 13.1
+      },
+      {
+        "date": "2026-07-17",
+        "clicks": 470,
+        "impressions": 16713,
+        "ctr": 2.81,
+        "position": 13.7
+      },
+      {
+        "date": "2026-07-18",
+        "clicks": 424,
+        "impressions": 14028,
+        "ctr": 3.02,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-19",
+        "clicks": 473,
+        "impressions": 16661,
+        "ctr": 2.84,
+        "position": 13
+      },
+      {
+        "date": "2026-07-20",
+        "clicks": 549,
+        "impressions": 19563,
+        "ctr": 2.81,
+        "position": 13.1
+      },
+      {
+        "date": "2026-07-21",
+        "clicks": 522,
+        "impressions": 18546,
+        "ctr": 2.81,
+        "position": 13.3
+      },
+      {
+        "date": "2026-07-22",
+        "clicks": 549,
+        "impressions": 18829,
+        "ctr": 2.92,
+        "position": 13
+      },
+      {
+        "date": "2026-07-23",
+        "clicks": 517,
+        "impressions": 17459,
+        "ctr": 2.96,
+        "position": 13.6
+      },
+      {
+        "date": "2026-07-24",
+        "clicks": 433,
+        "impressions": 15276,
+        "ctr": 2.83,
+        "position": 13.6
+      },
+      {
+        "date": "2026-07-25",
+        "clicks": 427,
+        "impressions": 15262,
+        "ctr": 2.8,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-26",
+        "clicks": 502,
+        "impressions": 17815,
+        "ctr": 2.82,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-27",
+        "clicks": 509,
+        "impressions": 17735,
+        "ctr": 2.87,
+        "position": 13
+      },
+      {
+        "date": "2026-07-28",
+        "clicks": 537,
+        "impressions": 18109,
+        "ctr": 2.97,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-29",
+        "clicks": 503,
+        "impressions": 16707,
+        "ctr": 3.01,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-30",
+        "clicks": 501,
+        "impressions": 17619,
+        "ctr": 2.84,
+        "position": 13.4
+      },
+      {
+        "date": "2026-07-31",
+        "clicks": 449,
+        "impressions": 15384,
+        "ctr": 2.92,
+        "position": 13.5
+      },
+      {
+        "date": "2026-08-01",
+        "clicks": 428,
+        "impressions": 14304,
+        "ctr": 2.99,
+        "position": 13.2
+      },
+      {
+        "date": "2026-08-02",
+        "clicks": 472,
+        "impressions": 16433,
+        "ctr": 2.87,
+        "position": 13
+      },
+      {
+        "date": "2026-08-03",
+        "clicks": 567,
+        "impressions": 20329,
+        "ctr": 2.79,
+        "position": 13
+      },
+      {
+        "date": "2026-08-04",
+        "clicks": 530,
+        "impressions": 17683,
+        "ctr": 3,
+        "position": 13.1
+      },
+      {
+        "date": "2026-08-05",
+        "clicks": 548,
+        "impressions": 19685,
+        "ctr": 2.78,
+        "position": 13.4
+      },
+      {
+        "date": "2026-08-06",
+        "clicks": 500,
+        "impressions": 16892,
+        "ctr": 2.96,
+        "position": 13.4
+      },
+      {
+        "date": "2026-08-07",
+        "clicks": 449,
+        "impressions": 15536,
+        "ctr": 2.89,
+        "position": 12.9
+      },
+      {
+        "date": "2026-08-08",
+        "clicks": 444,
+        "impressions": 15405,
+        "ctr": 2.88,
+        "position": 13.2
+      },
+      {
+        "date": "2026-08-09",
+        "clicks": 495,
+        "impressions": 16734,
+        "ctr": 2.96,
+        "position": 13.3
+      },
+      {
+        "date": "2026-08-10",
+        "clicks": 541,
+        "impressions": 18387,
+        "ctr": 2.94,
+        "position": 12.7
+      },
+      {
+        "date": "2026-08-11",
+        "clicks": 587,
+        "impressions": 20574,
+        "ctr": 2.85,
+        "position": 12.9
+      },
+      {
+        "date": "2026-08-12",
+        "clicks": 542,
+        "impressions": 18179,
+        "ctr": 2.98,
+        "position": 13
+      },
+      {
+        "date": "2026-08-13",
+        "clicks": 498,
+        "impressions": 17012,
+        "ctr": 2.93,
+        "position": 12.8
+      },
+      {
+        "date": "2026-08-14",
+        "clicks": 463,
+        "impressions": 16050,
+        "ctr": 2.88,
+        "position": 13.2
+      },
+      {
+        "date": "2026-08-15",
+        "clicks": 452,
+        "impressions": 16038,
+        "ctr": 2.82,
+        "position": 13
+      },
+      {
+        "date": "2026-08-16",
+        "clicks": 486,
+        "impressions": 16604,
+        "ctr": 2.93,
+        "position": 12.7
+      },
+      {
+        "date": "2026-08-17",
+        "clicks": 582,
+        "impressions": 20965,
+        "ctr": 2.78,
+        "position": 13.3
+      },
+      {
+        "date": "2026-08-18",
+        "clicks": 560,
+        "impressions": 19620,
+        "ctr": 2.85,
+        "position": 13.2
+      },
+      {
+        "date": "2026-08-19",
+        "clicks": 527,
+        "impressions": 18582,
+        "ctr": 2.84,
+        "position": 13.3
+      },
+      {
+        "date": "2026-08-20",
+        "clicks": 542,
+        "impressions": 18810,
+        "ctr": 2.88,
+        "position": 13.2
+      },
+      {
+        "date": "2026-08-21",
+        "clicks": 480,
+        "impressions": 16217,
+        "ctr": 2.96,
+        "position": 12.8
+      },
+      {
+        "date": "2026-08-22",
+        "clicks": 453,
+        "impressions": 15417,
+        "ctr": 2.94,
+        "position": 12.7
+      },
+      {
+        "date": "2026-08-23",
+        "clicks": 488,
+        "impressions": 17260,
+        "ctr": 2.83,
+        "position": 12.9
+      },
+      {
+        "date": "2026-08-24",
+        "clicks": 576,
+        "impressions": 20572,
+        "ctr": 2.8,
+        "position": 12.9
+      },
+      {
+        "date": "2026-08-25",
+        "clicks": 611,
+        "impressions": 20676,
+        "ctr": 2.96,
+        "position": 13
+      },
+      {
+        "date": "2026-08-26",
+        "clicks": 589,
+        "impressions": 20772,
+        "ctr": 2.84,
+        "position": 12.6
+      },
+      {
+        "date": "2026-08-27",
+        "clicks": 529,
+        "impressions": 18238,
+        "ctr": 2.9,
+        "position": 12.7
+      },
+      {
+        "date": "2026-08-28",
+        "clicks": 507,
+        "impressions": 17964,
+        "ctr": 2.82,
+        "position": 12.9
+      },
+      {
+        "date": "2026-08-29",
+        "clicks": 465,
+        "impressions": 16369,
+        "ctr": 2.84,
+        "position": 12.8
+      },
+      {
+        "date": "2026-08-30",
+        "clicks": 516,
+        "impressions": 17605,
+        "ctr": 2.93,
+        "position": 12.7
+      },
+      {
+        "date": "2026-08-31",
+        "clicks": 557,
+        "impressions": 19889,
+        "ctr": 2.8,
+        "position": 12.5
+      },
+      {
+        "date": "2026-09-01",
+        "clicks": 608,
+        "impressions": 21644,
+        "ctr": 2.81,
+        "position": 12.6
+      },
+      {
+        "date": "2026-09-02",
+        "clicks": 594,
+        "impressions": 21361,
+        "ctr": 2.78,
+        "position": 13.1
+      },
+      {
+        "date": "2026-09-03",
+        "clicks": 540,
+        "impressions": 19646,
+        "ctr": 2.75,
+        "position": 13
+      },
+      {
+        "date": "2026-09-04",
+        "clicks": 522,
+        "impressions": 18748,
+        "ctr": 2.78,
+        "position": 12.6
+      },
+      {
+        "date": "2026-09-05",
+        "clicks": 476,
+        "impressions": 16813,
+        "ctr": 2.83,
+        "position": 12.8
+      },
+      {
+        "date": "2026-09-06",
+        "clicks": 532,
+        "impressions": 19272,
+        "ctr": 2.76,
+        "position": 12.5
+      },
+      {
+        "date": "2026-09-07",
+        "clicks": 612,
+        "impressions": 22267,
+        "ctr": 2.75,
+        "position": 12.4
+      },
+      {
+        "date": "2026-09-08",
+        "clicks": 600,
+        "impressions": 21367,
+        "ctr": 2.81,
+        "position": 12.8
+      },
+      {
+        "date": "2026-09-09",
+        "clicks": 594,
+        "impressions": 21703,
+        "ctr": 2.74,
+        "position": 13
+      },
+      {
+        "date": "2026-09-10",
+        "clicks": 535,
+        "impressions": 18413,
+        "ctr": 2.91,
+        "position": 13
+      },
+      {
+        "date": "2026-09-11",
+        "clicks": 490,
+        "impressions": 17716,
+        "ctr": 2.77,
+        "position": 12.4
+      },
+      {
+        "date": "2026-09-12",
+        "clicks": 440,
+        "impressions": 15649,
+        "ctr": 2.81,
+        "position": 12.3
+      },
+      {
+        "date": "2026-09-13",
+        "clicks": 500,
+        "impressions": 18196,
+        "ctr": 2.75,
+        "position": 12.7
+      },
+      {
+        "date": "2026-09-14",
+        "clicks": 616,
+        "impressions": 21499,
+        "ctr": 2.87,
+        "position": 12.3
+      },
+      {
+        "date": "2026-09-15",
+        "clicks": 588,
+        "impressions": 20676,
+        "ctr": 2.84,
+        "position": 12.6
+      },
+      {
+        "date": "2026-09-16",
+        "clicks": 595,
+        "impressions": 21914,
+        "ctr": 2.72,
+        "position": 12.9
+      },
+      {
+        "date": "2026-09-17",
+        "clicks": 570,
+        "impressions": 19761,
+        "ctr": 2.88,
+        "position": 12.8
+      },
+      {
+        "date": "2026-09-18",
+        "clicks": 519,
+        "impressions": 18710,
+        "ctr": 2.77,
+        "position": 12.9
+      },
+      {
+        "date": "2026-09-19",
+        "clicks": 442,
+        "impressions": 15542,
+        "ctr": 2.84,
+        "position": 12.5
+      },
+      {
+        "date": "2026-09-20",
+        "clicks": 527,
+        "impressions": 19394,
+        "ctr": 2.72,
+        "position": 12.8
+      },
+      {
+        "date": "2026-09-21",
+        "clicks": 607,
+        "impressions": 22027,
+        "ctr": 2.76,
+        "position": 12.4
+      },
+      {
+        "date": "2026-09-22",
+        "clicks": 580,
+        "impressions": 21301,
+        "ctr": 2.72,
+        "position": 12.5
+      },
+      {
+        "date": "2026-09-23",
+        "clicks": 591,
+        "impressions": 21630,
+        "ctr": 2.73,
+        "position": 12.4
+      },
+      {
+        "date": "2026-09-24",
+        "clicks": 536,
+        "impressions": 19520,
+        "ctr": 2.75,
+        "position": 12.1
+      },
+      {
+        "date": "2026-09-25",
+        "clicks": 506,
+        "impressions": 18688,
+        "ctr": 2.71,
+        "position": 12.4
+      },
+      {
+        "date": "2026-09-26",
+        "clicks": 476,
+        "impressions": 16681,
+        "ctr": 2.85,
+        "position": 12.3
+      },
+      {
+        "date": "2026-09-27",
+        "clicks": 529,
+        "impressions": 19507,
+        "ctr": 2.71,
+        "position": 12.7
+      },
+      {
+        "date": "2026-09-28",
+        "clicks": 633,
+        "impressions": 21746,
+        "ctr": 2.91,
+        "position": 12.6
+      }
+    ],
+    "previous_daily": [
+      {
+        "date": "2026-04-02",
+        "clicks": 367,
+        "impressions": 11842,
+        "ctr": 3.1,
+        "position": 15.1
+      },
+      {
+        "date": "2026-04-03",
+        "clicks": 337,
+        "impressions": 11026,
+        "ctr": 3.06,
+        "position": 15.4
+      },
+      {
+        "date": "2026-04-04",
+        "clicks": 298,
+        "impressions": 9918,
+        "ctr": 3,
+        "position": 15.5
+      },
+      {
+        "date": "2026-04-05",
+        "clicks": 346,
+        "impressions": 10965,
+        "ctr": 3.16,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-06",
+        "clicks": 409,
+        "impressions": 12704,
+        "ctr": 3.22,
+        "position": 15.4
+      },
+      {
+        "date": "2026-04-07",
+        "clicks": 376,
+        "impressions": 12149,
+        "ctr": 3.09,
+        "position": 15
+      },
+      {
+        "date": "2026-04-08",
+        "clicks": 367,
+        "impressions": 11629,
+        "ctr": 3.16,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-09",
+        "clicks": 369,
+        "impressions": 11691,
+        "ctr": 3.16,
+        "position": 15.4
+      },
+      {
+        "date": "2026-04-10",
+        "clicks": 336,
+        "impressions": 10699,
+        "ctr": 3.14,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-11",
+        "clicks": 317,
+        "impressions": 10107,
+        "ctr": 3.14,
+        "position": 14.8
+      },
+      {
+        "date": "2026-04-12",
+        "clicks": 372,
+        "impressions": 12194,
+        "ctr": 3.05,
+        "position": 15.1
+      },
+      {
+        "date": "2026-04-13",
+        "clicks": 403,
+        "impressions": 13078,
+        "ctr": 3.08,
+        "position": 15.1
+      },
+      {
+        "date": "2026-04-14",
+        "clicks": 398,
+        "impressions": 12690,
+        "ctr": 3.14,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-15",
+        "clicks": 399,
+        "impressions": 13237,
+        "ctr": 3.01,
+        "position": 15.4
+      },
+      {
+        "date": "2026-04-16",
+        "clicks": 395,
+        "impressions": 13099,
+        "ctr": 3.02,
+        "position": 15.1
+      },
+      {
+        "date": "2026-04-17",
+        "clicks": 340,
+        "impressions": 10625,
+        "ctr": 3.2,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-18",
+        "clicks": 311,
+        "impressions": 9707,
+        "ctr": 3.2,
+        "position": 14.8
+      },
+      {
+        "date": "2026-04-19",
+        "clicks": 339,
+        "impressions": 10734,
+        "ctr": 3.16,
+        "position": 15.4
+      },
+      {
+        "date": "2026-04-20",
+        "clicks": 386,
+        "impressions": 12935,
+        "ctr": 2.98,
+        "position": 15.3
+      },
+      {
+        "date": "2026-04-21",
+        "clicks": 393,
+        "impressions": 12751,
+        "ctr": 3.08,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-22",
+        "clicks": 403,
+        "impressions": 12627,
+        "ctr": 3.19,
+        "position": 15.1
+      },
+      {
+        "date": "2026-04-23",
+        "clicks": 371,
+        "impressions": 12488,
+        "ctr": 2.97,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-24",
+        "clicks": 325,
+        "impressions": 10782,
+        "ctr": 3.01,
+        "position": 15.2
+      },
+      {
+        "date": "2026-04-25",
+        "clicks": 304,
+        "impressions": 9557,
+        "ctr": 3.18,
+        "position": 15.2
+      },
+      {
+        "date": "2026-04-26",
+        "clicks": 348,
+        "impressions": 11041,
+        "ctr": 3.15,
+        "position": 14.9
+      },
+      {
+        "date": "2026-04-27",
+        "clicks": 390,
+        "impressions": 13072,
+        "ctr": 2.98,
+        "position": 15.2
+      },
+      {
+        "date": "2026-04-28",
+        "clicks": 414,
+        "impressions": 13457,
+        "ctr": 3.08,
+        "position": 15
+      },
+      {
+        "date": "2026-04-29",
+        "clicks": 381,
+        "impressions": 12628,
+        "ctr": 3.02,
+        "position": 14.7
+      },
+      {
+        "date": "2026-04-30",
+        "clicks": 398,
+        "impressions": 12750,
+        "ctr": 3.12,
+        "position": 15
+      },
+      {
+        "date": "2026-05-01",
+        "clicks": 356,
+        "impressions": 11725,
+        "ctr": 3.04,
+        "position": 15
+      },
+      {
+        "date": "2026-05-02",
+        "clicks": 313,
+        "impressions": 10103,
+        "ctr": 3.1,
+        "position": 15.2
+      },
+      {
+        "date": "2026-05-03",
+        "clicks": 347,
+        "impressions": 11743,
+        "ctr": 2.95,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-04",
+        "clicks": 404,
+        "impressions": 13662,
+        "ctr": 2.96,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-05",
+        "clicks": 420,
+        "impressions": 13282,
+        "ctr": 3.16,
+        "position": 14.7
+      },
+      {
+        "date": "2026-05-06",
+        "clicks": 380,
+        "impressions": 12199,
+        "ctr": 3.12,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-07",
+        "clicks": 398,
+        "impressions": 13516,
+        "ctr": 2.94,
+        "position": 15.2
+      },
+      {
+        "date": "2026-05-08",
+        "clicks": 337,
+        "impressions": 11138,
+        "ctr": 3.03,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-09",
+        "clicks": 331,
+        "impressions": 10959,
+        "ctr": 3.02,
+        "position": 15
+      },
+      {
+        "date": "2026-05-10",
+        "clicks": 369,
+        "impressions": 12263,
+        "ctr": 3.01,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-11",
+        "clicks": 400,
+        "impressions": 13602,
+        "ctr": 2.94,
+        "position": 15
+      },
+      {
+        "date": "2026-05-12",
+        "clicks": 414,
+        "impressions": 13911,
+        "ctr": 2.98,
+        "position": 15.1
+      },
+      {
+        "date": "2026-05-13",
+        "clicks": 380,
+        "impressions": 12742,
+        "ctr": 2.98,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-14",
+        "clicks": 365,
+        "impressions": 11735,
+        "ctr": 3.11,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-15",
+        "clicks": 365,
+        "impressions": 11511,
+        "ctr": 3.17,
+        "position": 15
+      },
+      {
+        "date": "2026-05-16",
+        "clicks": 311,
+        "impressions": 10568,
+        "ctr": 2.94,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-17",
+        "clicks": 351,
+        "impressions": 11945,
+        "ctr": 2.94,
+        "position": 14.6
+      },
+      {
+        "date": "2026-05-18",
+        "clicks": 411,
+        "impressions": 13462,
+        "ctr": 3.05,
+        "position": 15.1
+      },
+      {
+        "date": "2026-05-19",
+        "clicks": 429,
+        "impressions": 14379,
+        "ctr": 2.98,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-20",
+        "clicks": 424,
+        "impressions": 13548,
+        "ctr": 3.13,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-21",
+        "clicks": 395,
+        "impressions": 13409,
+        "ctr": 2.95,
+        "position": 15
+      },
+      {
+        "date": "2026-05-22",
+        "clicks": 363,
+        "impressions": 12185,
+        "ctr": 2.98,
+        "position": 15
+      },
+      {
+        "date": "2026-05-23",
+        "clicks": 308,
+        "impressions": 10120,
+        "ctr": 3.04,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-24",
+        "clicks": 370,
+        "impressions": 12601,
+        "ctr": 2.94,
+        "position": 14.5
+      },
+      {
+        "date": "2026-05-25",
+        "clicks": 428,
+        "impressions": 14298,
+        "ctr": 2.99,
+        "position": 15
+      },
+      {
+        "date": "2026-05-26",
+        "clicks": 432,
+        "impressions": 14103,
+        "ctr": 3.06,
+        "position": 14.5
+      },
+      {
+        "date": "2026-05-27",
+        "clicks": 428,
+        "impressions": 13529,
+        "ctr": 3.16,
+        "position": 14.7
+      },
+      {
+        "date": "2026-05-28",
+        "clicks": 382,
+        "impressions": 13029,
+        "ctr": 2.93,
+        "position": 14.9
+      },
+      {
+        "date": "2026-05-29",
+        "clicks": 359,
+        "impressions": 12176,
+        "ctr": 2.95,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-30",
+        "clicks": 321,
+        "impressions": 10742,
+        "ctr": 2.99,
+        "position": 14.8
+      },
+      {
+        "date": "2026-05-31",
+        "clicks": 380,
+        "impressions": 12337,
+        "ctr": 3.08,
+        "position": 14.8
+      },
+      {
+        "date": "2026-06-01",
+        "clicks": 408,
+        "impressions": 13255,
+        "ctr": 3.08,
+        "position": 15
+      },
+      {
+        "date": "2026-06-02",
+        "clicks": 407,
+        "impressions": 13477,
+        "ctr": 3.02,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-03",
+        "clicks": 415,
+        "impressions": 13812,
+        "ctr": 3,
+        "position": 14.4
+      },
+      {
+        "date": "2026-06-04",
+        "clicks": 419,
+        "impressions": 13412,
+        "ctr": 3.12,
+        "position": 14.3
+      },
+      {
+        "date": "2026-06-05",
+        "clicks": 374,
+        "impressions": 12588,
+        "ctr": 2.97,
+        "position": 14.9
+      },
+      {
+        "date": "2026-06-06",
+        "clicks": 324,
+        "impressions": 10600,
+        "ctr": 3.06,
+        "position": 14.9
+      },
+      {
+        "date": "2026-06-07",
+        "clicks": 366,
+        "impressions": 11750,
+        "ctr": 3.11,
+        "position": 14.9
+      },
+      {
+        "date": "2026-06-08",
+        "clicks": 402,
+        "impressions": 13325,
+        "ctr": 3.02,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-09",
+        "clicks": 410,
+        "impressions": 14041,
+        "ctr": 2.92,
+        "position": 14.4
+      },
+      {
+        "date": "2026-06-10",
+        "clicks": 402,
+        "impressions": 12808,
+        "ctr": 3.14,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-11",
+        "clicks": 421,
+        "impressions": 14466,
+        "ctr": 2.91,
+        "position": 14.5
+      },
+      {
+        "date": "2026-06-12",
+        "clicks": 364,
+        "impressions": 12292,
+        "ctr": 2.96,
+        "position": 14.4
+      },
+      {
+        "date": "2026-06-13",
+        "clicks": 336,
+        "impressions": 10988,
+        "ctr": 3.06,
+        "position": 14.9
+      },
+      {
+        "date": "2026-06-14",
+        "clicks": 398,
+        "impressions": 13526,
+        "ctr": 2.94,
+        "position": 14.3
+      },
+      {
+        "date": "2026-06-15",
+        "clicks": 416,
+        "impressions": 14014,
+        "ctr": 2.97,
+        "position": 14.5
+      },
+      {
+        "date": "2026-06-16",
+        "clicks": 449,
+        "impressions": 14931,
+        "ctr": 3.01,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-17",
+        "clicks": 409,
+        "impressions": 13607,
+        "ctr": 3.01,
+        "position": 14.5
+      },
+      {
+        "date": "2026-06-18",
+        "clicks": 416,
+        "impressions": 14054,
+        "ctr": 2.96,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-19",
+        "clicks": 384,
+        "impressions": 12608,
+        "ctr": 3.05,
+        "position": 14.3
+      },
+      {
+        "date": "2026-06-20",
+        "clicks": 321,
+        "impressions": 10278,
+        "ctr": 3.12,
+        "position": 14.5
+      },
+      {
+        "date": "2026-06-21",
+        "clicks": 397,
+        "impressions": 12766,
+        "ctr": 3.11,
+        "position": 14.1
+      },
+      {
+        "date": "2026-06-22",
+        "clicks": 403,
+        "impressions": 13419,
+        "ctr": 3,
+        "position": 14.4
+      },
+      {
+        "date": "2026-06-23",
+        "clicks": 449,
+        "impressions": 14791,
+        "ctr": 3.04,
+        "position": 14.6
+      },
+      {
+        "date": "2026-06-24",
+        "clicks": 418,
+        "impressions": 14189,
+        "ctr": 2.95,
+        "position": 14.7
+      },
+      {
+        "date": "2026-06-25",
+        "clicks": 400,
+        "impressions": 12875,
+        "ctr": 3.11,
+        "position": 14.6
+      },
+      {
+        "date": "2026-06-26",
+        "clicks": 361,
+        "impressions": 12449,
+        "ctr": 2.9,
+        "position": 14.1
+      },
+      {
+        "date": "2026-06-27",
+        "clicks": 324,
+        "impressions": 10915,
+        "ctr": 2.97,
+        "position": 14.6
+      },
+      {
+        "date": "2026-06-28",
+        "clicks": 392,
+        "impressions": 12648,
+        "ctr": 3.1,
+        "position": 14.6
+      },
+      {
+        "date": "2026-06-29",
+        "clicks": 455,
+        "impressions": 15130,
+        "ctr": 3.01,
+        "position": 14.4
+      },
+      {
+        "date": "2026-06-30",
+        "clicks": 431,
+        "impressions": 14425,
+        "ctr": 2.99,
+        "position": 14.6
+      }
+    ],
+    "queries": [
+      {
+        "key": "maison lumen",
+        "clicks": 6200,
+        "impressions": 14800,
+        "ctr": 41.89,
+        "position": 1.1,
+        "prev_clicks": 5400,
+        "prev_impressions": 13100,
+        "prev_position": 1.2
+      },
+      {
+        "key": "maison lumen avis",
+        "clicks": 980,
+        "impressions": 3900,
+        "ctr": 25.13,
+        "position": 1.4,
+        "prev_clicks": 720,
+        "prev_impressions": 3100,
+        "prev_position": 1.6
+      },
+      {
+        "key": "suspension rotin",
+        "clicks": 1850,
+        "impressions": 52000,
+        "ctr": 3.56,
+        "position": 2.8,
+        "prev_clicks": 1120,
+        "prev_impressions": 41000,
+        "prev_position": 4.6
+      },
+      {
+        "key": "lampe de chevet tactile",
+        "clicks": 1420,
+        "impressions": 38500,
+        "ctr": 3.69,
+        "position": 3,
+        "prev_clicks": 610,
+        "prev_impressions": 22000,
+        "prev_position": 6.2
+      },
+      {
+        "key": "luminaire salon",
+        "clicks": 1180,
+        "impressions": 96000,
+        "ctr": 1.23,
+        "position": 6.4,
+        "prev_clicks": 940,
+        "prev_impressions": 88000,
+        "prev_position": 7.8
+      },
+      {
+        "key": "applique murale design",
+        "clicks": 960,
+        "impressions": 41000,
+        "ctr": 2.34,
+        "position": 5.1,
+        "prev_clicks": 700,
+        "prev_impressions": 36000,
+        "prev_position": 6
+      },
+      {
+        "key": "suspension cuisine",
+        "clicks": 870,
+        "impressions": 47000,
+        "ctr": 1.85,
+        "position": 7.2,
+        "prev_clicks": 520,
+        "prev_impressions": 39000,
+        "prev_position": 11.4
+      },
+      {
+        "key": "lampadaire arc",
+        "clicks": 760,
+        "impressions": 28000,
+        "ctr": 2.71,
+        "position": 4.2,
+        "prev_clicks": 690,
+        "prev_impressions": 27500,
+        "prev_position": 4.3
+      },
+      {
+        "key": "lampe à poser laiton",
+        "clicks": 640,
+        "impressions": 15200,
+        "ctr": 4.21,
+        "position": 2.2,
+        "prev_clicks": 310,
+        "prev_impressions": 9800,
+        "prev_position": 3.9
+      },
+      {
+        "key": "luminaire scandinave",
+        "clicks": 590,
+        "impressions": 33000,
+        "ctr": 1.79,
+        "position": 8.9,
+        "prev_clicks": 640,
+        "prev_impressions": 34000,
+        "prev_position": 8.1
+      },
+      {
+        "key": "ampoule filament e27",
+        "clicks": 540,
+        "impressions": 61000,
+        "ctr": 0.89,
+        "position": 9.8,
+        "prev_clicks": 580,
+        "prev_impressions": 58000,
+        "prev_position": 9.2
+      },
+      {
+        "key": "suspension verre",
+        "clicks": 510,
+        "impressions": 26000,
+        "ctr": 1.96,
+        "position": 6.8,
+        "prev_clicks": 280,
+        "prev_impressions": 17000,
+        "prev_position": 12.3
+      },
+      {
+        "key": "spot led encastrable",
+        "clicks": 430,
+        "impressions": 52000,
+        "ctr": 0.83,
+        "position": 14.6,
+        "prev_clicks": 470,
+        "prev_impressions": 50000,
+        "prev_position": 13.9
+      },
+      {
+        "key": "lampe champignon",
+        "clicks": 420,
+        "impressions": 19800,
+        "ctr": 2.12,
+        "position": 4.8,
+        "prev_clicks": 150,
+        "prev_impressions": 8800,
+        "prev_position": 9.6
+      },
+      {
+        "key": "luminaire extérieur",
+        "clicks": 390,
+        "impressions": 44000,
+        "ctr": 0.89,
+        "position": 11.2,
+        "prev_clicks": 220,
+        "prev_impressions": 30000,
+        "prev_position": 16.8
+      },
+      {
+        "key": "plafonnier chambre",
+        "clicks": 360,
+        "impressions": 37000,
+        "ctr": 0.97,
+        "position": 9.4,
+        "prev_clicks": 300,
+        "prev_impressions": 33500,
+        "prev_position": 10.6
+      },
+      {
+        "key": "lampe de bureau vintage",
+        "clicks": 330,
+        "impressions": 21000,
+        "ctr": 1.57,
+        "position": 7.7,
+        "prev_clicks": 410,
+        "prev_impressions": 22500,
+        "prev_position": 6.4
+      },
+      {
+        "key": "guirlande guinguette",
+        "clicks": 280,
+        "impressions": 18000,
+        "ctr": 1.56,
+        "position": 5.9,
+        "prev_clicks": 90,
+        "prev_impressions": 6200,
+        "prev_position": 14.2
+      },
+      {
+        "key": "variateur lumière",
+        "clicks": 210,
+        "impressions": 26500,
+        "ctr": 0.79,
+        "position": 16.4,
+        "prev_clicks": 240,
+        "prev_impressions": 27000,
+        "prev_position": 15.8
+      },
+      {
+        "key": "comment choisir une suspension",
+        "clicks": 190,
+        "impressions": 12800,
+        "ctr": 1.48,
+        "position": 2.9,
+        "prev_clicks": 40,
+        "prev_impressions": 3900,
+        "prev_position": 8.8
+      }
+    ],
+    "pages": [
+      {
+        "key": "https://www.maison-lumen.fr/",
+        "clicks": 7400,
+        "impressions": 21500,
+        "ctr": 34.42,
+        "position": 1.6,
+        "prev_clicks": 6300,
+        "prev_impressions": 19200,
+        "prev_position": 1.8
+      },
+      {
+        "key": "https://www.maison-lumen.fr/suspensions/rotin",
+        "clicks": 2900,
+        "impressions": 88000,
+        "ctr": 3.3,
+        "position": 3.9,
+        "prev_clicks": 1700,
+        "prev_impressions": 66000,
+        "prev_position": 5.6
+      },
+      {
+        "key": "https://www.maison-lumen.fr/lampes-a-poser/chevet-tactile",
+        "clicks": 2100,
+        "impressions": 61000,
+        "ctr": 3.44,
+        "position": 3.6,
+        "prev_clicks": 900,
+        "prev_impressions": 37000,
+        "prev_position": 6.8
+      },
+      {
+        "key": "https://www.maison-lumen.fr/luminaires/salon",
+        "clicks": 1800,
+        "impressions": 142000,
+        "ctr": 1.27,
+        "position": 6.9,
+        "prev_clicks": 1450,
+        "prev_impressions": 128000,
+        "prev_position": 8.1
+      },
+      {
+        "key": "https://www.maison-lumen.fr/appliques-murales",
+        "clicks": 1500,
+        "impressions": 70000,
+        "ctr": 2.14,
+        "position": 5.8,
+        "prev_clicks": 1150,
+        "prev_impressions": 61000,
+        "prev_position": 6.7
+      },
+      {
+        "key": "https://www.maison-lumen.fr/suspensions/cuisine",
+        "clicks": 1350,
+        "impressions": 76000,
+        "ctr": 1.78,
+        "position": 7.4,
+        "prev_clicks": 820,
+        "prev_impressions": 60000,
+        "prev_position": 11
+      },
+      {
+        "key": "https://www.maison-lumen.fr/lampadaires",
+        "clicks": 1200,
+        "impressions": 51000,
+        "ctr": 2.35,
+        "position": 5.2,
+        "prev_clicks": 1100,
+        "prev_impressions": 49500,
+        "prev_position": 5.4
+      },
+      {
+        "key": "https://www.maison-lumen.fr/blog/comment-choisir-une-suspension",
+        "clicks": 1100,
+        "impressions": 64000,
+        "ctr": 1.72,
+        "position": 4.4,
+        "prev_clicks": 380,
+        "prev_impressions": 24000,
+        "prev_position": 9.1
+      },
+      {
+        "key": "https://www.maison-lumen.fr/lampes-a-poser/laiton",
+        "clicks": 980,
+        "impressions": 26000,
+        "ctr": 3.77,
+        "position": 3.1,
+        "prev_clicks": 520,
+        "prev_impressions": 17500,
+        "prev_position": 4.8
+      },
+      {
+        "key": "https://www.maison-lumen.fr/ampoules/filament",
+        "clicks": 900,
+        "impressions": 98000,
+        "ctr": 0.92,
+        "position": 10.1,
+        "prev_clicks": 950,
+        "prev_impressions": 93000,
+        "prev_position": 9.5
+      },
+      {
+        "key": "https://www.maison-lumen.fr/suspensions/verre",
+        "clicks": 820,
+        "impressions": 41000,
+        "ctr": 2,
+        "position": 7,
+        "prev_clicks": 450,
+        "prev_impressions": 27000,
+        "prev_position": 11.9
+      },
+      {
+        "key": "https://www.maison-lumen.fr/luminaires-exterieurs",
+        "clicks": 700,
+        "impressions": 69000,
+        "ctr": 1.01,
+        "position": 11.6,
+        "prev_clicks": 430,
+        "prev_impressions": 48000,
+        "prev_position": 16.2
+      },
+      {
+        "key": "https://www.maison-lumen.fr/blog/guide-temperature-couleur",
+        "clicks": 640,
+        "impressions": 47000,
+        "ctr": 1.36,
+        "position": 6.1,
+        "prev_clicks": 290,
+        "prev_impressions": 21000,
+        "prev_position": 10.4
+      },
+      {
+        "key": "https://www.maison-lumen.fr/spots-encastrables",
+        "clicks": 560,
+        "impressions": 83000,
+        "ctr": 0.67,
+        "position": 14.2,
+        "prev_clicks": 610,
+        "prev_impressions": 80000,
+        "prev_position": 13.6
+      },
+      {
+        "key": "https://www.maison-lumen.fr/plafonniers",
+        "clicks": 520,
+        "impressions": 58000,
+        "ctr": 0.9,
+        "position": 9.8,
+        "prev_clicks": 470,
+        "prev_impressions": 54000,
+        "prev_position": 10.9
+      }
+    ],
+    "countries": [
+      {
+        "key": "France",
+        "clicks": 39871,
+        "impressions": 1370017,
+        "ctr": 2.91,
+        "position": 11.9,
+        "prev_clicks": 29560,
+        "prev_impressions": 953822,
+        "prev_position": 14
+      },
+      {
+        "key": "Belgium",
+        "clicks": 2974,
+        "impressions": 115524,
+        "ctr": 2.57,
+        "position": 13.8,
+        "prev_clicks": 2048,
+        "prev_impressions": 75184,
+        "prev_position": 15.6
+      },
+      {
+        "key": "Switzerland",
+        "clicks": 1673,
+        "impressions": 63457,
+        "ctr": 2.64,
+        "position": 15.1,
+        "prev_clicks": 1161,
+        "prev_impressions": 41519,
+        "prev_position": 16.8
+      },
+      {
+        "key": "Canada",
+        "clicks": 976,
+        "impressions": 42305,
+        "ctr": 2.31,
+        "position": 18.4,
+        "prev_clicks": 649,
+        "prev_impressions": 26931,
+        "prev_position": 20.1
+      },
+      {
+        "key": "Luxembourg",
+        "clicks": 511,
+        "impressions": 17898,
+        "ctr": 2.86,
+        "position": 14.2,
+        "prev_clicks": 375,
+        "prev_impressions": 12344,
+        "prev_position": 15.9
+      },
+      {
+        "key": "Morocco",
+        "clicks": 465,
+        "impressions": 17897,
+        "ctr": 2.6,
+        "position": 21.5,
+        "prev_clicks": 341,
+        "prev_impressions": 12343,
+        "prev_position": 23
+      }
+    ],
+    "devices": [
+      {
+        "key": "Mobile",
+        "clicks": 29369,
+        "impressions": 1086901,
+        "ctr": 2.7,
+        "position": 12.9,
+        "prev_clicks": 20515,
+        "prev_impressions": 720416,
+        "prev_position": 14.9
+      },
+      {
+        "key": "Desktop",
+        "clicks": 15289,
+        "impressions": 481621,
+        "ctr": 3.17,
+        "position": 11.6,
+        "prev_clicks": 12220,
+        "prev_impressions": 359086,
+        "prev_position": 13.7
+      },
+      {
+        "key": "Tablet",
+        "clicks": 1812,
+        "impressions": 58576,
+        "ctr": 3.09,
+        "position": 13.4,
+        "prev_clicks": 1399,
+        "prev_impressions": 42641,
+        "prev_position": 15.2
+      }
+    ],
+    "search_appearance": [
+      {
+        "key": "Product snippets",
+        "clicks": 14200,
+        "impressions": 402000,
+        "ctr": 3.53,
+        "position": 8.1,
+        "prev_clicks": 9800,
+        "prev_impressions": 281000,
+        "prev_position": 9.4
+      },
+      {
+        "key": "Merchant listings",
+        "clicks": 6900,
+        "impressions": 251000,
+        "ctr": 2.75,
+        "position": 9.6,
+        "prev_clicks": 4100,
+        "prev_impressions": 168000,
+        "prev_position": 11.2
+      },
+      {
+        "key": "Review snippets",
+        "clicks": 2300,
+        "impressions": 64000,
+        "ctr": 3.59,
+        "position": 5.4,
+        "prev_clicks": 1900,
+        "prev_impressions": 57000,
+        "prev_position": 5.9
+      },
+      {
+        "key": "Videos",
+        "clicks": 610,
+        "impressions": 38000,
+        "ctr": 1.61,
+        "position": 7.8,
+        "prev_clicks": 240,
+        "prev_impressions": 15000,
+        "prev_position": 9.9
+      }
+    ],
+    "brand_split": {
+      "branded": {
+        "current": 9850,
+        "previous": 8640
+      },
+      "non_branded": {
+        "current": 36620,
+        "previous": 25494
+      },
+      "brand_terms": [
+        "maison lumen",
+        "lumen"
+      ]
+    },
+    "position_distribution": {
+      "top3": {
+        "current": 148,
+        "previous": 102
+      },
+      "top4_10": {
+        "current": 412,
+        "previous": 318
+      },
+      "top11_20": {
+        "current": 690,
+        "previous": 605
+      },
+      "beyond20": {
+        "current": 2350,
+        "previous": 2180
+      }
+    },
+    "indexing": {
+      "indexed": {
+        "current": 1840,
+        "previous": 1610
+      },
+      "not_indexed": {
+        "current": 420,
+        "previous": 510
+      },
+      "issues": [
+        {
+          "reason": "Crawled - currently not indexed",
+          "pages": 180
+        },
+        {
+          "reason": "Duplicate without user-selected canonical",
+          "pages": 95
+        },
+        {
+          "reason": "Page with redirect",
+          "pages": 70
+        },
+        {
+          "reason": "Not found (404)",
+          "pages": 45
+        },
+        {
+          "reason": "Excluded by ‘noindex’ tag",
+          "pages": 30
+        }
+      ],
+      "sitemaps": [
+        {
+          "url": "https://www.maison-lumen.fr/sitemap_products.xml",
+          "discovered_urls": 1460,
+          "status": "Success"
+        },
+        {
+          "url": "https://www.maison-lumen.fr/sitemap_collections.xml",
+          "discovered_urls": 185,
+          "status": "Success"
+        },
+        {
+          "url": "https://www.maison-lumen.fr/sitemap_blog.xml",
+          "discovered_urls": 92,
+          "status": "Success"
+        }
+      ]
+    },
+    "core_web_vitals": {
+      "mobile": {
+        "good": 1210,
+        "needs_improvement": 380,
+        "poor": 250
+      },
+      "desktop": {
+        "good": 1640,
+        "needs_improvement": 150,
+        "poor": 50
+      }
+    }
+  },
+  "analytics": {
+    "totals": {
+      "sessions": {
+        "current": 94882,
+        "previous": 78821
+      },
+      "users": {
+        "current": 74008,
+        "previous": 62269
+      },
+      "new_users": {
+        "current": 57878,
+        "previous": 49657
+      },
+      "engaged_sessions": {
+        "current": 58258,
+        "previous": 46426
+      },
+      "engagement_rate": {
+        "current": 61.4,
+        "previous": 58.9
+      },
+      "avg_engagement_time": {
+        "current": 74,
+        "previous": 69
+      },
+      "page_views": {
+        "current": 294134,
+        "previous": 228581
+      },
+      "key_events": {
+        "current": 2140,
+        "previous": 1610
+      },
+      "revenue": {
+        "current": 186400,
+        "previous": 139800
+      }
+    },
+    "organic_totals": {
+      "sessions": {
+        "current": 40772,
+        "previous": 29976
+      },
+      "users": {
+        "current": 33025,
+        "previous": 24580
+      },
+      "engagement_rate": {
+        "current": 66.2,
+        "previous": 63.5
+      },
+      "key_events": {
+        "current": 980,
+        "previous": 690
+      },
+      "revenue": {
+        "current": 84600,
+        "previous": 59300
+      }
+    },
+    "daily": [
+      {
+        "date": "2026-07-01",
+        "sessions": 1033,
+        "organic_sessions": 440,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-02",
+        "sessions": 979,
+        "organic_sessions": 421,
+        "ai_sessions": 12
+      },
+      {
+        "date": "2026-07-03",
+        "sessions": 949,
+        "organic_sessions": 375,
+        "ai_sessions": 15
+      },
+      {
+        "date": "2026-07-04",
+        "sessions": 918,
+        "organic_sessions": 371,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-07-05",
+        "sessions": 989,
+        "organic_sessions": 405,
+        "ai_sessions": 14
+      },
+      {
+        "date": "2026-07-06",
+        "sessions": 1076,
+        "organic_sessions": 457,
+        "ai_sessions": 14
+      },
+      {
+        "date": "2026-07-07",
+        "sessions": 1100,
+        "organic_sessions": 494,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-07-08",
+        "sessions": 1014,
+        "organic_sessions": 435,
+        "ai_sessions": 15
+      },
+      {
+        "date": "2026-07-09",
+        "sessions": 1029,
+        "organic_sessions": 417,
+        "ai_sessions": 15
+      },
+      {
+        "date": "2026-07-10",
+        "sessions": 926,
+        "organic_sessions": 377,
+        "ai_sessions": 13
+      },
+      {
+        "date": "2026-07-11",
+        "sessions": 875,
+        "organic_sessions": 351,
+        "ai_sessions": 14
+      },
+      {
+        "date": "2026-07-12",
+        "sessions": 995,
+        "organic_sessions": 424,
+        "ai_sessions": 17
+      },
+      {
+        "date": "2026-07-13",
+        "sessions": 1084,
+        "organic_sessions": 456,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-14",
+        "sessions": 1088,
+        "organic_sessions": 476,
+        "ai_sessions": 17
+      },
+      {
+        "date": "2026-07-15",
+        "sessions": 1035,
+        "organic_sessions": 436,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-07-16",
+        "sessions": 1034,
+        "organic_sessions": 455,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-17",
+        "sessions": 964,
+        "organic_sessions": 424,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-18",
+        "sessions": 903,
+        "organic_sessions": 384,
+        "ai_sessions": 13
+      },
+      {
+        "date": "2026-07-19",
+        "sessions": 990,
+        "organic_sessions": 411,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-20",
+        "sessions": 1086,
+        "organic_sessions": 476,
+        "ai_sessions": 17
+      },
+      {
+        "date": "2026-07-21",
+        "sessions": 1041,
+        "organic_sessions": 449,
+        "ai_sessions": 20
+      },
+      {
+        "date": "2026-07-22",
+        "sessions": 1096,
+        "organic_sessions": 488,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-23",
+        "sessions": 1023,
+        "organic_sessions": 456,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-07-24",
+        "sessions": 928,
+        "organic_sessions": 379,
+        "ai_sessions": 15
+      },
+      {
+        "date": "2026-07-25",
+        "sessions": 901,
+        "organic_sessions": 367,
+        "ai_sessions": 14
+      },
+      {
+        "date": "2026-07-26",
+        "sessions": 1042,
+        "organic_sessions": 454,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-07-27",
+        "sessions": 1050,
+        "organic_sessions": 439,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-07-28",
+        "sessions": 1107,
+        "organic_sessions": 485,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-07-29",
+        "sessions": 1063,
+        "organic_sessions": 451,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-07-30",
+        "sessions": 1037,
+        "organic_sessions": 439,
+        "ai_sessions": 22
+      },
+      {
+        "date": "2026-07-31",
+        "sessions": 959,
+        "organic_sessions": 401,
+        "ai_sessions": 16
+      },
+      {
+        "date": "2026-08-01",
+        "sessions": 890,
+        "organic_sessions": 370,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-08-02",
+        "sessions": 985,
+        "organic_sessions": 416,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-03",
+        "sessions": 1143,
+        "organic_sessions": 512,
+        "ai_sessions": 21
+      },
+      {
+        "date": "2026-08-04",
+        "sessions": 1079,
+        "organic_sessions": 456,
+        "ai_sessions": 26
+      },
+      {
+        "date": "2026-08-05",
+        "sessions": 1070,
+        "organic_sessions": 473,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-06",
+        "sessions": 1067,
+        "organic_sessions": 452,
+        "ai_sessions": 22
+      },
+      {
+        "date": "2026-08-07",
+        "sessions": 961,
+        "organic_sessions": 400,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-08",
+        "sessions": 930,
+        "organic_sessions": 386,
+        "ai_sessions": 17
+      },
+      {
+        "date": "2026-08-09",
+        "sessions": 992,
+        "organic_sessions": 429,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-10",
+        "sessions": 1110,
+        "organic_sessions": 463,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-11",
+        "sessions": 1146,
+        "organic_sessions": 504,
+        "ai_sessions": 25
+      },
+      {
+        "date": "2026-08-12",
+        "sessions": 1075,
+        "organic_sessions": 479,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-08-13",
+        "sessions": 1067,
+        "organic_sessions": 440,
+        "ai_sessions": 22
+      },
+      {
+        "date": "2026-08-14",
+        "sessions": 993,
+        "organic_sessions": 405,
+        "ai_sessions": 17
+      },
+      {
+        "date": "2026-08-15",
+        "sessions": 963,
+        "organic_sessions": 394,
+        "ai_sessions": 21
+      },
+      {
+        "date": "2026-08-16",
+        "sessions": 997,
+        "organic_sessions": 421,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-08-17",
+        "sessions": 1125,
+        "organic_sessions": 508,
+        "ai_sessions": 22
+      },
+      {
+        "date": "2026-08-18",
+        "sessions": 1109,
+        "organic_sessions": 498,
+        "ai_sessions": 23
+      },
+      {
+        "date": "2026-08-19",
+        "sessions": 1089,
+        "organic_sessions": 473,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-08-20",
+        "sessions": 1087,
+        "organic_sessions": 485,
+        "ai_sessions": 21
+      },
+      {
+        "date": "2026-08-21",
+        "sessions": 983,
+        "organic_sessions": 414,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-22",
+        "sessions": 967,
+        "organic_sessions": 406,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-23",
+        "sessions": 1057,
+        "organic_sessions": 433,
+        "ai_sessions": 20
+      },
+      {
+        "date": "2026-08-24",
+        "sessions": 1132,
+        "organic_sessions": 510,
+        "ai_sessions": 22
+      },
+      {
+        "date": "2026-08-25",
+        "sessions": 1138,
+        "organic_sessions": 523,
+        "ai_sessions": 23
+      },
+      {
+        "date": "2026-08-26",
+        "sessions": 1128,
+        "organic_sessions": 521,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-08-27",
+        "sessions": 1053,
+        "organic_sessions": 455,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-08-28",
+        "sessions": 1018,
+        "organic_sessions": 435,
+        "ai_sessions": 19
+      },
+      {
+        "date": "2026-08-29",
+        "sessions": 985,
+        "organic_sessions": 403,
+        "ai_sessions": 21
+      },
+      {
+        "date": "2026-08-30",
+        "sessions": 1027,
+        "organic_sessions": 441,
+        "ai_sessions": 20
+      },
+      {
+        "date": "2026-08-31",
+        "sessions": 1104,
+        "organic_sessions": 476,
+        "ai_sessions": 23
+      },
+      {
+        "date": "2026-09-01",
+        "sessions": 1183,
+        "organic_sessions": 550,
+        "ai_sessions": 23
+      },
+      {
+        "date": "2026-09-02",
+        "sessions": 1168,
+        "organic_sessions": 516,
+        "ai_sessions": 30
+      },
+      {
+        "date": "2026-09-03",
+        "sessions": 1109,
+        "organic_sessions": 468,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-09-04",
+        "sessions": 1053,
+        "organic_sessions": 455,
+        "ai_sessions": 21
+      },
+      {
+        "date": "2026-09-05",
+        "sessions": 999,
+        "organic_sessions": 417,
+        "ai_sessions": 18
+      },
+      {
+        "date": "2026-09-06",
+        "sessions": 1092,
+        "organic_sessions": 455,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-07",
+        "sessions": 1202,
+        "organic_sessions": 541,
+        "ai_sessions": 28
+      },
+      {
+        "date": "2026-09-08",
+        "sessions": 1157,
+        "organic_sessions": 534,
+        "ai_sessions": 27
+      },
+      {
+        "date": "2026-09-09",
+        "sessions": 1156,
+        "organic_sessions": 517,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-09-10",
+        "sessions": 1112,
+        "organic_sessions": 475,
+        "ai_sessions": 26
+      },
+      {
+        "date": "2026-09-11",
+        "sessions": 1048,
+        "organic_sessions": 425,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-12",
+        "sessions": 927,
+        "organic_sessions": 383,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-09-13",
+        "sessions": 1053,
+        "organic_sessions": 436,
+        "ai_sessions": 30
+      },
+      {
+        "date": "2026-09-14",
+        "sessions": 1177,
+        "organic_sessions": 527,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-15",
+        "sessions": 1153,
+        "organic_sessions": 520,
+        "ai_sessions": 34
+      },
+      {
+        "date": "2026-09-16",
+        "sessions": 1177,
+        "organic_sessions": 528,
+        "ai_sessions": 30
+      },
+      {
+        "date": "2026-09-17",
+        "sessions": 1144,
+        "organic_sessions": 491,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-09-18",
+        "sessions": 1091,
+        "organic_sessions": 462,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-19",
+        "sessions": 973,
+        "organic_sessions": 394,
+        "ai_sessions": 28
+      },
+      {
+        "date": "2026-09-20",
+        "sessions": 1084,
+        "organic_sessions": 450,
+        "ai_sessions": 25
+      },
+      {
+        "date": "2026-09-21",
+        "sessions": 1190,
+        "organic_sessions": 547,
+        "ai_sessions": 30
+      },
+      {
+        "date": "2026-09-22",
+        "sessions": 1194,
+        "organic_sessions": 508,
+        "ai_sessions": 36
+      },
+      {
+        "date": "2026-09-23",
+        "sessions": 1141,
+        "organic_sessions": 525,
+        "ai_sessions": 26
+      },
+      {
+        "date": "2026-09-24",
+        "sessions": 1109,
+        "organic_sessions": 467,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-25",
+        "sessions": 1057,
+        "organic_sessions": 456,
+        "ai_sessions": 26
+      },
+      {
+        "date": "2026-09-26",
+        "sessions": 1030,
+        "organic_sessions": 425,
+        "ai_sessions": 29
+      },
+      {
+        "date": "2026-09-27",
+        "sessions": 1113,
+        "organic_sessions": 476,
+        "ai_sessions": 24
+      },
+      {
+        "date": "2026-09-28",
+        "sessions": 1206,
+        "organic_sessions": 550,
+        "ai_sessions": 32
+      }
+    ],
+    "previous_daily": [
+      {
+        "date": "2026-04-02",
+        "sessions": 838,
+        "organic_sessions": 316,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-03",
+        "sessions": 805,
+        "organic_sessions": 288,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-04",
+        "sessions": 771,
+        "organic_sessions": 264,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-05",
+        "sessions": 815,
+        "organic_sessions": 305,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-06",
+        "sessions": 895,
+        "organic_sessions": 357,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-07",
+        "sessions": 898,
+        "organic_sessions": 328,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-08",
+        "sessions": 867,
+        "organic_sessions": 317,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-09",
+        "sessions": 842,
+        "organic_sessions": 323,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-10",
+        "sessions": 785,
+        "organic_sessions": 291,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-11",
+        "sessions": 738,
+        "organic_sessions": 272,
+        "ai_sessions": 4
+      },
+      {
+        "date": "2026-04-12",
+        "sessions": 817,
+        "organic_sessions": 320,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-13",
+        "sessions": 896,
+        "organic_sessions": 359,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-14",
+        "sessions": 928,
+        "organic_sessions": 355,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-15",
+        "sessions": 915,
+        "organic_sessions": 345,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-16",
+        "sessions": 898,
+        "organic_sessions": 340,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-17",
+        "sessions": 804,
+        "organic_sessions": 296,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-18",
+        "sessions": 746,
+        "organic_sessions": 276,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-19",
+        "sessions": 824,
+        "organic_sessions": 295,
+        "ai_sessions": 5
+      },
+      {
+        "date": "2026-04-20",
+        "sessions": 925,
+        "organic_sessions": 349,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-21",
+        "sessions": 926,
+        "organic_sessions": 354,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-04-22",
+        "sessions": 890,
+        "organic_sessions": 348,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-23",
+        "sessions": 850,
+        "organic_sessions": 322,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-24",
+        "sessions": 804,
+        "organic_sessions": 278,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-25",
+        "sessions": 739,
+        "organic_sessions": 272,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-26",
+        "sessions": 818,
+        "organic_sessions": 310,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-04-27",
+        "sessions": 911,
+        "organic_sessions": 351,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-28",
+        "sessions": 925,
+        "organic_sessions": 375,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-04-29",
+        "sessions": 906,
+        "organic_sessions": 333,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-04-30",
+        "sessions": 866,
+        "organic_sessions": 341,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-05-01",
+        "sessions": 844,
+        "organic_sessions": 314,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-02",
+        "sessions": 786,
+        "organic_sessions": 277,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-03",
+        "sessions": 852,
+        "organic_sessions": 303,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-04",
+        "sessions": 901,
+        "organic_sessions": 363,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-05",
+        "sessions": 957,
+        "organic_sessions": 365,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-06",
+        "sessions": 876,
+        "organic_sessions": 325,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-07",
+        "sessions": 881,
+        "organic_sessions": 349,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-08",
+        "sessions": 826,
+        "organic_sessions": 304,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-09",
+        "sessions": 788,
+        "organic_sessions": 285,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-10",
+        "sessions": 826,
+        "organic_sessions": 318,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-05-11",
+        "sessions": 928,
+        "organic_sessions": 356,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-05-12",
+        "sessions": 941,
+        "organic_sessions": 370,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-13",
+        "sessions": 865,
+        "organic_sessions": 328,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-14",
+        "sessions": 862,
+        "organic_sessions": 316,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-05-15",
+        "sessions": 855,
+        "organic_sessions": 316,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-16",
+        "sessions": 786,
+        "organic_sessions": 273,
+        "ai_sessions": 6
+      },
+      {
+        "date": "2026-05-17",
+        "sessions": 830,
+        "organic_sessions": 310,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-18",
+        "sessions": 934,
+        "organic_sessions": 365,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-05-19",
+        "sessions": 929,
+        "organic_sessions": 378,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-20",
+        "sessions": 929,
+        "organic_sessions": 380,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-21",
+        "sessions": 919,
+        "organic_sessions": 346,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-22",
+        "sessions": 841,
+        "organic_sessions": 320,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-23",
+        "sessions": 763,
+        "organic_sessions": 278,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-05-24",
+        "sessions": 892,
+        "organic_sessions": 331,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-25",
+        "sessions": 948,
+        "organic_sessions": 372,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-05-26",
+        "sessions": 932,
+        "organic_sessions": 376,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-05-27",
+        "sessions": 944,
+        "organic_sessions": 386,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-05-28",
+        "sessions": 877,
+        "organic_sessions": 345,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-29",
+        "sessions": 859,
+        "organic_sessions": 317,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-30",
+        "sessions": 779,
+        "organic_sessions": 277,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-05-31",
+        "sessions": 862,
+        "organic_sessions": 334,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-06-01",
+        "sessions": 912,
+        "organic_sessions": 366,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-06-02",
+        "sessions": 932,
+        "organic_sessions": 348,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-06-03",
+        "sessions": 955,
+        "organic_sessions": 371,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-06-04",
+        "sessions": 952,
+        "organic_sessions": 378,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-06-05",
+        "sessions": 876,
+        "organic_sessions": 337,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-06-06",
+        "sessions": 808,
+        "organic_sessions": 279,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-06-07",
+        "sessions": 855,
+        "organic_sessions": 323,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-08",
+        "sessions": 933,
+        "organic_sessions": 352,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-06-09",
+        "sessions": 952,
+        "organic_sessions": 366,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-10",
+        "sessions": 914,
+        "organic_sessions": 347,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-11",
+        "sessions": 951,
+        "organic_sessions": 370,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-06-12",
+        "sessions": 851,
+        "organic_sessions": 326,
+        "ai_sessions": 8
+      },
+      {
+        "date": "2026-06-13",
+        "sessions": 788,
+        "organic_sessions": 288,
+        "ai_sessions": 7
+      },
+      {
+        "date": "2026-06-14",
+        "sessions": 873,
+        "organic_sessions": 340,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-06-15",
+        "sessions": 932,
+        "organic_sessions": 367,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-16",
+        "sessions": 956,
+        "organic_sessions": 391,
+        "ai_sessions": 12
+      },
+      {
+        "date": "2026-06-17",
+        "sessions": 959,
+        "organic_sessions": 366,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-06-18",
+        "sessions": 920,
+        "organic_sessions": 356,
+        "ai_sessions": 12
+      },
+      {
+        "date": "2026-06-19",
+        "sessions": 875,
+        "organic_sessions": 335,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-20",
+        "sessions": 769,
+        "organic_sessions": 277,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-21",
+        "sessions": 877,
+        "organic_sessions": 351,
+        "ai_sessions": 12
+      },
+      {
+        "date": "2026-06-22",
+        "sessions": 951,
+        "organic_sessions": 345,
+        "ai_sessions": 13
+      },
+      {
+        "date": "2026-06-23",
+        "sessions": 987,
+        "organic_sessions": 392,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-06-24",
+        "sessions": 966,
+        "organic_sessions": 375,
+        "ai_sessions": 12
+      },
+      {
+        "date": "2026-06-25",
+        "sessions": 911,
+        "organic_sessions": 355,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-26",
+        "sessions": 880,
+        "organic_sessions": 314,
+        "ai_sessions": 11
+      },
+      {
+        "date": "2026-06-27",
+        "sessions": 814,
+        "organic_sessions": 287,
+        "ai_sessions": 10
+      },
+      {
+        "date": "2026-06-28",
+        "sessions": 911,
+        "organic_sessions": 349,
+        "ai_sessions": 9
+      },
+      {
+        "date": "2026-06-29",
+        "sessions": 957,
+        "organic_sessions": 394,
+        "ai_sessions": 13
+      },
+      {
+        "date": "2026-06-30",
+        "sessions": 950,
+        "organic_sessions": 374,
+        "ai_sessions": 10
+      }
+    ],
+    "channels": [
+      {
+        "channel": "Organic Search",
+        "sessions": 40772,
+        "prev_sessions": 29976,
+        "users": 32618,
+        "engagement_rate": 66.2,
+        "key_events": 980,
+        "revenue": 84600
+      },
+      {
+        "channel": "Direct",
+        "sessions": 20876,
+        "prev_sessions": 19730,
+        "users": 16701,
+        "engagement_rate": 63.8,
+        "key_events": 540,
+        "revenue": 51200
+      },
+      {
+        "channel": "Paid Search",
+        "sessions": 12525,
+        "prev_sessions": 12031,
+        "users": 10020,
+        "engagement_rate": 55.1,
+        "key_events": 330,
+        "revenue": 27900
+      },
+      {
+        "channel": "Organic Social",
+        "sessions": 6263,
+        "prev_sessions": 5293,
+        "users": 5010,
+        "engagement_rate": 48.7,
+        "key_events": 70,
+        "revenue": 4800
+      },
+      {
+        "channel": "Referral",
+        "sessions": 6618,
+        "prev_sessions": 5054,
+        "users": 5294,
+        "engagement_rate": 64.9,
+        "key_events": 105,
+        "revenue": 8100
+      },
+      {
+        "channel": "Email",
+        "sessions": 4697,
+        "prev_sessions": 3850,
+        "users": 3758,
+        "engagement_rate": 69.5,
+        "key_events": 90,
+        "revenue": 8300
+      },
+      {
+        "channel": "Paid Social",
+        "sessions": 3131,
+        "prev_sessions": 2887,
+        "users": 2505,
+        "engagement_rate": 41.2,
+        "key_events": 25,
+        "revenue": 1500
+      }
+    ],
+    "sources": [
+      {
+        "source": "google",
+        "medium": "organic",
+        "sessions": 37918,
+        "prev_sessions": 27878,
+        "users": 30334,
+        "engagement_rate": 66.4,
+        "key_events": 915,
+        "revenue": 79100
+      },
+      {
+        "source": "(direct)",
+        "medium": "(none)",
+        "sessions": 20876,
+        "prev_sessions": 19730,
+        "users": 16701,
+        "engagement_rate": 63.8,
+        "key_events": 540,
+        "revenue": 51200
+      },
+      {
+        "source": "google",
+        "medium": "cpc",
+        "sessions": 12525,
+        "prev_sessions": 12031,
+        "users": 10020,
+        "engagement_rate": 55.1,
+        "key_events": 330,
+        "revenue": 27900
+      },
+      {
+        "source": "bing",
+        "medium": "organic",
+        "sessions": 2039,
+        "prev_sessions": 1499,
+        "users": 1631,
+        "engagement_rate": 64,
+        "key_events": 48,
+        "revenue": 4200
+      },
+      {
+        "source": "duckduckgo",
+        "medium": "organic",
+        "sessions": 815,
+        "prev_sessions": 599,
+        "users": 652,
+        "engagement_rate": 62.7,
+        "key_events": 17,
+        "revenue": 1300
+      },
+      {
+        "source": "newsletter",
+        "medium": "email",
+        "sessions": 4697,
+        "prev_sessions": 3850,
+        "users": 3758,
+        "engagement_rate": 69.5,
+        "key_events": 90,
+        "revenue": 8300
+      },
+      {
+        "source": "instagram.com",
+        "medium": "referral",
+        "sessions": 3257,
+        "prev_sessions": 2647,
+        "users": 2606,
+        "engagement_rate": 47.9,
+        "key_events": 31,
+        "revenue": 2100
+      },
+      {
+        "source": "pinterest.com",
+        "medium": "referral",
+        "sessions": 1942,
+        "prev_sessions": 1747,
+        "users": 1554,
+        "engagement_rate": 52.3,
+        "key_events": 29,
+        "revenue": 2000
+      },
+      {
+        "source": "l.facebook.com",
+        "medium": "referral",
+        "sessions": 1064,
+        "prev_sessions": 899,
+        "users": 851,
+        "engagement_rate": 44.1,
+        "key_events": 10,
+        "revenue": 700
+      },
+      {
+        "source": "facebook",
+        "medium": "paid",
+        "sessions": 3131,
+        "prev_sessions": 2887,
+        "users": 2505,
+        "engagement_rate": 41.2,
+        "key_events": 25,
+        "revenue": 1500
+      },
+      {
+        "source": "houzz.fr",
+        "medium": "referral",
+        "sessions": 2583,
+        "prev_sessions": 2512,
+        "users": 2066,
+        "engagement_rate": 61.2,
+        "key_events": 22,
+        "revenue": 1900
+      },
+      {
+        "source": "marieclaire.fr",
+        "medium": "referral",
+        "sessions": 2114,
+        "prev_sessions": 1819,
+        "users": 1691,
+        "engagement_rate": 58.4,
+        "key_events": 13,
+        "revenue": 1100
+      },
+      {
+        "source": "chatgpt.com",
+        "medium": "referral",
+        "sessions": 1057,
+        "prev_sessions": 434,
+        "users": 846,
+        "engagement_rate": 71.4,
+        "key_events": 38,
+        "revenue": 3420
+      },
+      {
+        "source": "perplexity.ai",
+        "medium": "referral",
+        "sessions": 384,
+        "prev_sessions": 123,
+        "users": 307,
+        "engagement_rate": 74.2,
+        "key_events": 16,
+        "revenue": 1480
+      },
+      {
+        "source": "gemini.google.com",
+        "medium": "referral",
+        "sessions": 211,
+        "prev_sessions": 65,
+        "users": 169,
+        "engagement_rate": 68,
+        "key_events": 7,
+        "revenue": 610
+      },
+      {
+        "source": "copilot.microsoft.com",
+        "medium": "referral",
+        "sessions": 134,
+        "prev_sessions": 72,
+        "users": 107,
+        "engagement_rate": 63.5,
+        "key_events": 4,
+        "revenue": 350
+      },
+      {
+        "source": "claude.ai",
+        "medium": "referral",
+        "sessions": 96,
+        "prev_sessions": 22,
+        "users": 77,
+        "engagement_rate": 77.9,
+        "key_events": 4,
+        "revenue": 390
+      },
+      {
+        "source": "chat.mistral.ai",
+        "medium": "referral",
+        "sessions": 39,
+        "prev_sessions": 7,
+        "users": 31,
+        "engagement_rate": 70,
+        "key_events": 1,
+        "revenue": 80
+      }
+    ],
+    "landing_pages": [
+      {
+        "page": "/",
+        "sessions": 6620,
+        "prev_sessions": 5600,
+        "engagement_rate": 64.1,
+        "key_events": 210,
+        "revenue": 18400
+      },
+      {
+        "page": "/suspensions/rotin",
+        "sessions": 2540,
+        "prev_sessions": 1490,
+        "engagement_rate": 69.8,
+        "key_events": 118,
+        "revenue": 11900
+      },
+      {
+        "page": "/lampes-a-poser/chevet-tactile",
+        "sessions": 1850,
+        "prev_sessions": 790,
+        "engagement_rate": 71.2,
+        "key_events": 96,
+        "revenue": 7300
+      },
+      {
+        "page": "/luminaires/salon",
+        "sessions": 1590,
+        "prev_sessions": 1270,
+        "engagement_rate": 62.4,
+        "key_events": 64,
+        "revenue": 6800
+      },
+      {
+        "page": "/appliques-murales",
+        "sessions": 1320,
+        "prev_sessions": 1010,
+        "engagement_rate": 65,
+        "key_events": 52,
+        "revenue": 5200
+      },
+      {
+        "page": "/suspensions/cuisine",
+        "sessions": 1190,
+        "prev_sessions": 720,
+        "engagement_rate": 67.3,
+        "key_events": 49,
+        "revenue": 5600
+      },
+      {
+        "page": "/lampadaires",
+        "sessions": 1050,
+        "prev_sessions": 970,
+        "engagement_rate": 60.8,
+        "key_events": 38,
+        "revenue": 4900
+      },
+      {
+        "page": "/blog/comment-choisir-une-suspension",
+        "sessions": 980,
+        "prev_sessions": 330,
+        "engagement_rate": 78.5,
+        "key_events": 21,
+        "revenue": 1700
+      },
+      {
+        "page": "/lampes-a-poser/laiton",
+        "sessions": 860,
+        "prev_sessions": 455,
+        "engagement_rate": 70.1,
+        "key_events": 41,
+        "revenue": 3800
+      },
+      {
+        "page": "/ampoules/filament",
+        "sessions": 790,
+        "prev_sessions": 840,
+        "engagement_rate": 52.6,
+        "key_events": 33,
+        "revenue": 1200
+      },
+      {
+        "page": "/blog/guide-temperature-couleur",
+        "sessions": 560,
+        "prev_sessions": 250,
+        "engagement_rate": 81,
+        "key_events": 9,
+        "revenue": 600
+      },
+      {
+        "page": "/luminaires-exterieurs",
+        "sessions": 610,
+        "prev_sessions": 380,
+        "engagement_rate": 63.9,
+        "key_events": 27,
+        "revenue": 2900
+      }
+    ]
+  },
+  "geo": {
+    "ai_daily": [
+      {
+        "date": "2026-07-01",
+        "value": 16
+      },
+      {
+        "date": "2026-07-02",
+        "value": 12
+      },
+      {
+        "date": "2026-07-03",
+        "value": 15
+      },
+      {
+        "date": "2026-07-04",
+        "value": 11
+      },
+      {
+        "date": "2026-07-05",
+        "value": 14
+      },
+      {
+        "date": "2026-07-06",
+        "value": 14
+      },
+      {
+        "date": "2026-07-07",
+        "value": 18
+      },
+      {
+        "date": "2026-07-08",
+        "value": 15
+      },
+      {
+        "date": "2026-07-09",
+        "value": 15
+      },
+      {
+        "date": "2026-07-10",
+        "value": 13
+      },
+      {
+        "date": "2026-07-11",
+        "value": 14
+      },
+      {
+        "date": "2026-07-12",
+        "value": 17
+      },
+      {
+        "date": "2026-07-13",
+        "value": 16
+      },
+      {
+        "date": "2026-07-14",
+        "value": 17
+      },
+      {
+        "date": "2026-07-15",
+        "value": 19
+      },
+      {
+        "date": "2026-07-16",
+        "value": 16
+      },
+      {
+        "date": "2026-07-17",
+        "value": 16
+      },
+      {
+        "date": "2026-07-18",
+        "value": 13
+      },
+      {
+        "date": "2026-07-19",
+        "value": 16
+      },
+      {
+        "date": "2026-07-20",
+        "value": 17
+      },
+      {
+        "date": "2026-07-21",
+        "value": 20
+      },
+      {
+        "date": "2026-07-22",
+        "value": 16
+      },
+      {
+        "date": "2026-07-23",
+        "value": 18
+      },
+      {
+        "date": "2026-07-24",
+        "value": 15
+      },
+      {
+        "date": "2026-07-25",
+        "value": 14
+      },
+      {
+        "date": "2026-07-26",
+        "value": 16
+      },
+      {
+        "date": "2026-07-27",
+        "value": 18
+      },
+      {
+        "date": "2026-07-28",
+        "value": 19
+      },
+      {
+        "date": "2026-07-29",
+        "value": 19
+      },
+      {
+        "date": "2026-07-30",
+        "value": 22
+      },
+      {
+        "date": "2026-07-31",
+        "value": 16
+      },
+      {
+        "date": "2026-08-01",
+        "value": 18
+      },
+      {
+        "date": "2026-08-02",
+        "value": 19
+      },
+      {
+        "date": "2026-08-03",
+        "value": 21
+      },
+      {
+        "date": "2026-08-04",
+        "value": 26
+      },
+      {
+        "date": "2026-08-05",
+        "value": 19
+      },
+      {
+        "date": "2026-08-06",
+        "value": 22
+      },
+      {
+        "date": "2026-08-07",
+        "value": 19
+      },
+      {
+        "date": "2026-08-08",
+        "value": 17
+      },
+      {
+        "date": "2026-08-09",
+        "value": 19
+      },
+      {
+        "date": "2026-08-10",
+        "value": 19
+      },
+      {
+        "date": "2026-08-11",
+        "value": 25
+      },
+      {
+        "date": "2026-08-12",
+        "value": 24
+      },
+      {
+        "date": "2026-08-13",
+        "value": 22
+      },
+      {
+        "date": "2026-08-14",
+        "value": 17
+      },
+      {
+        "date": "2026-08-15",
+        "value": 21
+      },
+      {
+        "date": "2026-08-16",
+        "value": 18
+      },
+      {
+        "date": "2026-08-17",
+        "value": 22
+      },
+      {
+        "date": "2026-08-18",
+        "value": 23
+      },
+      {
+        "date": "2026-08-19",
+        "value": 24
+      },
+      {
+        "date": "2026-08-20",
+        "value": 21
+      },
+      {
+        "date": "2026-08-21",
+        "value": 19
+      },
+      {
+        "date": "2026-08-22",
+        "value": 19
+      },
+      {
+        "date": "2026-08-23",
+        "value": 20
+      },
+      {
+        "date": "2026-08-24",
+        "value": 22
+      },
+      {
+        "date": "2026-08-25",
+        "value": 23
+      },
+      {
+        "date": "2026-08-26",
+        "value": 29
+      },
+      {
+        "date": "2026-08-27",
+        "value": 29
+      },
+      {
+        "date": "2026-08-28",
+        "value": 19
+      },
+      {
+        "date": "2026-08-29",
+        "value": 21
+      },
+      {
+        "date": "2026-08-30",
+        "value": 20
+      },
+      {
+        "date": "2026-08-31",
+        "value": 23
+      },
+      {
+        "date": "2026-09-01",
+        "value": 23
+      },
+      {
+        "date": "2026-09-02",
+        "value": 30
+      },
+      {
+        "date": "2026-09-03",
+        "value": 24
+      },
+      {
+        "date": "2026-09-04",
+        "value": 21
+      },
+      {
+        "date": "2026-09-05",
+        "value": 18
+      },
+      {
+        "date": "2026-09-06",
+        "value": 29
+      },
+      {
+        "date": "2026-09-07",
+        "value": 28
+      },
+      {
+        "date": "2026-09-08",
+        "value": 27
+      },
+      {
+        "date": "2026-09-09",
+        "value": 24
+      },
+      {
+        "date": "2026-09-10",
+        "value": 26
+      },
+      {
+        "date": "2026-09-11",
+        "value": 29
+      },
+      {
+        "date": "2026-09-12",
+        "value": 24
+      },
+      {
+        "date": "2026-09-13",
+        "value": 30
+      },
+      {
+        "date": "2026-09-14",
+        "value": 29
+      },
+      {
+        "date": "2026-09-15",
+        "value": 34
+      },
+      {
+        "date": "2026-09-16",
+        "value": 30
+      },
+      {
+        "date": "2026-09-17",
+        "value": 24
+      },
+      {
+        "date": "2026-09-18",
+        "value": 29
+      },
+      {
+        "date": "2026-09-19",
+        "value": 28
+      },
+      {
+        "date": "2026-09-20",
+        "value": 25
+      },
+      {
+        "date": "2026-09-21",
+        "value": 30
+      },
+      {
+        "date": "2026-09-22",
+        "value": 36
+      },
+      {
+        "date": "2026-09-23",
+        "value": 26
+      },
+      {
+        "date": "2026-09-24",
+        "value": 29
+      },
+      {
+        "date": "2026-09-25",
+        "value": 26
+      },
+      {
+        "date": "2026-09-26",
+        "value": 29
+      },
+      {
+        "date": "2026-09-27",
+        "value": 24
+      },
+      {
+        "date": "2026-09-28",
+        "value": 32
+      }
+    ],
+    "citations": [
+      {
+        "prompt": "Quelle est la meilleure boutique en ligne de luminaires design en France ?",
+        "engine": "ChatGPT",
+        "cited": true,
+        "mentioned": true,
+        "position": 2,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Luminaires Atelier",
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25",
+        "notes": "Cited thanks to the new About page and customer reviews."
+      },
+      {
+        "prompt": "Quelle est la meilleure boutique en ligne de luminaires design en France ?",
+        "engine": "Perplexity",
+        "cited": true,
+        "mentioned": true,
+        "position": 1,
+        "previously_cited": true,
+        "competitors_cited": [
+          "Luminaires Atelier"
+        ],
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Quelle suspension choisir pour un îlot de cuisine ?",
+        "engine": "Perplexity",
+        "cited": true,
+        "mentioned": true,
+        "position": 3,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25",
+        "notes": "The “How to choose a pendant light” guide is the cited source."
+      },
+      {
+        "prompt": "Quelle suspension choisir pour un îlot de cuisine ?",
+        "engine": "Google AI Overviews",
+        "cited": false,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Luminaires Atelier",
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Lampe de chevet tactile : quel modèle acheter ?",
+        "engine": "ChatGPT",
+        "cited": true,
+        "mentioned": true,
+        "position": 1,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Nordlicht Design"
+        ],
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Comment choisir la température de couleur d'une ampoule ?",
+        "engine": "Gemini",
+        "cited": true,
+        "mentioned": true,
+        "position": 2,
+        "previously_cited": false,
+        "date": "2026-09-25",
+        "notes": "Cites the colour temperature guide published in July."
+      },
+      {
+        "prompt": "Comment choisir la température de couleur d'une ampoule ?",
+        "engine": "ChatGPT",
+        "cited": false,
+        "mentioned": true,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25",
+        "notes": "Brand named without a link."
+      },
+      {
+        "prompt": "Suspension en rotin : quelles marques françaises ?",
+        "engine": "Copilot",
+        "cited": true,
+        "mentioned": true,
+        "position": 2,
+        "previously_cited": true,
+        "competitors_cited": [
+          "Luminaires Atelier"
+        ],
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Avis Maison Lumen",
+        "engine": "ChatGPT",
+        "cited": true,
+        "mentioned": true,
+        "position": 1,
+        "previously_cited": true,
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Luminaire scandinave pas cher",
+        "engine": "Perplexity",
+        "cited": false,
+        "previously_cited": true,
+        "competitors_cited": [
+          "Nordlicht Design",
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25",
+        "notes": "Citation lost: the category page was merged."
+      },
+      {
+        "prompt": "Quel lampadaire pour un salon cosy ?",
+        "engine": "Google AI Mode",
+        "cited": false,
+        "previously_cited": false,
+        "competitors_cited": [
+          "Lampes & Cie"
+        ],
+        "date": "2026-09-25"
+      },
+      {
+        "prompt": "Guirlande guinguette extérieure : comment l'installer ?",
+        "engine": "Claude",
+        "cited": true,
+        "mentioned": true,
+        "position": 2,
+        "previously_cited": false,
+        "date": "2026-09-25"
+      }
+    ],
+    "share_of_voice": [
+      {
+        "brand": "Luminaires Atelier",
+        "share": 29,
+        "previous": 31
+      },
+      {
+        "brand": "Lampes & Cie",
+        "share": 24,
+        "previous": 23
+      },
+      {
+        "brand": "Maison Lumen",
+        "share": 21,
+        "previous": 13,
+        "is_self": true
+      },
+      {
+        "brand": "Nordlicht Design",
+        "share": 12,
+        "previous": 14
+      }
+    ],
+    "ai_overviews": [
+      {
+        "query": "luminaire salon",
+        "overview_present": true,
+        "cited": true
+      },
+      {
+        "query": "suspension cuisine",
+        "overview_present": true,
+        "cited": false,
+        "notes": "Luminaires Atelier cited first."
+      },
+      {
+        "query": "comment choisir une suspension",
+        "overview_present": true,
+        "cited": true,
+        "notes": "Our guide is the first source."
+      },
+      {
+        "query": "ampoule filament e27",
+        "overview_present": true,
+        "cited": false
+      },
+      {
+        "query": "lampe de chevet tactile",
+        "overview_present": false,
+        "cited": false
+      },
+      {
+        "query": "suspension rotin",
+        "overview_present": true,
+        "cited": true
+      },
+      {
+        "query": "luminaire extérieur",
+        "overview_present": true,
+        "cited": false
+      },
+      {
+        "query": "variateur lumière",
+        "overview_present": true,
+        "cited": false
+      }
+    ],
+    "ai_crawlers": [
+      {
+        "bot": "GPTBot",
+        "hits": 18400,
+        "prev_hits": 9200
+      },
+      {
+        "bot": "ClaudeBot",
+        "hits": 7300,
+        "prev_hits": 4100
+      },
+      {
+        "bot": "OAI-SearchBot",
+        "hits": 6100,
+        "prev_hits": 1900
+      },
+      {
+        "bot": "PerplexityBot",
+        "hits": 4200,
+        "prev_hits": 1600
+      },
+      {
+        "bot": "ChatGPT-User",
+        "hits": 2300,
+        "prev_hits": 700
+      },
+      {
+        "bot": "Bytespider",
+        "hits": 2900,
+        "prev_hits": 3400
+      },
+      {
+        "bot": "Meta-ExternalAgent",
+        "hits": 1500,
+        "prev_hits": 600
+      }
+    ]
+  },
+  "narrative": {
+    "executive_summary": "Q3 2026 confirms the momentum started in the spring: **Google clicks are up +36%** (46,470 clicks) and impressions are up +45%, driven by the new category guides and the redesign of the pendant light pages.\n\nTraffic from **AI assistants** (ChatGPT, Perplexity, Gemini…) grew by **+166%**: still a small channel, but its visitors are among the most engaged and they already generate sales. Maison Lumen is now cited in 2 out of 3 tested AI answers.\n\nOn the business side, conversions are up +33% and organic revenue follows the same trend (+33% for all channels). The main point of attention remains **mobile speed**: 14% of mobile URLs are rated \"poor\" in Core Web Vitals.",
+    "highlights": [
+      "4 strategic queries entered Google's top 3, including “suspension rotin” and “lampe de chevet tactile”.",
+      "The “How to choose a pendant light” guide nearly tripled its traffic and is cited by Perplexity and Google AI Overviews.",
+      "ChatGPT has become the leading AI source of visits, with an engagement rate above the site average.",
+      "Indexed pages went from 1,610 to 1,840 after the sitemap clean-up."
+    ],
+    "concerns": [
+      "Click-through rate is slipping because many new impressions come from queries still ranked on page 2.",
+      "250 mobile URLs have poor Core Web Vitals, mostly product pages with heavy image galleries.",
+      "The site lost its Perplexity citation on “luminaire scandinave pas cher” after the category merge."
+    ],
+    "actions": [
+      {
+        "title": "Redesign of the pendant light category pages",
+        "description": "New buying-guide introduction, FAQ block and internal links to the best-selling products.",
+        "date": "2026-07-08",
+        "status": "done",
+        "category": "content",
+        "impact": "+71 % clicks on /suspensions/rotin"
+      },
+      {
+        "title": "Publication of two buying guides",
+        "description": "*How to choose a pendant light* and *Colour temperature guide*, with structured FAQ data.",
+        "date": "2026-07-22",
+        "status": "done",
+        "category": "geo",
+        "impact": "Cited by Perplexity, Gemini and AI Overviews"
+      },
+      {
+        "title": "Sitemap and canonical clean-up",
+        "description": "Removal of redirected URLs from sitemaps, canonical tags on filtered pages.",
+        "date": "2026-08-05",
+        "status": "done",
+        "category": "technical",
+        "impact": "−90 non-indexed pages"
+      },
+      {
+        "title": "Image optimisation on product pages",
+        "description": "AVIF conversion and lazy loading of galleries to improve LCP on mobile.",
+        "date": "2026-09-15",
+        "status": "in_progress",
+        "category": "technical"
+      },
+      {
+        "title": "Digital PR campaign with design magazines",
+        "description": "Three partnerships signed, articles expected in October.",
+        "status": "in_progress",
+        "category": "netlinking"
+      },
+      {
+        "title": "llms.txt file and brand fact sheet",
+        "description": "Give AI engines a clear, up-to-date description of the brand, delivery terms and best-sellers.",
+        "status": "planned",
+        "category": "geo"
+      }
+    ],
+    "recommendations": [
+      {
+        "title": "Rewrite titles and meta descriptions of the 20 most viewed pages",
+        "description": "Impressions grow faster than clicks: highlight prices, free delivery and the French design in snippets.",
+        "priority": "high",
+        "effort": "low",
+        "category": "seo"
+      },
+      {
+        "title": "Fix Core Web Vitals on mobile product pages",
+        "description": "Target LCP < 2.5 s: compress gallery images, preload the main image, defer third-party scripts.",
+        "priority": "high",
+        "effort": "medium",
+        "category": "technical"
+      },
+      {
+        "title": "Create comparison content for AI answers",
+        "description": "Pages such as *Rattan vs wicker pendant* or *Which floor lamp for a cosy living room?* answer the prompts where competitors are cited.",
+        "priority": "medium",
+        "effort": "medium",
+        "category": "geo"
+      },
+      {
+        "title": "Restore the Scandinavian category page",
+        "description": "Re-create a dedicated landing page to win back the lost Perplexity citation and the associated queries.",
+        "priority": "medium",
+        "effort": "low",
+        "category": "content"
+      },
+      {
+        "title": "Track AI assistants as a dedicated GA4 channel",
+        "description": "Create a custom channel group so AI traffic is reported separately from Referral.",
+        "priority": "low",
+        "effort": "low",
+        "category": "tracking"
+      }
+    ],
+    "section_notes": {
+      "geo": "AI traffic is detected from GA4 sources (chatgpt.com, perplexity.ai…). Citation checks were run manually on **25 September 2026** with logged-out accounts.",
+      "queries": "Queries are shown as typed by users, in French.",
+      "technical": "The drop in non-indexed pages follows the sitemap clean-up of August 5. Mobile Core Web Vitals remain the priority for Q4."
+    }
+  },
+  "sections": [
+    {
+      "id": "geo-method",
+      "title": "How we measure visibility in AI assistants",
+      "body": "AI assistants do not provide a \"Search Console\". We therefore combine three sources:\n\n1. **Visits**: GA4 sessions whose source is an AI assistant (chatgpt.com, perplexity.ai, gemini.google.com…).\n2. **Citations**: 12 representative questions asked by hand to each engine, checking whether *Maison Lumen* is cited with a link.\n3. **Crawlers**: hits from AI robots (GPTBot, ClaudeBot, PerplexityBot…) in the server logs.\n\nAnswers vary from one session to another: these checks are indicators, not exact measurements.",
+      "after": "geo",
+      "style": "info"
+    },
+    {
+      "id": "q4-plan",
+      "title": "Q4 2026 action plan",
+      "body": "| Action | Deadline | Owner | Expected impact |\n|---|---|---|---|\n| Titles & meta descriptions (top 20 pages) | Oct 15 | Studio Halo | +10 % CTR |\n| Mobile image optimisation | Oct 31 | Maison Lumen dev team | LCP < 2.5 s |\n| Comparison content (4 pages) | Nov 15 | Studio Halo | New AI citations |\n| Scandinavian category page | Nov 30 | Maison Lumen | Recover lost queries |\n| GA4 \"AI assistants\" channel | Dec 5 | Studio Halo | Reliable AI reporting |\n\nPriorities will be reviewed at the next monthly meeting.",
+      "after": "recommendations",
+      "style": "plain"
+    }
+  ]
+}

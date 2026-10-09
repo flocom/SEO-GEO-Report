@@ -36,6 +36,7 @@ type Meta struct {
 	PreparedBy       string  `json:"prepared_by,omitempty" jsonschema:"Author or agency name"`
 	PreparedFor      string  `json:"prepared_for,omitempty" jsonschema:"Client name"`
 	LogoURL          string  `json:"logo_url,omitempty" jsonschema:"Logo as an https URL or a data: URI"`
+	FaviconURL       string  `json:"favicon_url,omitempty" jsonschema:"Site favicon as an https URL or a data: URI. Leave empty: it is fetched automatically from site_url and embedded. Set to 'none' to disable"`
 	BrandColor       string  `json:"brand_color,omitempty" jsonschema:"Accent color as hex, e.g. #2563eb"`
 	Currency         string  `json:"currency,omitempty" jsonschema:"ISO currency code for revenue, e.g. EUR. Defaults to EUR"`
 }
@@ -327,11 +328,11 @@ type TextSection struct {
 
 // Options tune the display.
 type Options struct {
-	ShowGlossary   *bool    `json:"show_glossary,omitempty" jsonschema:"Show the glossary of terms at the end (default true)"`
-	BeginnerHints  *bool    `json:"beginner_hints,omitempty" jsonschema:"Show 'how to read this' explanations next to charts (default true)"`
-	HideSections   []string `json:"hide_sections,omitempty" jsonschema:"Built-in section ids to hide"`
-	MaxTableRows   int      `json:"max_table_rows,omitempty" jsonschema:"Rows displayed per table (default 15)"`
-	AutoInsights   *bool    `json:"auto_insights,omitempty" jsonschema:"Generate automatic insights from the numbers (default true)"`
+	ShowGlossary  *bool    `json:"show_glossary,omitempty" jsonschema:"Show the glossary of terms at the end (default true)"`
+	BeginnerHints *bool    `json:"beginner_hints,omitempty" jsonschema:"Show 'how to read this' explanations next to charts (default true)"`
+	HideSections  []string `json:"hide_sections,omitempty" jsonschema:"Built-in section ids to hide"`
+	MaxTableRows  int      `json:"max_table_rows,omitempty" jsonschema:"Rows displayed per table (default 15)"`
+	AutoInsights  *bool    `json:"auto_insights,omitempty" jsonschema:"Generate automatic insights from the numbers (default true)"`
 }
 
 // SectionIDs lists built-in sections in display order.

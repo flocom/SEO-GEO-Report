@@ -1,0 +1,140 @@
+{{define "page" -}}
+<!DOCTYPE html>
+<html lang="{{.Lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="SEO/GEO Report">
+<meta name="color-scheme" content="light dark">
+<title>{{.Title}}</title>
+{{- if .Favicon}}
+<link rel="icon" href="{{.Favicon}}">
+{{- end}}
+<style>{{.CSS}}</style>
+<style>{{.ThemeCSS}}</style>
+</head>
+<body>
+<div class="doc">
+{{template "cover" .}}
+<main>
+{{- range .Sections}}
+{{template "section" .}}
+{{- end}}
+</main>
+<footer class="foot">
+  <span>{{.Generated}}</span>
+  <span class="foot-brand">{{icon "spark"}} {{t "footer.with"}}</span>
+</footer>
+</div>
+</body>
+</html>
+{{- end}}
+
+{{define "cover"}}
+<header class="cover" id="top">
+  <div class="cover-bar">
+    <div class="brand">
+      {{- if .Cover.Logo}}<img class="logo" src="{{.Cover.Logo}}" alt="{{.Cover.SiteName}}">
+      {{- else if .Cover.Favicon}}<span class="logo-fav"><img src="{{.Cover.Favicon}}" alt=""></span>
+      {{- else}}<span class="logo-mono" aria-hidden="true">{{.Cover.Initials}}</span>{{end}}
+      <div class="brand-text">
+        {{- if .Cover.SiteName}}<div class="brand-name">{{if and .Cover.Logo .Cover.Favicon}}<img class="fav-inline" src="{{.Cover.Favicon}}" alt="">{{end}}{{.Cover.SiteName}}</div>{{end}}
+        {{- if .Cover.SiteURL}}{{if .Cover.SiteHref}}<a class="brand-url" href="{{.Cover.SiteHref}}">{{.Cover.SiteURL}}</a>{{else}}<span class="brand-url">{{.Cover.SiteURL}}</span>{{end}}{{end}}
+      </div>
+    </div>
+    {{- if or .Cover.PDF .Cover.HTMLDL}}
+    <div class="cover-actions no-print">
+      {{- if .Cover.HTMLDL}}<a class="btn-pdf btn-ghost" href="{{.Cover.HTMLDL}}" download>{{icon "file"}}<span>{{t "cover.html"}}</span></a>{{end}}
+      {{- if .Cover.PDF}}<a class="btn-pdf" href="{{.Cover.PDF}}" download>{{icon "download"}}<span>{{t "cover.pdf"}}</span></a>{{end}}
+    </div>
+    {{- end}}
+  </div>
+  <div class="cover-main">
+    <p class="eyebrow">{{t "cover.eyebrow"}}</p>
+    <h1>{{.Cover.Title}}</h1>
+    <p class="cover-lead">{{t "cover.lead"}}</p>
+  </div>
+  <dl class="cover-meta">
+    <div class="cm">
+      <dt>{{icon "calendar"}}{{t "cover.period"}}</dt>
+      <dd>{{.Cover.Period}}{{if .Cover.PeriodDays}} <span class="cm-sub">· {{.Cover.PeriodDays}}</span>{{end}}</dd>
+    </div>
+    <div class="cm">
+      <dt>{{icon "compare"}}{{t "cover.comparison"}}</dt>
+      <dd>{{if .Cover.Comparison}}{{.Cover.Comparison}}{{else}}<span class="cm-sub">{{t "cover.no_comparison"}}</span>{{end}}</dd>
+    </div>
+    {{- if .Cover.PreparedFor}}
+    <div class="cm"><dt>{{icon "user"}}{{t "cover.prepared_for"}}</dt><dd>{{.Cover.PreparedFor}}</dd></div>
+    {{- end}}
+    {{- if .Cover.PreparedBy}}
+    <div class="cm"><dt>{{icon "pen"}}{{t "cover.prepared_by"}}</dt><dd>{{.Cover.PreparedBy}}</dd></div>
+    {{- end}}
+    {{- if .Cover.Sources}}
+    <div class="cm cm-wide"><dt>{{icon "db"}}{{t "cover.sources"}}</dt><dd class="chips">{{range .Cover.Sources}}<span class="chip">{{.}}</span>{{end}}</dd></div>
+    {{- end}}
+  </dl>
+  {{- if .TOC}}
+  <nav class="toc" aria-label="{{t "toc.title"}}">
+    <h2>{{t "toc.title"}}</h2>
+    <div class="toc-parts">
+      {{- range .TOC}}
+      <div class="toc-part">
+        <p class="toc-part-title"><span>{{.Num}}</span>{{.Title}}</p>
+        <ol>
+          {{- range .Items}}
+          <li><a href="#{{.Anchor}}"><span class="toc-num">{{.Num}}</span><span class="toc-title">{{.Title}}</span></a></li>
+          {{- end}}
+        </ol>
+      </div>
+      {{- end}}
+    </div>
+  </nav>
+  {{- end}}
+</header>
+{{end}}
+
+{{define "section"}}
+{{- if .IsPart}}
+<section class="part part-{{.Part}}{{if .Major}} major{{end}}" id="{{.Anchor}}">
+  <p class="part-num">{{.PartNum}}</p>
+  <h2 class="part-title">{{.Title}}</h2>
+  <p class="part-intro">{{.Intro}}</p>
+</section>
+{{- else}}
+<section class="section{{if .Major}} major{{end}}{{if .Custom}} custom style-{{.Style}}{{end}}" id="{{.Anchor}}">
+  <div class="sec-keep">
+  <header class="sec-head">
+    <span class="sec-ico" aria-hidden="true">{{.Icon}}</span>
+    <div class="sec-titles">
+      <p class="sec-num">{{.Num}}</p>
+      <h2>{{.Title}}</h2>
+      {{- if .Intro}}<p class="sec-intro">{{.Intro}}</p>{{end}}
+    </div>
+  </header>
+  {{- if .Note}}
+  <aside class="note">
+    <div class="note-head">{{icon "pen"}}<span>{{t "note.title"}}</span></div>
+    <div class="md">{{.Note}}</div>
+  </aside>
+  {{- end}}
+  {{- if .Custom}}
+  <div class="custom-body"><div class="md">{{.Body}}</div></div>
+  {{- end}}
+  {{- with .LeadBlocks}}
+  <div class="grid">
+    {{- range .}}
+    {{template "block" .}}
+    {{- end}}
+  </div>
+  {{- end}}
+  </div>
+  {{- with .RestBlocks}}
+  <div class="grid grid-rest">
+    {{- range .}}
+    {{template "block" .}}
+    {{- end}}
+  </div>
+  {{- end}}
+</section>
+{{- end}}
+{{end}}

@@ -1,0 +1,247 @@
+{{define "block"}}
+<div class="blk {{span .Span}} k-{{.Kind}}">
+{{- if eq .Kind "hero"}}{{template "hero" .}}
+{{- else if eq .Kind "kpis"}}{{template "kpis" .}}
+{{- else if eq .Kind "chart"}}{{template "chart" .}}
+{{- else if eq .Kind "table"}}{{template "tablecard" .}}
+{{- else if eq .Kind "callouts"}}{{template "callouts" .}}
+{{- else if eq .Kind "markdown"}}{{template "mdcard" .}}
+{{- else if eq .Kind "list"}}{{template "list" .}}
+{{- else if eq .Kind "stats"}}{{template "statscard" .}}
+{{- else if eq .Kind "timeline"}}{{template "timeline" .}}
+{{- else if eq .Kind "recs"}}{{template "recs" .}}
+{{- else if eq .Kind "glossary"}}{{template "glossary" .}}
+{{- else if eq .Kind "plan"}}{{template "plan" .}}
+{{- end}}
+</div>
+{{- end}}
+
+{{define "hint"}}
+{{- if .Hint}}
+<div class="hint">
+  <span class="hint-ico" aria-hidden="true">{{icon "bulb"}}</span>
+  <p><strong>{{if eq .HintKind "table"}}{{t "hint.title_table"}}{{else}}{{t "hint.title"}}{{end}}</strong> {{.Hint}}</p>
+</div>
+{{- end}}
+{{- end}}
+
+{{define "delta"}}<span class="delta d-{{.Tone}}">{{.Arrow}}<span>{{.Text}}</span></span>{{if .Sub}}<span class="delta-sub">{{.Sub}}</span>{{end}}{{end}}
+
+{{define "badge"}}<span class="badge b-{{.Tone}}">{{if .Icon}}{{.Icon}}{{end}}{{.Text}}</span>{{end}}
+
+{{define "hero"}}
+<div class="card hero{{if .Hero.Tone}} tone-{{.Hero.Tone}}{{end}}{{if not .Hero.Score}} no-gauge{{end}}">
+  {{- if .Hero.Score}}
+  <div class="hero-gauge">
+    {{- if .Hero.Gauge}}<div class="gauge">{{.Hero.Gauge}}</div>
+    {{- else}}<div class="score"><span>{{.Hero.Score}}</span><small>/100</small></div>{{end}}
+    {{- if .Hero.Scale}}<p class="hero-scale">{{.Hero.Scale}}</p>{{end}}
+  </div>
+  {{- end}}
+  <div class="hero-body">
+    {{- if .Hero.Verdict}}
+    <p class="hero-kicker">{{t "hero.progress"}} · <strong>{{.Hero.Score}}/100</strong></p>
+    <h3 class="verdict">{{.Hero.Verdict}}</h3>
+    <p class="hero-desc">{{.Hero.Desc}}</p>
+    {{- else}}
+    <p class="hero-kicker">{{t "hero.headline"}}</p>
+    {{- end}}
+    {{- if .Hero.NoCompare}}<p class="hero-desc muted">{{.Hero.NoCompare}}</p>{{end}}
+    <p class="hero-period">{{icon "calendar"}}<span>{{.Hero.Period}}</span></p>
+    {{- if .Hero.Stats}}
+    <div class="hero-stats">
+      {{- range .Hero.Stats}}
+      <div class="hs">
+        <div class="hs-label">{{.Label}}</div>
+        <div class="hs-value">{{.Value}}</div>
+        {{- with .Delta}}<div class="hs-delta">{{template "delta" .}}</div>{{end}}
+      </div>
+      {{- end}}
+    </div>
+    {{- end}}
+  </div>
+  {{template "hint" .}}
+</div>
+{{end}}
+
+{{define "kpi"}}
+<div class="kpi{{if .Tone}} tone-{{.Tone}}{{end}}">
+  <div class="kpi-label">{{.Label}}</div>
+  <div class="kpi-main"><span class="kpi-value">{{.Value}}</span></div>
+  <div class="kpi-delta">{{with .Delta}}{{template "delta" .}}{{end}}{{if .Prev}}<span class="kpi-prev">{{.Prev}}</span>{{end}}</div>
+  {{- if .Spark}}<div class="kpi-spark">{{.Spark}}</div>{{end}}
+  {{- if .Explain}}<p class="kpi-explain">{{.Explain}}</p>{{end}}
+</div>
+{{end}}
+
+{{define "kpis"}}
+{{- if .Title}}<h3 class="grp-title">{{.Title}}</h3>{{end}}
+<div class="kpi-grid{{if eq .Tone "compact"}} compact{{end}}{{if eq .Tone "hero"}} big{{end}}">
+  {{- range .KPIs}}{{template "kpi" .}}{{end}}
+</div>
+{{end}}
+
+{{define "cardhead"}}
+{{- if or .Title .Sub}}
+<div class="card-head">
+  {{- if .Title}}<h3>{{.Title}}</h3>{{end}}
+  {{- if .Sub}}<p class="card-sub">{{.Sub}}</p>{{end}}
+</div>
+{{- end}}
+{{- end}}
+
+{{define "stats"}}<div class="mini-stats">{{range .}}<div class="stat{{if .Tone}} tone-{{.Tone}}{{end}}"><div class="stat-label">{{.Label}}</div><div class="stat-value">{{.Value}}</div>{{if .Sub}}<div class="stat-sub">{{.Sub}}</div>{{end}}{{with .Delta}}<div class="stat-delta">{{template "delta" .}}</div>{{end}}</div>{{end}}</div>{{end}}
+
+{{define "chart"}}
+<figure class="card chart-card{{if .Tone}} tone-{{.Tone}}{{end}}">
+  {{template "cardhead" .}}
+  <div class="chart">{{if .ChartSm}}<div class="chart-lg">{{.Chart}}</div><div class="chart-sm">{{.ChartSm}}</div>{{with .ChartPr}}<div class="chart-pr">{{.}}</div>{{end}}{{else}}{{.Chart}}{{end}}</div>
+  {{- if .Stats}}{{template "stats" .Stats}}{{end}}
+  {{template "hint" .}}
+</figure>
+{{end}}
+
+{{define "statscard"}}
+<div class="card stats-card{{if .Tone}} tone-{{.Tone}}{{end}}">
+  {{template "cardhead" .}}
+  {{template "stats" .Stats}}
+  {{template "hint" .}}
+</div>
+{{end}}
+
+{{define "tablecard"}}
+<div class="card table-card{{if .Tone}} tone-{{.Tone}}{{end}}">
+  {{template "cardhead" .}}
+  {{template "table" .Table}}
+  {{- if .Table.Truncated}}<p class="tbl-foot">{{.Table.Truncated}}</p>{{end}}
+  {{template "hint" .}}
+</div>
+{{end}}
+
+{{define "table"}}
+<div class="tbl-wrap">
+<table class="tbl{{if .Compact}} compact{{end}}">
+  <thead><tr>{{range .Columns}}<th class="{{if .Num}}num{{end}}{{if .Width}} w-{{.Width}}{{end}}" scope="col">{{.Label}}</th>{{end}}</tr></thead>
+  <tbody>
+  {{- range .Rows}}
+  <tr{{if .Highlight}} class="hl"{{end}}>{{range .Cells}}{{template "cell" .}}{{end}}</tr>
+  {{- end}}
+  </tbody>
+</table>
+</div>
+{{end}}
+
+{{define "cell" -}}
+<td class="{{if .Num}}num{{end}}{{if .Key}} key{{end}}{{if .Muted}} muted{{end}}{{if .Wrap}} wrap{{end}}{{if .Mono}} mono{{end}}"{{if .Title}} title="{{.Title}}"{{end}}>
+{{- if .Delta}}{{template "delta" .Delta}}
+{{- else if .Bar}}<div class="cell-bar"><span class="bar{{if .BarTone}} bar-{{.BarTone}}{{end}}"><i style="{{.Bar}}"></i></span><span class="v">{{.Text}}</span></div>{{if .Sub}}<span class="sub">{{.Sub}}</span>{{end}}
+{{- else}}{{if .Text}}<span class="v">{{.Text}}</span>{{end}}{{range .Badges}}{{template "badge" .}}{{end}}{{if .Sub}}<span class="sub">{{.Sub}}</span>{{end}}
+{{- end -}}
+</td>
+{{- end}}
+
+{{define "callouts"}}
+{{- if or .Title .Sub}}
+<div class="blk-head">
+  {{- if .Title}}<h3>{{.Title}}</h3>{{end}}
+  {{- if .Sub}}<span class="pill">{{icon "spark"}}{{.Sub}}</span>{{end}}
+</div>
+{{- end}}
+<div class="callouts">
+  {{- range .Callouts}}
+  <div class="callout c-{{.Tone}}">
+    <span class="c-ico" aria-hidden="true">{{.Icon}}</span>
+    <p>{{if .Title}}<strong>{{.Title}}</strong> {{end}}{{.Text}}{{.HTML}}</p>
+  </div>
+  {{- end}}
+</div>
+{{end}}
+
+{{define "mdcard"}}
+<div class="card md-card">
+  {{template "cardhead" .}}
+  <div class="md">{{.HTML}}</div>
+</div>
+{{end}}
+
+{{define "list"}}
+<div class="card list-card tone-{{.Tone}}">
+  <div class="card-head"><h3><span class="lc-ico" aria-hidden="true">{{if eq .Tone "pos"}}{{icon "trend-up"}}{{else}}{{icon "alert"}}{{end}}</span>{{.Title}}</h3></div>
+  <ul class="checklist">
+    {{- range .Items}}
+    <li><span class="li-ico" aria-hidden="true">{{if eq $.Tone "pos"}}{{icon "check"}}{{else}}{{icon "dot"}}{{end}}</span><span class="li-text">{{.HTML}}{{.Text}}</span></li>
+    {{- end}}
+  </ul>
+</div>
+{{end}}
+
+{{define "timeline"}}
+<div class="card timeline-card">
+  {{- if .ActSum}}
+  <div class="act-sum">
+    {{- range .ActSum}}<span class="pill-stat tone-{{.Tone}}"><strong>{{.Value}}</strong> {{.Label}}</span>{{end}}
+  </div>
+  {{- end}}
+  <ol class="timeline">
+    {{- range .Actions}}
+    <li class="tl st-{{.Status}}">
+      <span class="tl-dot" aria-hidden="true">{{.Icon}}</span>
+      <div class="tl-body">
+        <div class="tl-meta">
+          {{- if .Date}}<time>{{.Date}}</time>{{end}}
+          <span class="badge st-{{.Status}}">{{.StatusLabel}}</span>
+          {{- if .Category}}<span class="tag">{{.Category}}</span>{{end}}
+        </div>
+        <h4>{{.Title}}</h4>
+        {{- if .Description}}<div class="md">{{.Description}}</div>{{end}}
+        {{- if .Impact}}<p class="impact">{{icon "trend-up"}}<span><strong>{{t "actions.impact"}}</strong> {{.Impact}}</span></p>{{end}}
+      </div>
+    </li>
+    {{- end}}
+  </ol>
+</div>
+{{end}}
+
+{{define "recs"}}
+<div class="recs">
+  {{- range .Recs}}
+  <article class="rec{{if .Priority}} prio-{{.Priority}}{{end}}">
+    <div class="rec-num">{{.Num}}</div>
+    <div class="rec-body">
+      <div class="rec-badges">
+        {{- if .PrioLabel}}<span class="badge prio-{{.Priority}}">{{.PrioLabel}}</span>{{end}}
+        {{- if .EffortLabel}}<span class="badge effort">{{.EffortLabel}}</span>{{end}}
+        {{- if .Category}}<span class="tag">{{.Category}}</span>{{end}}
+      </div>
+      <h4>{{.Title}}</h4>
+      {{- if .Description}}<div class="md">{{.Description}}</div>{{end}}
+    </div>
+  </article>
+  {{- end}}
+</div>
+{{end}}
+
+{{define "glossary"}}
+<dl class="glossary">
+  {{- range .Glossary}}
+  <div class="g-item"><dt>{{.Term}}</dt><dd>{{.Definition}}</dd></div>
+  {{- end}}
+</dl>
+{{end}}
+
+{{define "plan"}}
+<div class="card plan-card tone-{{.Tone}}">
+  {{template "cardhead" .}}
+  <ul class="plan">
+    {{- range .Plan}}
+    <li class="plan-item p-{{.Tone}}">
+      <span class="plan-ico" aria-hidden="true">{{.Icon}}</span>
+      <div class="plan-body">
+        <p class="plan-title">{{.Title}}</p>
+        <p class="plan-meta">{{if .Date}}<time>{{.Date}}</time>{{end}}{{range .Badges}}{{if eq .Tone "tag"}}<span class="tag">{{.Text}}</span>{{else if eq .Tone "outline"}}<span class="badge effort">{{.Text}}</span>{{else}}{{template "badge" .}}{{end}}{{end}}</p>
+      </div>
+    </li>
+    {{- end}}
+  </ul>
+</div>
+{{end}}

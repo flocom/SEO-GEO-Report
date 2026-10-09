@@ -2,7 +2,7 @@
 // trends, wins, alerts, AI-assistant traffic detection and a progress index.
 package insights
 
-import "seogeo/internal/model"
+import "github.com/flocom/SEO-GEO-Report/internal/model"
 
 // Tone qualifies an insight.
 type Tone string
@@ -64,8 +64,15 @@ type Analysis struct {
 }
 
 // Analyze computes the analysis. r must be normalized (r.Normalize()).
-func Analyze(r *model.Report) Analysis { return Analysis{KPIs: map[string]KPIStatus{}} }
+//
+// It never panics on partial data: every section of the report may be nil or
+// empty. Insights are written in r.Lang() and are empty when
+// options.auto_insights is false.
+func Analyze(r *model.Report) Analysis { return analyze(r) }
 
 // DetectAIPlatform maps a GA4 source (e.g. "chatgpt.com", "perplexity",
 // "copilot.microsoft.com") to an AI platform name, or "" if not an AI source.
-func DetectAIPlatform(source string) string { return "" }
+//
+// Matching is case-insensitive and tolerates "chatgpt.com / referral" style
+// values, full URLs and "utm_source=chatgpt.com" query strings.
+func DetectAIPlatform(source string) string { return detectAIPlatform(source) }

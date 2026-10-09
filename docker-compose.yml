@@ -1,0 +1,63 @@
+# SEO & GEO Report — production compose file.
+#
+#   docker compose up -d
+#   docker compose logs seogeo     # shows the generated access password
+#
+# No variable is required (optional ones: see .env.example).
+# Watchtower checks GHCR every hour and updates ONLY the seogeo container
+# when a new release is published. To build from source instead, use:
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+services:
+  seogeo:
+    image: ghcr.io/flocom/seo-geo-report:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - seogeo-data:/data
+    env_file:
+      - path: .env
+        required: false
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    restart: unless-stopped
+
+  # Automatic updates (maintained fork of containrrr/watchtower, archived in 2025).
+  # Only containers labelled com.centurylinklabs.watchtower.enable=true are updated.
+  watchtower:
+    image: ghcr.io/nicholas-fedor/watchtower:latest
+    command: --label-enable --cleanup
+    environment:
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-3600}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Optional: public HTTPS URL with a Cloudflare Tunnel (needed by claude.ai).
+  #
+  # A) Named tunnel (stable URL, free Cloudflare account):
+  #    Zero Trust > Networks > Tunnels > Create a tunnel > Cloudflared,
+  #    put the token in .env as TUNNEL_TOKEN=..., then add a Public Hostname
+  #    (e.g. seo.example.com) pointing to the service  http://seogeo:8080
+  #
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   command: tunnel --no-autoupdate run
+  #   environment:
+  #     - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+  #   depends_on:
+  #     - seogeo
+  #   restart: unless-stopped
+  #
+  # B) Quick tunnel (no account, random https://xxx.trycloudflare.com URL that
+  #    changes at every restart; read it with: docker compose logs cloudflared):
+  #
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   command: tunnel --no-autoupdate --url http://seogeo:8080
+  #   depends_on:
+  #     - seogeo
+  #   restart: unless-stopped
+
+volumes:
+  seogeo-data:

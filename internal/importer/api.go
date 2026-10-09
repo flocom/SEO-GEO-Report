@@ -2,7 +2,10 @@
 // and Google Analytics 4, in French or English) into model structures.
 package importer
 
-import "seogeo/internal/model"
+import "github.com/flocom/SEO-GEO-Report/internal/model"
+
+// Implementations live in gsc.go (ParseGSCCSV, ImportGSCExport,
+// ApplyGSCTable) and ga4.go (ParseGA4CSV).
 
 // GSCKind is the kind of Search Console export table.
 type GSCKind string
@@ -26,19 +29,6 @@ type GSCTable struct {
 	PreviousDaily []model.GSCDailyPoint
 }
 
-// ParseGSCCSV parses one Search Console export CSV. kind may be empty: it is
-// then guessed from the header.
-func ParseGSCCSV(data []byte, kind GSCKind) (*GSCTable, error) { return nil, nil }
-
-// ImportGSCExport reads a Search Console export, given as a .zip file or a
-// directory containing the CSV files, and returns a SearchConsole with totals
-// computed from the Dates table (CTR and position impression-weighted).
-func ImportGSCExport(path string) (*model.SearchConsole, error) { return nil, nil }
-
-// ApplyGSCTable merges a parsed table into sc (creating it when nil) and
-// recomputes totals when the table is the Dates table.
-func ApplyGSCTable(sc *model.SearchConsole, t *GSCTable) *model.SearchConsole { return sc }
-
 // GA4Kind is the kind of GA4 table.
 type GA4Kind string
 
@@ -48,10 +38,3 @@ const (
 	GA4LandingPages GA4Kind = "landing_pages" // Landing page
 	GA4Daily        GA4Kind = "daily"         // Date
 )
-
-// ParseGA4CSV parses a GA4 "Export > Download CSV" file (comment lines starting
-// with '#' are skipped, French or English headers) and merges the rows into a
-// (possibly nil) Analytics. kind may be empty: it is guessed from the header.
-func ParseGA4CSV(data []byte, kind GA4Kind, into *model.Analytics) (*model.Analytics, error) {
-	return into, nil
-}
