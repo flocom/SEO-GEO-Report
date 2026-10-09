@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-09
+
+### Fixed
+- Docker image builds no longer depend on Docker Hub (base images pulled from
+  mirror.gcr.io): the v0.1.1 image could not be published because of Docker
+  Hub rate limits. v0.1.2 ships the v0.1.1 changes as a Docker image.
+
 ## [0.1.1] - 2026-10-09
 
 ### Changed
