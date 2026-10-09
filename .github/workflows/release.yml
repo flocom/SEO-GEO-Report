@@ -30,6 +30,8 @@ jobs:
           go-version-file: go.mod
       - run: go vet ./...
       - run: go test -race -count=1 ./...
+        env:
+          SEOGEO_SKIP_CHROME_TEST: "1" # PDF export is checked inside the image by CI
 
   image:
     needs: test
