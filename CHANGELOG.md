@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-09
+
+### Fixed
+- Release pipeline: buildx, QEMU and SBOM helper images are pulled from
+  mirror.gcr.io too, so Docker Hub outages no longer block the image. This is
+  the first published image with the v0.1.1 redesign.
+
 ## [0.1.2] - 2026-10-09
 
 ### Fixed
