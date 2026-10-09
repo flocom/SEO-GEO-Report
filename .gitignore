@@ -1,0 +1,5 @@
+data/
+/seogeo
+*.html
+!internal/**/*.html
+.env
