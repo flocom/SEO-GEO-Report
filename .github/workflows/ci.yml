@@ -35,6 +35,10 @@ jobs:
         run: go vet ./...
 
       - name: go test (race)
+        # The runner's Chrome is not the one shipped in the image: the PDF
+        # export is exercised in the Docker smoke test below instead.
+        env:
+          SEOGEO_SKIP_CHROME_TEST: "1"
         run: go test -race -count=1 ./...
 
       - name: go build
@@ -71,3 +75,9 @@ jobs:
             http://localhost:8080/.well-known/oauth-authorization-server | grep -q '"issuer": "https://ci.example.com"'
           docker logs seogeo-ci 2>&1 | grep -q "ACCESS PASSWORD"
           docker rm -f seogeo-ci
+
+      - name: PDF export inside the image
+        run: |
+          docker run --rm --entrypoint sh seogeo:ci -c \
+            'seogeo example --lang fr > /tmp/demo.json && seogeo render -i /tmp/demo.json -o /tmp/report.pdf --no-favicon && head -c 4 /tmp/report.pdf' \
+            | grep -q '%PDF'

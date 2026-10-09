@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"os"
 	"testing"
 	"time"
 )
@@ -57,6 +58,9 @@ func TestFromHTML(t *testing.T) {
 	}
 	if !Available() {
 		t.Skip("no Chromium available")
+	}
+	if os.Getenv("SEOGEO_SKIP_CHROME_TEST") != "" {
+		t.Skip("SEOGEO_SKIP_CHROME_TEST set (PDF export is tested inside the Docker image)")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

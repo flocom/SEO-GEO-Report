@@ -186,7 +186,11 @@ func FromHTML(ctx context.Context, html []byte) ([]byte, error) {
 			exited = true
 			done <- runErr // let the deferred wait return immediately
 		case <-ctx.Done():
-			return nil, fmt.Errorf("pdf: Chromium timed out: %w", ctx.Err())
+			msg := stderr.String()
+			if len(msg) > 1000 {
+				msg = msg[len(msg)-1000:]
+			}
+			return nil, fmt.Errorf("pdf: Chromium timed out: %w\n%s", ctx.Err(), msg)
 		case <-tick.C:
 			// The PDF is complete when it ends with %%EOF and stopped growing.
 			if fi, err := os.Stat(out); err == nil && fi.Size() > 0 {
