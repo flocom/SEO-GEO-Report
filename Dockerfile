@@ -1,7 +1,5 @@
-# syntax=docker/dockerfile:1
-
 # ---- build -------------------------------------------------------------------
-FROM golang:1.26-alpine AS build
+FROM mirror.gcr.io/library/golang:1.26-alpine AS build
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
@@ -12,7 +10,7 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}"
 # ---- runtime -----------------------------------------------------------------
 # Alpine + Chromium for the PDF export, with fonts covering French/English
 # text, symbols and emoji.
-FROM alpine:3.22
+FROM mirror.gcr.io/library/alpine:3.22
 ARG VERSION=docker
 LABEL org.opencontainers.image.title="SEO & GEO Report" \
       org.opencontainers.image.description="Bilingual SEO (Search Console), GA4 and GEO (AI assistants) visibility reports — MCP server for claude.ai, HTML and PDF export" \
