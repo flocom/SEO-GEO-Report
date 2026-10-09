@@ -15,26 +15,37 @@ func delta(cur, prev float64) (float64, bool) {
 	return d, finite(d)
 }
 
-// badge draws a rounded delta pill starting at x, vertically centered on cy,
-// and returns its width.
+// badge draws a discreet delta label (small arrow + colored text) starting
+// at x, vertically centered on cy, and returns its width.
 func badge(c *canvas, x, cy, pct float64, df Formatter) float64 {
 	const size = 10.5
 	txt := df(pct)
-	fill, ink := ColorNeutral, badgeNeutralText
+	ink, arrow := badgeNeutralText, ""
 	switch {
 	case math.Abs(pct) < 0.05:
 	case pct > 0:
-		fill, ink = ColorPositive, badgePositiveText
+		ink, arrow = badgePositiveText, "▲"
 	case pct < 0:
-		fill, ink = ColorNegative, badgeNegativeText
+		ink, arrow = badgeNegativeText, "▼"
 	}
-	w := textWidth(txt, size) + 12
-	c.printf(`<rect x="%s" y="%s" width="%s" height="16" rx="8" fill="%s" fill-opacity="0.12"/>`, n(x), n(cy-8), n(w), fill)
-	c.text(x+w/2, cy+size*0.36, txt, size, "middle", `fill="`+ink+`" font-weight="600"`)
-	return w
+	if arrow != "" {
+		c.printf(`<text x="%s" y="%s" font-size="%s" fill="%s" font-weight="600"><tspan font-size="%s">%s</tspan> %s</text>`,
+			n(x), n(cy+size*0.36), n(size), ink, n(size*0.72), arrow, esc(txt))
+	} else {
+		c.text(x, cy+size*0.36, txt, size, "", `fill="`+ink+`" font-weight="600"`)
+	}
+	return badgeWidth(pct, df)
 }
 
-func badgeWidth(pct float64, df Formatter) float64 { return textWidth(df(pct), 10.5) + 12 }
+func badgeWidth(pct float64, df Formatter) float64 { return textWidth(df(pct), 10.5)*1.05 + 12 }
+
+// prevName is the tooltip name of the previous-period value.
+func prevName(name string) string {
+	if name == "" {
+		return "vs"
+	}
+	return name
+}
 
 func bars(o BarsOpts) template.HTML {
 	W := math.Max(def(o.Width, 720), 200)
@@ -107,7 +118,7 @@ func bars(o BarsOpts) template.HTML {
 	zero := xs(0)
 	H := pad*2 + rowH*float64(len(o.Items))
 
-	var c canvas
+	var c, hv canvas
 	c.open("bars", W, H, o.Title)
 	if lo < 0 {
 		c.printf(`<line x1="%s" y1="%s" x2="%s" y2="%s" %s/>`, n(zero), n(pad), n(zero), n(H-pad), axisStroke)
@@ -123,20 +134,13 @@ func bars(o BarsOpts) template.HTML {
 		cy := barY + barH/2
 		col := esc(seriesColor(it.Color, 0))
 
-		tip := it.Label + ": " + f(it.Value)
 		var d float64
 		hasDelta := false
 		if it.Previous != nil {
-			tip += " (" + f(*it.Previous)
 			if dd, ok := delta(it.Value, *it.Previous); ok {
 				d, hasDelta = dd, true
-				tip += ", " + df(dd)
 			}
-			tip += ")"
 		}
-		c.printf(`<g><title>%s</title>`, esc(tip))
-		// Hit area.
-		c.printf(`<rect x="0" y="%s" width="%s" height="%s" fill="#000" fill-opacity="0"/>`, n(rowTop), n(W), n(rowH))
 
 		// Label.
 		if above {
@@ -149,14 +153,15 @@ func bars(o BarsOpts) template.HTML {
 		// Ghost bar for the previous period + end tick.
 		if it.Previous != nil && finite(*it.Previous) {
 			px := xs(*it.Previous)
-			if p := hBarPath(zero, px, barY, barH, 4); p != "" {
-				c.printf(`<path d="%s" fill="%s" fill-opacity="0.32"/>`, p, ColorPrevious)
+			if p := hBarPath(zero, px, barY, barH, 3); p != "" {
+				c.printf(`<path class="sgc-mark" d="%s" fill="%s" fill-opacity="0.3"/>`, p, ColorPrevious)
 			}
-			c.printf(`<rect x="%s" y="%s" width="2" height="%s" rx="1" fill="%s"/>`, n(px-1), n(barY-3), n(barH+6), ColorPrevious)
+			c.printf(`<rect class="sgc-mark" x="%s" y="%s" width="2" height="%s" rx="1" fill="%s"/>`, n(px-1), n(barY-3), n(barH+6), ColorPrevious)
 			end = math.Max(end, px+1)
 		}
-		if p := hBarPath(zero, xs(it.Value), barY, barH, 4); p != "" {
-			c.printf(`<path d="%s" fill="%s"/>`, p, col)
+		bar := hBarPath(zero, xs(it.Value), barY, barH, 3)
+		if bar != "" {
+			c.printf(`<path class="sgc-mark" d="%s" fill="%s"/>`, bar, col)
 		}
 		vx := end + 8
 		vs := f(it.Value)
@@ -164,9 +169,24 @@ func bars(o BarsOpts) template.HTML {
 		if o.ShowDelta && hasDelta {
 			badge(&c, vx+textWidth(vs, valueSize)+8, cy, d, df)
 		}
-		c.raw(`</g>`)
+
+		// Hover zone: highlight the bar and show the details.
+		hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="0" y="%s" width="%s" height="%s"/><g class="sgc-tip">`, n(rowTop), n(W), n(rowH))
+		hv.printf(`<rect class="sgc-hl" x="0" y="%s" width="%s" height="%s" rx="4"/>`, n(rowTop), n(W), n(rowH))
+		if bar != "" {
+			hv.printf(`<path d="%s" fill="%s"/>`, bar, col)
+		}
+		rows := []tipRow{{key: seriesColor(it.Color, 0), value: f(it.Value)}}
+		if it.Previous != nil {
+			rows = append(rows, tipRow{key: ColorPrevious, name: prevName(o.PreviousLabel), value: f(*it.Previous), muted: true})
+		}
+		if hasDelta {
+			rows = append(rows, tipRow{name: "Δ", value: df(d)})
+		}
+		tooltip(&hv, math.Max(xs(it.Value), zero), cy, W, H, it.Label, rows, 12)
+		hv.raw(`</g></g>`)
 	}
-	c.close()
+	c.closeHover(&hv)
 	return c.html()
 }
 
@@ -217,7 +237,7 @@ func columns(o ColumnsOpts) template.HTML {
 		span = 1
 	}
 
-	var c canvas
+	var c, hv canvas
 	c.open("columns", W, H, o.Title)
 	top := 12.0
 	if hasPrev && (o.CurrentName != "" || o.PreviousName != "") {
@@ -286,40 +306,23 @@ func columns(o ColumnsOpts) template.HTML {
 		if i < len(o.Labels) {
 			label = o.Labels[i]
 		}
-		tip := []string{}
-		if label != "" {
-			tip = append(tip, longLabel(label))
-		}
-		nameOr := func(name, fallback string) string {
-			if name != "" {
-				return name + ": "
-			}
-			return fallback
-		}
-		tip = append(tip, nameOr(o.CurrentName, "")+f(cur))
-		if hasPrev {
-			t := nameOr(o.PreviousName, "") + f(prev)
-			if d, ok := delta(cur, prev); ok {
-				t += " (" + df(d) + ")"
-			}
-			tip = append(tip, t)
-		}
-		c.printf(`<g><title>%s</title>`, esc(strings.Join(tip, " · ")))
-		c.printf(`<rect x="%s" y="%s" width="%s" height="%s" fill="#000" fill-opacity="0"/>`, n(cx-groupW/2), n(top), n(groupW), n(plotH))
 		curX := cx - colW/2
+		var prevBar, curBar string
 		if hasPrev {
 			px := cx - colW - 1
 			curX = cx + 1
 			if finite(prev) {
-				if p := vBarPath(px, colW, base, ys(prev), 4); p != "" {
-					c.printf(`<path d="%s" fill="%s" fill-opacity="0.55"/>`, p, prevCol)
+				if prevBar = vBarPath(px, colW, base, ys(prev), 3); prevBar != "" {
+					c.printf(`<path class="sgc-mark" d="%s" fill="%s" fill-opacity="0.55"/>`, prevBar, prevCol)
 				}
 			}
 		}
+		ay := base
 		if finite(cur) {
 			y1 := ys(cur)
-			if p := vBarPath(curX, colW, base, y1, 4); p != "" {
-				c.printf(`<path d="%s" fill="%s"/>`, p, curCol)
+			ay = y1
+			if curBar = vBarPath(curX, colW, base, y1, 3); curBar != "" {
+				c.printf(`<path class="sgc-mark" d="%s" fill="%s"/>`, curBar, curCol)
 			}
 			if showValues {
 				vy := y1 - 5
@@ -334,9 +337,31 @@ func columns(o ColumnsOpts) template.HTML {
 			w := textWidth(lab, tickSize)
 			c.labelText(clampF(cx, w/2+1, W-w/2-1), H-6, shortLabel(label), labelMax, tickSize, "middle", inkMuted)
 		}
-		c.raw(`</g>`)
+
+		// Hover zone.
+		hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="%s" y="%s" width="%s" height="%s"/><g class="sgc-tip">`, n(cx-groupW/2), n(top), n(groupW), n(plotH))
+		hv.printf(`<rect class="sgc-hl" x="%s" y="%s" width="%s" height="%s" rx="3"/>`, n(cx-groupW/2), n(top), n(groupW), n(plotH))
+		if prevBar != "" {
+			hv.printf(`<path d="%s" fill="%s" fill-opacity="0.55"/>`, prevBar, prevCol)
+		}
+		if curBar != "" {
+			hv.printf(`<path d="%s" fill="%s"/>`, curBar, curCol)
+		}
+		rows := []tipRow{{key: curRaw, name: o.CurrentName, value: f(cur)}}
+		if hasPrev {
+			rows = append(rows, tipRow{key: prevRaw, name: prevName(o.PreviousName), value: f(prev), muted: true})
+			if d, ok := delta(cur, prev); ok {
+				rows = append(rows, tipRow{name: "Δ", value: df(d)})
+			}
+		}
+		head := ""
+		if label != "" {
+			head = longLabel(label)
+		}
+		tooltip(&hv, cx+colW+2, ay, W, H, head, rows, 12)
+		hv.raw(`</g></g>`)
 	}
 	c.printf(`<line x1="%s" y1="%s" x2="%s" y2="%s" %s/>`, n(left), n(base), n(left+plotW), n(base), axisStroke)
-	c.close()
+	c.closeHover(&hv)
 	return c.html()
 }

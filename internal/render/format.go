@@ -285,7 +285,7 @@ func shortURL(s string) string {
 var hexColor = regexp.MustCompile(`^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$`)
 
 // DefaultAccent is used when meta.brand_color is missing or invalid.
-const DefaultAccent = "#2563eb"
+const DefaultAccent = "#1e3a5f"
 
 // accentColor validates a hex color and expands it to #rrggbb.
 func accentColor(c string) string {
@@ -444,7 +444,7 @@ func nonZero(vals []float64) bool {
 }
 
 // colorAI identifies AI-assistant traffic in multi-series charts.
-const colorAI = "#f59e0b"
+const colorAI = charts.ColorWarning
 
 func pickColor(i int) string { return charts.Palette[i%len(charts.Palette)] }
 
@@ -474,6 +474,9 @@ func boolPtr(b *bool) bool { return b != nil && *b }
 func (b *builder) bars(o charts.BarsOpts) template.HTML {
 	if o.DeltaFormat == nil {
 		o.DeltaFormat = b.fmtDelta()
+	}
+	if o.PreviousLabel == "" {
+		o.PreviousLabel = b.t("label.previous")
 	}
 	return charts.Bars(o)
 }

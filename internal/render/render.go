@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/flocom/SEO-GEO-Report/internal/charts"
 	"github.com/flocom/SEO-GEO-Report/internal/i18n"
 	"github.com/flocom/SEO-GEO-Report/internal/insights"
 	"github.com/flocom/SEO-GEO-Report/internal/model"
@@ -28,9 +29,27 @@ var baseTemplates = template.Must(template.New("report").Funcs(templateFuncs("fr
 
 func templateFuncs(lang string) template.FuncMap {
 	return template.FuncMap{
-		"t":    func(key string) string { return i18n.T(lang, key) },
-		"span": func(n int) string { return fmt.Sprintf("span-%d", n) },
-		"icon": namedIcon,
+		"t":         func(key string) string { return i18n.T(lang, key) },
+		"span":      func(n int) string { return fmt.Sprintf("span-%d", n) },
+		"icon":      namedIcon,
+		"bal":       balFor,
+		"add":       func(a, b int) int { return a + b },
+		"withStyle": withStyle,
+		"kpiPreset": func(tone string) string {
+			switch tone {
+			case "hero":
+				return "kpi-hero"
+			case "compact":
+				return "kpi-compact"
+			}
+			return "kpi"
+		},
+		"statsPreset": func(span int) string {
+			if span > 0 && span <= 6 {
+				return "stats-half"
+			}
+			return "stats"
+		},
 	}
 }
 
@@ -351,11 +370,13 @@ func drawCharts(blocks []block) []block {
 			if bl.Kind == "chart" {
 				// A phone-sized twin keeps chart text readable on small
 				// screens (SVG text scales with the viewBox).
-				bl.ChartSm = bl.mk(400, 280)
+				// Twins carry no hover layer: phones have no hover and paper
+				// has no mouse, and it keeps the document light.
+				bl.ChartSm = charts.Static(bl.mk(400, 280))
 				// Half-width cards are narrower in the PDF than on screen:
 				// a print twin keeps their text readable on paper.
 				if bl.Span == 6 {
-					bl.ChartPr = bl.mk(440, 230)
+					bl.ChartPr = charts.Static(bl.mk(440, 230))
 				}
 			}
 			bl.mk = nil

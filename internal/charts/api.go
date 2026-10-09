@@ -58,6 +58,9 @@ type BarsOpts struct {
 	// to a comfortable limit) to fill it, e.g. to match a neighbouring card.
 	// 0 = compact height from the number of rows.
 	Height float64
+	// PreviousLabel names the previous-period value in hover tooltips
+	// (e.g. "Période précédente"). Empty = "vs".
+	PreviousLabel string
 }
 
 // ColumnsOpts configures vertical grouped columns comparing two periods.
@@ -144,9 +147,13 @@ type SparkOpts struct {
 	Width, Height float64 // default 120x36
 	InvertY       bool
 
-	// Format formats the first/last values in the accessible title.
-	// nil = FormatCompact.
+	// Format formats the first/last values in the accessible title and the
+	// hover tooltip. nil = FormatCompact.
 	Format Formatter
+	// Labels optionally names each point (typically YYYY-MM-DD dates) for
+	// the hover tooltip; LabelFormat formats them (nil = "DD/MM/YYYY").
+	Labels      []string
+	LabelFormat func(label string) string
 }
 
 // DeltaArrow returns a small inline SVG arrow (up, down or flat) colored by
@@ -175,12 +182,13 @@ func Stacked(o StackedOpts) template.HTML { return stacked(o) }
 func Sparkline(o SparkOpts) template.HTML { return sparkline(o) }
 
 // Palette is the default categorical palette (colorblind-friendly order).
-var Palette = []string{"#2563eb", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#84cc16"}
+var Palette = []string{"#2f5f96", "#cf8a2a", "#26927a", "#c2533c", "#7a5aa6", "#3b97bd", "#bf5b88", "#87993a"}
 
 // Semantic colors.
 const (
-	ColorPositive = "#16a34a"
-	ColorNegative = "#dc2626"
-	ColorNeutral  = "#64748b"
-	ColorPrevious = "#94a3b8"
+	ColorPositive = "#2f8a57"
+	ColorNegative = "#c2412d"
+	ColorNeutral  = "#6b7280"
+	ColorPrevious = "#a3a9b2"
+	ColorWarning  = "#cf8a2a"
 )

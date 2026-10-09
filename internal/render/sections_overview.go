@@ -30,8 +30,27 @@ func (b *builder) card(key, labelKey string, value string, m *model.Metric, prev
 	return c
 }
 
-func (b *builder) sparkline(vals []float64, invert bool) (h charts.SparkOpts) {
-	return charts.SparkOpts{Values: vals, Color: b.accent, InvertY: invert, Format: b.fmtCompact()}
+func (b *builder) sparkline(dates []string, vals []float64, invert bool, f func(float64) string) (h charts.SparkOpts) {
+	if f == nil {
+		f = b.fmtCompact()
+	}
+	return charts.SparkOpts{Values: vals, Labels: dates, LabelFormat: b.fmtDateTip, Color: b.accent, InvertY: invert, Format: f}
+}
+
+func gscDates(pts []model.GSCDailyPoint) []string {
+	out := make([]string, len(pts))
+	for i, p := range pts {
+		out[i] = p.Date
+	}
+	return out
+}
+
+func ga4Dates(pts []model.GA4DailyPoint) []string {
+	out := make([]string, len(pts))
+	for i, p := range pts {
+		out[i] = p.Date
+	}
+	return out
 }
 
 func gscSeries(pts []model.GSCDailyPoint, f func(model.GSCDailyPoint) float64) []float64 {
@@ -50,9 +69,9 @@ func ga4Series(pts []model.GA4DailyPoint, f func(model.GA4DailyPoint) float64) [
 	return out
 }
 
-func (b *builder) withSpark(c kpiCard, vals []float64, invert bool) kpiCard {
+func (b *builder) withSpark(c kpiCard, dates []string, vals []float64, invert bool, f func(float64) string) kpiCard {
 	if len(vals) >= 3 && nonZero(vals) {
-		c.Spark = charts.Sparkline(b.sparkline(vals, invert))
+		c.Spark = charts.Sparkline(b.sparkline(dates, vals, invert, f))
 	}
 	return c
 }
@@ -68,17 +87,17 @@ func (b *builder) gscKPIs() []kpiCard {
 	}
 	cards := []kpiCard{
 		b.withSpark(b.card("gsc.clicks", "clicks", b.num(t.Clicks.Current), &t.Clicks, b.num, b.deltaRel(t.Clicks, false, b.num)),
-			gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Clicks }), false),
+			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Clicks }), false, b.num),
 		b.withSpark(b.card("gsc.impressions", "impressions", b.num(t.Impressions.Current), &t.Impressions, b.num, b.deltaRel(t.Impressions, false, b.num)),
-			gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Impressions }), false),
+			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Impressions }), false, b.num),
 	}
 	if t.CTR != nil {
 		cards = append(cards, b.withSpark(b.card("gsc.ctr", "ctr", i18nPct2(b, t.CTR.Current), t.CTR, func(v float64) string { return i18nPct2(b, v) }, b.deltaPts(*t.CTR)),
-			gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.CTR }), false))
+			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.CTR }), false, func(v float64) string { return i18nPct2(b, v) }))
 	}
 	if t.Position != nil && t.Position.Current > 0 {
 		cards = append(cards, b.withSpark(b.card("gsc.position", "position", b.pos(t.Position.Current), t.Position, b.pos, b.deltaPosition(*t.Position)),
-			gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Position }), true))
+			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Position }), true, b.pos))
 	}
 	return cards
 }
@@ -106,12 +125,12 @@ func (b *builder) ga4KPIs() []kpiCard {
 	t := a.Totals
 	if t.Sessions != nil {
 		cards = append(cards, b.withSpark(b.card("ga4.sessions", "sessions", b.num(t.Sessions.Current), t.Sessions, b.num, b.deltaRel(*t.Sessions, false, b.num)),
-			ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.Sessions }), false))
+			ga4Dates(a.Daily), ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.Sessions }), false, b.num))
 	}
 	if a.OrganicTotals != nil && a.OrganicTotals.Sessions != nil {
 		m := a.OrganicTotals.Sessions
 		cards = append(cards, b.withSpark(b.card("ga4.organic_sessions", "organic_sessions", b.num(m.Current), m, b.num, b.deltaRel(*m, false, b.num)),
-			ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.OrganicSessions }), false))
+			ga4Dates(a.Daily), ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.OrganicSessions }), false, b.num))
 	}
 	if t.Users != nil {
 		cards = append(cards, b.card("ga4.users", "users", b.num(t.Users.Current), t.Users, b.num, b.deltaRel(*t.Users, false, b.num)))
@@ -131,8 +150,8 @@ func (b *builder) ga4KPIs() []kpiCard {
 func (b *builder) geoKPIs() []kpiCard {
 	var cards []kpiCard
 	if ai := b.aiSessions(); ai != nil {
-		_, vals := b.aiDaily()
-		cards = append(cards, b.withSpark(b.card("geo.ai_sessions", "ai_sessions", b.num(ai.Current), ai, b.num, b.deltaRel(*ai, false, b.num)), vals, false))
+		dates, vals := b.aiDaily()
+		cards = append(cards, b.withSpark(b.card("geo.ai_sessions", "ai_sessions", b.num(ai.Current), ai, b.num, b.deltaRel(*ai, false, b.num)), dates, vals, false, b.num))
 	}
 	if s := b.aiShare(); s != nil {
 		cards = append(cards, b.card("geo.ai_share", "ai_share", i18nPct2(b, *s), nil, nil, nil))
@@ -213,7 +232,7 @@ func (b *builder) summary() *section {
 		h.Scale = b.t("hero.scale")
 		h.Gauge = b.gauge(charts.GaugeOpts{
 			Value: v, Min: 0, Max: 100, Display: h.Score, Label: b.t("hero.progress"),
-			Bands: []charts.GaugeBand{{Upto: 35, Color: charts.ColorNegative}, {Upto: 45, Color: "#f97316"}, {Upto: 55, Color: "#94a3b8"}, {Upto: 65, Color: "#4ade80"}, {Upto: 100, Color: charts.ColorPositive}},
+			Bands: []charts.GaugeBand{{Upto: 35, Color: charts.ColorNegative}, {Upto: 45, Color: "#d98a3a"}, {Upto: 55, Color: charts.ColorPrevious}, {Upto: 65, Color: "#82b896"}, {Upto: 100, Color: charts.ColorPositive}},
 			Title: b.t("hero.progress"),
 		})
 	} else if len(all) > 0 {

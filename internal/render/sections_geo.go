@@ -73,7 +73,7 @@ func (b *builder) geo() *section {
 		rows := sortedCopy(g.ShareOfVoice, func(r model.ShareOfVoice) float64 { return r.Share })
 		var items []charts.BarItem
 		for _, r := range rows {
-			col := "#94a3b8"
+			col := charts.ColorPrevious
 			label := r.Brand
 			if r.IsSelf {
 				col = b.accent
@@ -291,8 +291,8 @@ func (b *builder) aioBlocks(rows []model.AIOverviewRow) []block {
 	svg := func(w, h float64) template.HTML {
 		return b.stacked(charts.StackedOpts{Width: w, Segments: []charts.StackSegment{
 			{Label: b.t("lbl.aio_cited"), Value: float64(cited), Color: charts.ColorPositive},
-			{Label: b.t("lbl.aio_not_cited"), Value: float64(present - cited), Color: "#f59e0b"},
-			{Label: b.t("lbl.aio_none"), Value: float64(none), Color: "#cbd5e1"},
+			{Label: b.t("lbl.aio_not_cited"), Value: float64(present - cited), Color: charts.ColorWarning},
+			{Label: b.t("lbl.aio_none"), Value: float64(none), Color: "#d6d9de"},
 		}, Format: b.fmtNum(), Title: b.t("chart.aio")})
 	}
 	var out []block

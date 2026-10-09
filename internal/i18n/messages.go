@@ -41,8 +41,8 @@ var messages = map[string][2]string{
 	"hint.title_table": {"Comment lire ce tableau ?", "How to read this table?"},
 	"hint.title_kpi":   {"Comment lire ces indicateurs ?", "How to read these indicators?"},
 	"hint.kpis": {
-		"Le grand chiffre est la valeur de la période. La pastille indique l’évolution par rapport à la période précédente : verte quand c’est une bonne nouvelle, rouge quand c’est à surveiller, grise quand c’est stable. Pour la position moyenne, un chiffre qui baisse est une bonne nouvelle (on se rapproche de la 1re place). La petite courbe montre la tendance jour après jour.",
-		"The big number is the value for the period. The badge shows the change versus the previous period: green is good news, red needs attention, grey means stable. For average position, a lower number is good news (closer to the top spot). The small line shows the day-by-day trend.",
+		"Le grand chiffre est la valeur de la période. Juste en dessous, l’évolution par rapport à la période précédente : en vert quand c’est une bonne nouvelle, en rouge quand c’est à surveiller, en gris quand c’est stable. Pour la position moyenne, un chiffre qui baisse est une bonne nouvelle (on se rapproche de la 1re place). La petite courbe montre la tendance jour après jour.",
+		"The big number is the value for the period. Just below, the change versus the previous period: green is good news, red needs attention, grey means stable. For average position, a lower number is good news (closer to the top spot). The small line shows the day-by-day trend.",
 	},
 	"hint.progress": {
 		"L’indice résume en un seul chiffre l’évolution de vos principaux indicateurs (clics, sessions, visibilité IA…). 50 signifie « stable », au-dessus c’est une progression, en dessous un recul.",
@@ -77,16 +77,16 @@ var messages = map[string][2]string{
 		"The higher a page ranks, the more it gets clicked. This chart shows the average click-through rate of your queries by position: gaining a few spots can multiply clicks.",
 	},
 	"hint.top_queries": {
-		"Les mots-clés tapés dans Google qui vous apportent le plus de visites. La barre grise montre la période précédente et la pastille l’évolution.",
-		"The search terms typed in Google that bring you the most visits. The grey bar shows the previous period and the badge the change.",
+		"Les mots-clés tapés dans Google qui vous apportent le plus de visites. La barre grise montre la période précédente et le pourcentage coloré l’évolution.",
+		"The search terms typed in Google that bring you the most visits. The grey bar shows the previous period and the colored percentage the change.",
 	},
 	"hint.top_pages": {
 		"Les pages de votre site qui reçoivent le plus de clics depuis Google.",
 		"The pages of your site that receive the most clicks from Google.",
 	},
 	"hint.table_gsc": {
-		"Clics = visites depuis Google, Impressions = affichages dans les résultats, CTR = clics ÷ impressions, Position = rang moyen (1 = premier résultat). Les pastilles comparent à la période précédente ; pour la position, un chiffre négatif est une amélioration.",
-		"Clicks = visits from Google, Impressions = times shown in results, CTR = clicks ÷ impressions, Position = average rank (1 = first result). Badges compare with the previous period; for position, a negative number is an improvement.",
+		"Clics = visites depuis Google, Impressions = affichages dans les résultats, CTR = clics ÷ impressions, Position = rang moyen (1 = premier résultat). Les évolutions colorées comparent à la période précédente ; pour la position, un chiffre négatif est une amélioration.",
+		"Clicks = visits from Google, Impressions = times shown in results, CTR = clicks ÷ impressions, Position = average rank (1 = first result). Colored changes compare with the previous period; for position, a negative number is an improvement.",
 	},
 	"hint.devices": {
 		"Répartition des clics Google selon l’appareil utilisé. Si le mobile domine, la version mobile de votre site doit être irréprochable.",
@@ -109,8 +109,8 @@ var messages = map[string][2]string{
 		"Where your visitors come from: search engines (organic), direct visits, links from other sites, social networks, emails, ads…",
 	},
 	"hint.bars_delta": {
-		"Chaque barre représente la période actuelle, la barre grise claire la période précédente. La pastille donne l’évolution en pourcentage.",
-		"Each bar is the current period, the light grey bar the previous one. The badge gives the change in percent.",
+		"Chaque barre représente la période actuelle, la barre grise claire la période précédente. Le pourcentage coloré donne l’évolution.",
+		"Each bar is the current period, the light grey bar the previous one. The colored percentage gives the change.",
 	},
 	"hint.table_landing": {
 		"Une page d’entrée est la première page vue lors d’une visite. Le taux d’engagement indique la part des visites réellement actives (plus de 10 secondes, plusieurs pages ou une conversion).",
@@ -234,8 +234,8 @@ var messages = map[string][2]string{
 		"Each point is the number of visits to your site that day. The dashed grey line shows the previous period.",
 	},
 	"hint.ai_platforms_glance": {
-		"Chaque barre correspond à un assistant IA et au nombre de visiteurs qu’il vous a envoyés. La pastille indique l’évolution.",
-		"Each bar is an AI assistant and the number of visitors it sent you. The badge shows the change.",
+		"Chaque barre correspond à un assistant IA et au nombre de visiteurs qu’il vous a envoyés. Le pourcentage coloré indique l’évolution.",
+		"Each bar is an AI assistant and the number of visitors it sent you. The colored percentage shows the change.",
 	},
 	"hint.citations_glance": {
 		"Nous avons posé des questions types aux assistants IA. Plus l’aiguille est à droite, plus votre site est cité comme source dans leurs réponses.",
@@ -280,8 +280,8 @@ var messages = map[string][2]string{
 	},
 	"sec.channels.title": {"Canaux d’acquisition", "Acquisition channels"},
 	"sec.channels.intro": {
-		"D’où viennent vos visiteurs. Un mix équilibré rend votre trafic moins dépendant d’une seule source ; les sources IA sont signalées par un badge.",
-		"Where your visitors come from. A balanced mix makes your traffic less dependent on a single source; AI sources are flagged with a badge.",
+		"D’où viennent vos visiteurs. Un mix équilibré rend votre trafic moins dépendant d’une seule source ; les sources IA sont signalées par la mention « IA ».",
+		"Where your visitors come from. A balanced mix makes your traffic less dependent on a single source; AI sources are flagged with an “AI” label.",
 	},
 	"sec.landing_pages.title": {"Pages d’entrée", "Landing pages"},
 	"sec.landing_pages.intro": {

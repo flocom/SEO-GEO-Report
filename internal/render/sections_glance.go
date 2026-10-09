@@ -45,7 +45,7 @@ func (b *builder) aiGlance() *section {
 		v := cr.Current
 		mk := func(w, h float64) template.HTML {
 			return b.gauge(charts.GaugeOpts{Value: v, Min: 0, Max: 100, Display: b.pct0(v), Label: b.t("kpi.citation_rate.label"),
-				Bands: []charts.GaugeBand{{Upto: 20, Color: charts.ColorNegative}, {Upto: 50, Color: "#f59e0b"}, {Upto: 100, Color: charts.ColorPositive}},
+				Bands: []charts.GaugeBand{{Upto: 20, Color: charts.ColorNegative}, {Upto: 50, Color: charts.ColorWarning}, {Upto: 100, Color: charts.ColorPositive}},
 				Title: b.t("kpi.citation_rate.label")})
 		}
 		cited := 0
@@ -72,7 +72,7 @@ func (b *builder) aiGlance() *section {
 		rows := topN(sortedCopy(g.ShareOfVoice, func(r model.ShareOfVoice) float64 { return r.Share }), 6)
 		var items []charts.BarItem
 		for _, r := range rows {
-			col, label := "#94a3b8", r.Brand
+			col, label := charts.ColorPrevious, r.Brand
 			if r.IsSelf {
 				col, label = b.accent, r.Brand+" ("+b.t("badge.you")+")"
 			}

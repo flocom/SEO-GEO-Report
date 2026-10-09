@@ -44,7 +44,7 @@ func (b *builder) technical() *section {
 			svg := func(w, h float64) template.HTML {
 				return b.donut(charts.DonutOpts{Slices: []charts.Slice{
 					{Label: b.t("lbl.indexed"), Value: ix.Indexed.Current, Color: charts.ColorPositive},
-					{Label: b.t("lbl.not_indexed"), Value: ix.NotIndexed.Current, Color: "#cbd5e1"},
+					{Label: b.t("lbl.not_indexed"), Value: ix.NotIndexed.Current, Color: "#d6d9de"},
 				}, CenterValue: b.pct0(ix.Indexed.Current / total * 100), CenterLabel: b.t("lbl.indexed"), Format: b.fmtNum(), Title: b.t("chart.indexing")})
 			}
 			s.Blocks = add(s.Blocks, block{Kind: "chart", Title: b.t("chart.indexing"), mk: svg}, 6, b.hint("indexing"))
@@ -53,7 +53,7 @@ func (b *builder) technical() *section {
 			rows := sortedCopy(ix.Issues, func(r model.IndexingIssue) float64 { return r.Pages })
 			var items []charts.BarItem
 			for _, is := range topN(rows, 8) {
-				items = append(items, charts.BarItem{Label: truncate(is.Reason, 60), Value: is.Pages, Color: "#f59e0b"})
+				items = append(items, charts.BarItem{Label: truncate(is.Reason, 60), Value: is.Pages, Color: charts.ColorWarning})
 			}
 			svg := func(w, h float64) template.HTML {
 				return b.bars(charts.BarsOpts{Width: w, Items: items, Format: b.fmtNum(), Title: b.t("chart.index_issues")})
@@ -108,7 +108,7 @@ func (b *builder) technical() *section {
 			svg := func(w, h float64) template.HTML {
 				return b.stacked(charts.StackedOpts{Width: w, Segments: []charts.StackSegment{
 					{Label: b.t("lbl.good"), Value: d.st.Good, Color: charts.ColorPositive},
-					{Label: b.t("lbl.ni"), Value: d.st.NeedsImprovement, Color: "#f59e0b"},
+					{Label: b.t("lbl.ni"), Value: d.st.NeedsImprovement, Color: charts.ColorWarning},
 					{Label: b.t("lbl.poor"), Value: d.st.Poor, Color: charts.ColorNegative},
 				}, Format: b.fmtNum(), Title: b.t("chart.cwv_" + d.key)})
 			}

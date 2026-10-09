@@ -55,7 +55,7 @@ func (b *builder) analytics() *section {
 		sess := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.Sessions })
 		series := []charts.Series{{Name: b.t("lbl.all_sessions"), Values: sess, Color: b.accent, Area: true}}
 		if org := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.OrganicSessions }); nonZero(org) {
-			series = append(series, charts.Series{Name: b.t("lbl.organic_sessions"), Values: org, Color: "#10b981"})
+			series = append(series, charts.Series{Name: b.t("lbl.organic_sessions"), Values: org, Color: charts.Palette[2]})
 		}
 		if ai := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.AISessions }); nonZero(ai) {
 			series = append(series, charts.Series{Name: b.t("lbl.ai_sessions"), Values: ai, Color: colorAI})

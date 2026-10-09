@@ -182,14 +182,11 @@ func line(o LineOpts) template.HTML {
 		if !s.Area {
 			continue
 		}
-		col := seriesColor(s.Color, i)
-		id := newID("area")
-		aTop, aBot := 0.22, 0.02
+		col := esc(seriesColor(s.Color, i))
+		op := 0.09
 		if s.Dashed {
-			aTop, aBot = 0.1, 0.01
+			op = 0.04
 		}
-		c.printf(`<defs><linearGradient id="%s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="%s" stop-opacity="%s"/><stop offset="1" stop-color="%s" stop-opacity="%s"/></linearGradient></defs>`,
-			id, esc(col), n(aTop), esc(col), n(aBot))
 		for _, seg := range segsOf(s) {
 			if len(seg) < 2 {
 				continue
@@ -200,7 +197,7 @@ func line(o LineOpts) template.HTML {
 				b.WriteString("L" + n(p.x) + " " + n(p.y))
 			}
 			b.WriteString("L" + n(seg[len(seg)-1].x) + " " + n(base) + "Z")
-			c.printf(`<path d="%s" fill="url(#%s)" stroke="none"/>`, b.String(), id)
+			c.printf(`<path d="%s" fill="%s" fill-opacity="%s" stroke="none"/>`, b.String(), col, n(op))
 		}
 	}
 	for pass := 0; pass < 2; pass++ {
@@ -211,7 +208,7 @@ func line(o LineOpts) template.HTML {
 			col := esc(seriesColor(s.Color, i))
 			dash := ""
 			if s.Dashed {
-				dash = ` stroke-dasharray="5 4" stroke-opacity="0.9"`
+				dash = ` stroke-dasharray="4 3"`
 			}
 			segs := segsOf(s)
 			for _, seg := range segs {
@@ -228,48 +225,65 @@ func line(o LineOpts) template.HTML {
 					}
 					b.WriteString(n(p.x) + " " + n(p.y))
 				}
-				c.printf(`<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"%s/>`, b.String(), col, dash)
+				width := "1.75"
+				if s.Dashed {
+					width = "1.5"
+				}
+				c.printf(`<path d="%s" fill="none" stroke="%s" stroke-width="%s" stroke-linejoin="round" stroke-linecap="round"%s/>`, b.String(), col, width, dash)
 			}
 			// End dot on the last point of solid series.
 			if !s.Dashed && len(segs) > 0 {
 				last := segs[len(segs)-1]
 				p := last[len(last)-1]
 				if count > 1 || len(last) == 1 {
-					c.printf(`<circle cx="%s" cy="%s" r="4" fill="%s" %s/>`, n(p.x), n(p.y), col, surfaceStroke)
+					c.printf(`<circle cx="%s" cy="%s" r="3.5" fill="%s" %s/>`, n(p.x), n(p.y), col, surfaceStroke)
 				}
 			}
 		}
 	}
 
-	// Native tooltips: one invisible band per x position.
+	// Hover layer: one zone per x position with a guide line, highlighted
+	// points and a tooltip listing every series.
+	var hv canvas
 	if count <= 500 {
 		bw := plotW
 		if count > 1 {
 			bw = plotW / float64(count-1)
 		}
 		for i := 0; i < count; i++ {
-			x0 := clampF(xmap(i)-bw/2, left, left+plotW)
-			x1 := clampF(xmap(i)+bw/2, left, left+plotW)
-			var tip []string
-			if i < len(o.Labels) && o.Labels[i] != "" {
-				tip = append(tip, tf(o.Labels[i]))
-			}
-			for _, s := range o.Series {
+			x := xmap(i)
+			x0 := clampF(x-bw/2, left, left+plotW)
+			x1 := clampF(x+bw/2, left, left+plotW)
+			hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="%s" y="%s" width="%s" height="%s"/><g class="sgc-tip">`,
+				n1(x0), n1(top), n1(math.Max(x1-x0, 1)), n1(plotH))
+			hv.printf(`<path class="sgc-guide" d="M%s %sV%s"/>`, n1(x), n1(top), n1(bottom))
+			ay := math.Inf(1)
+			var rows []tipRow
+			for k, s := range o.Series {
 				v := math.NaN()
 				if i < len(s.Values) {
 					v = s.Values[i]
 				}
-				if s.Name != "" {
-					tip = append(tip, s.Name+": "+yf(v))
-				} else {
-					tip = append(tip, yf(v))
+				col := seriesColor(s.Color, k)
+				if finite(v) {
+					y := ymap(v)
+					ay = math.Min(ay, y)
+					hv.printf(`<circle class="sgc-dot" cx="%s" cy="%s" r="4" fill="%s"/>`, n1(x), n1(y), esc(col))
 				}
+				rows = append(rows, tipRow{key: col, name: s.Name, value: yf(v), muted: s.Dashed})
 			}
-			c.printf(`<rect x="%s" y="%s" width="%s" height="%s" fill="#000" fill-opacity="0"><title>%s</title></rect>`,
-				n(x0), n(top), n(math.Max(x1-x0, 1)), n(plotH), esc(strings.Join(tip, " · ")))
+			if math.IsInf(ay, 1) {
+				ay = top + plotH/2
+			}
+			head := ""
+			if i < len(o.Labels) {
+				head = tf(o.Labels[i])
+			}
+			tooltip(&hv, x, ay, W, H, head, rows, 12)
+			hv.raw(`</g></g>`)
 		}
 	}
-	c.close()
+	c.closeHover(&hv)
 	return c.html()
 }
 

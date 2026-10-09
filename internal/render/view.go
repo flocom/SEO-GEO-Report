@@ -183,6 +183,13 @@ type kpiCard struct {
 	Spark   template.HTML
 	Tone    string
 	Icon    template.HTML
+	Style   template.CSS // grid placement, set by the template
+}
+
+// withStyle returns a copy of k placed with the given grid style.
+func withStyle(k kpiCard, st template.CSS) kpiCard {
+	k.Style = st
+	return k
 }
 
 type callout struct {

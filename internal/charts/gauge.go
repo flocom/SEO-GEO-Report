@@ -35,7 +35,7 @@ func gauge(o GaugeOpts) template.HTML {
 	if len(bands) == 0 {
 		bands = []GaugeBand{
 			{Upto: mn + span/3, Color: ColorNegative},
-			{Upto: mn + span*2/3, Color: "#f59e0b"},
+			{Upto: mn + span*2/3, Color: ColorWarning},
 			{Upto: mx, Color: ColorPositive},
 		}
 	}
@@ -124,6 +124,14 @@ func gauge(o GaugeOpts) template.HTML {
 	if o.Label != "" {
 		c.labelText(cx, cy+18, o.Label, W-2*(r*0.55), 12, "middle", inkSecondary)
 	}
-	c.close()
+	// Hover: the exact value next to the knob.
+	var hv canvas
+	if hasValue {
+		kx, ky := polar(cx, cy, r, ang(fv))
+		hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="0" y="0" width="%s" height="%s"/><g class="sgc-tip">`, n(W), n(H))
+		tooltip(&hv, kx, ky, W, H, o.Label, []tipRow{{key: valColor, value: gf(o.Value)}, {name: gf(mn) + " – " + gf(mx), muted: true}}, 11)
+		hv.raw(`</g></g>`)
+	}
+	c.closeHover(&hv)
 	return c.html()
 }

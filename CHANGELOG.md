@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-09
+
+### Changed
+- Editorial redesign: sober typography (serif headings), neutral palette with
+  a navy default accent, flat cards, discreet chart captions, insights as a
+  clean list.
+- Key indicators on a single row on desktop; every card grid is balanced
+  automatically (no holes, never a lone card on its row), on screen and in print.
+
+### Added
+- Hover tooltips on every chart (lines, bars, columns, donut, stacked bars,
+  gauges, sparklines) in pure CSS: they work in the downloaded HTML file too.
+
 ## [0.1.0] - 2026-10-09
 
 ### Added

@@ -146,7 +146,7 @@ func TestEscaping(t *testing.T) {
 	if !strings.Contains(s, "&lt;script&gt;alert(1)&lt;/script&gt;") {
 		t.Errorf("malicious query not shown escaped")
 	}
-	if !strings.Contains(s, "--accent:#2563eb") {
+	if !strings.Contains(s, "--accent:"+DefaultAccent) {
 		t.Errorf("invalid brand color should fall back to default")
 	}
 }

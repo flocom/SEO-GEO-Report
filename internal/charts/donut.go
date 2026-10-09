@@ -99,7 +99,7 @@ func donut(o DonutOpts) template.HTML {
 	slices, total := prepareSlices(o.Slices)
 
 	r := S/2 - 4
-	thick := math.Max(S*0.14, 8)
+	thick := math.Max(S*0.105, 7)
 	rm := r - thick/2
 	holeW := (rm - thick/2) * 2 * 0.86
 
@@ -141,35 +141,10 @@ func donut(o DonutOpts) template.HTML {
 	H := math.Max(S, rowH*float64(len(slices))+8)
 	cx, cy := S/2, H/2
 
-	var c canvas
+	var c, hv canvas
 	c.openCapped("donut", W, H, o.Title, W*1.4)
 
-	// Ring.
-	gap := 0.0
-	if len(slices) > 1 {
-		gap = 2 / rm
-	}
-	a := -math.Pi / 2
-	for _, s := range slices {
-		sweep := s.Value / total * 2 * math.Pi
-		tip := s.Label + ": " + f(s.Value) + " (" + sharePct(s.Value, total, o.PctFormat) + ")"
-		col := esc(s.Color)
-		if len(slices) == 1 || sweep >= 2*math.Pi-1e-9 {
-			c.printf(`<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="%s"><title>%s</title></circle>`, n(cx), n(cy), n(rm), col, n(thick), esc(tip))
-		} else {
-			g := math.Min(gap, sweep*0.4)
-			c.printf(`<path d="%s" fill="none" stroke="%s" stroke-width="%s"><title>%s</title></path>`,
-				arcPath(cx, cy, rm, a+g/2, a+sweep-g/2), col, n(thick), esc(tip))
-		}
-		a += sweep
-	}
-	cv := o.CenterValue
-	if cv == "" {
-		cv = f(total)
-	}
-	center(&c, cx, cy, cv)
-
-	// Legend: swatch · label ........ value   pct
+	// Legend geometry: swatch · label ........ value   pct
 	pctW, valW := 0.0, 0.0
 	for _, s := range slices {
 		pctW = math.Max(pctW, textWidth(sharePct(s.Value, total, o.PctFormat), 12))
@@ -179,18 +154,69 @@ func donut(o DonutOpts) template.HTML {
 	valX := pctX - pctW - 14
 	labelX := legendX + 18
 	labelMax := valX - valW - 14 - labelX
-	y := cy - rowH*float64(len(slices))/2
-	for _, s := range slices {
+	legendTop := cy - rowH*float64(len(slices))/2
+
+	gap := 0.0
+	if len(slices) > 1 {
+		gap = 2 / rm
+	}
+	full := len(slices) == 1
+	inner := rm - thick/2 - 1
+	a := -math.Pi / 2
+	for k, s := range slices {
+		sweep := s.Value / total * 2 * math.Pi
+		col := esc(s.Color)
+		share := sharePct(s.Value, total, o.PctFormat)
+		var arc string
+		if full || sweep >= 2*math.Pi-1e-9 {
+			full = true
+			c.printf(`<circle class="sgc-mark" cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="%s"/>`, n(cx), n(cy), n(rm), col, n(thick))
+		} else {
+			g := math.Min(gap, sweep*0.4)
+			arc = arcPath(cx, cy, rm, a+g/2, a+sweep-g/2)
+			c.printf(`<path class="sgc-mark" d="%s" fill="none" stroke="%s" stroke-width="%s"/>`, arc, col, n(thick))
+		}
+		a += sweep
+
+		// Legend row.
+		y := legendTop + float64(k)*rowH
 		my := y + rowH/2
-		c.printf(`<g><title>%s</title>`, esc(s.Label+": "+f(s.Value)+" ("+sharePct(s.Value, total, o.PctFormat)+")"))
-		c.printf(`<rect x="%s" y="%s" width="%s" height="%s" fill="#000" fill-opacity="0"/>`, n(legendX), n(y), n(legendW), n(rowH))
-		c.printf(`<rect x="%s" y="%s" width="10" height="10" rx="3" fill="%s"/>`, n(legendX), n(my-5), esc(s.Color))
+		c.printf(`<rect x="%s" y="%s" width="10" height="10" rx="2" fill="%s"/>`, n(legendX), n(my-5), col)
 		c.labelText(labelX, my+size*0.35, s.Label, labelMax, size, "", inkPrimary)
 		c.text(valX, my+12*0.35, f(s.Value), 12, "end", inkMuted+` style="font-variant-numeric:tabular-nums"`)
-		c.text(pctX, my+12*0.35, sharePct(s.Value, total, o.PctFormat), 12, "end", inkPrimary+` font-weight="600" style="font-variant-numeric:tabular-nums"`)
-		c.raw(`</g>`)
-		y += rowH
+		c.text(pctX, my+12*0.35, share, 12, "end", inkPrimary+` font-weight="600" style="font-variant-numeric:tabular-nums"`)
+
+		// Hover zone: the slice and its legend row; the slice grows and the
+		// center shows its share, label and value.
+		hv.raw(`<g class="sgc-hz">`)
+		if arc != "" {
+			hv.printf(`<path class="sgc-hits" d="%s" stroke-width="%s"/>`, arc, n(thick+6))
+		} else {
+			hv.printf(`<circle class="sgc-hits" cx="%s" cy="%s" r="%s" stroke-width="%s"/>`, n(cx), n(cy), n(rm), n(thick+6))
+		}
+		hv.printf(`<rect class="sgc-hit" x="%s" y="%s" width="%s" height="%s"/><g class="sgc-tip">`, n(legendX-6), n(y), n(W-legendX+6), n(rowH))
+		hv.printf(`<rect class="sgc-hl" x="%s" y="%s" width="%s" height="%s" rx="4"/>`, n(legendX-6), n(y), n(W-legendX+6), n(rowH))
+		if arc != "" {
+			hv.printf(`<path d="%s" fill="none" stroke="%s" stroke-width="%s"/>`, arc, col, n(thick+5))
+		} else {
+			hv.printf(`<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="%s"/>`, n(cx), n(cy), n(rm), col, n(thick+5))
+		}
+		hv.printf(`<circle cx="%s" cy="%s" r="%s" style="fill:var(--chart-surface,#fff)"/>`, n(cx), n(cy), n(inner))
+		big := 24.0 * S / 220
+		for big > 12 && textWidth(share, big) > holeW {
+			big--
+		}
+		small := math.Max(11*S/220, 9)
+		hv.labelText(cx, cy-big*0.55, s.Label, holeW*0.92, small, "middle", inkSecondary)
+		hv.text(cx, cy+big*0.42, share, big, "middle", inkPrimary+` font-weight="650"`)
+		hv.labelText(cx, cy+big*0.42+small+5, f(s.Value), holeW*0.92, small, "middle", inkMuted)
+		hv.raw(`</g></g>`)
 	}
-	c.close()
+	cv := o.CenterValue
+	if cv == "" {
+		cv = f(total)
+	}
+	center(&c, cx, cy, cv)
+	c.closeHover(&hv)
 	return c.html()
 }

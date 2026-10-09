@@ -53,18 +53,20 @@ func stacked(o StackedOpts) template.HTML {
 	}
 	H := ly + 8
 
-	var c canvas
+	var c, hv canvas
 	c.open("stacked", W, H, o.Title)
 	clip := newID("clip")
-	c.printf(`<defs><clipPath id="%s"><rect x="0" y="%s" width="%s" height="%s" rx="6"/></clipPath></defs>`, clip, n(barY), n(W), n(barH))
+	c.printf(`<defs><clipPath id="%s"><rect x="0" y="%s" width="%s" height="%s" rx="4"/></clipPath></defs>`, clip, n(barY), n(W), n(barH))
 	c.printf(`<g clip-path="url(#%s)">`, clip)
 	usable := W - gap*float64(len(segs)-1)
 	x := 0.0
-	for _, s := range segs {
+	type span struct{ x, w float64 }
+	spans := make([]span, len(segs))
+	for k, s := range segs {
 		w := s.Value / total * usable
+		spans[k] = span{x, w}
 		pct := sharePct(s.Value, total, o.PctFormat)
-		c.printf(`<g><title>%s</title>`, esc(s.Label+": "+f(s.Value)+" ("+pct+")"))
-		c.printf(`<rect x="%s" y="%s" width="%s" height="%s" fill="%s"/>`, n(x), n(barY), n(math.Max(w, 0.5)), n(barH), esc(s.color))
+		c.printf(`<rect class="sgc-mark" x="%s" y="%s" width="%s" height="%s" fill="%s"/>`, n(x), n(barY), n(math.Max(w, 0.5)), n(barH), esc(s.color))
 		if w >= textWidth(pct, 11.5)+14 {
 			ink := `fill="#ffffff"`
 			if isLight(s.color) {
@@ -72,19 +74,27 @@ func stacked(o StackedOpts) template.HTML {
 			}
 			c.text(x+w/2, barY+barH/2+11.5*0.36, pct, 11.5, "middle", ink+` font-weight="600"`)
 		}
-		c.raw(`</g>`)
 		x += w + gap
 	}
 	c.raw(`</g>`)
 
-	for i, it := range items {
-		s := segs[i]
-		c.printf(`<g><title>%s</title>`, esc(s.Label+": "+it.val))
-		c.printf(`<rect x="%s" y="%s" width="10" height="10" rx="3" fill="%s"/>`, n(it.x), n(it.y-9), esc(s.color))
+	for k, it := range items {
+		s := segs[k]
+		c.printf(`<rect x="%s" y="%s" width="10" height="10" rx="2" fill="%s"/>`, n(it.x), n(it.y-9), esc(s.color))
 		c.printf(`<text x="%s" y="%s" font-size="%s" %s>%s<tspan dx="6" %s>%s</tspan></text>`,
 			n(it.x+16), n(it.y), n(size), inkPrimary, esc(it.label), inkMuted, esc(it.val))
-		c.raw(`</g>`)
+
+		// Hover zone: the segment and its legend item.
+		sp := spans[k]
+		hw := math.Max(sp.w, 4)
+		lw := 16 + (textWidth(it.label, size)+textWidth(it.val, size))*1.08 + 6
+		hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="%s" y="%s" width="%s" height="%s"/>`, n(sp.x+sp.w/2-hw/2), n(barY), n(hw), n(barH))
+		hv.printf(`<rect class="sgc-hit" x="%s" y="%s" width="%s" height="18"/><g class="sgc-tip">`, n(it.x-3), n(it.y-13), n(lw))
+		hv.printf(`<rect class="sgc-hl" x="%s" y="%s" width="%s" height="18" rx="3"/>`, n(it.x-3), n(it.y-13), n(lw))
+		hv.printf(`<rect x="%s" y="%s" width="%s" height="%s" fill="%s" clip-path="url(#%s)"/>`, n(sp.x), n(barY), n(math.Max(sp.w, 0.5)), n(barH), esc(s.color), clip)
+		tooltip(&hv, sp.x+sp.w/2, barY+barH/2, W, H, s.Label, []tipRow{{key: s.color, value: f(s.Value) + " · " + sharePct(s.Value, total, o.PctFormat)}}, 12)
+		hv.raw(`</g></g>`)
 	}
-	c.close()
+	c.closeHover(&hv)
 	return c.html()
 }

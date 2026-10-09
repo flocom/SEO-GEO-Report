@@ -139,7 +139,7 @@ func TestLineEscaping(t *testing.T) {
 func TestLineInvertY(t *testing.T) {
 	// Position 1 (best) must be drawn above position 10.
 	out := string(Line(LineOpts{InvertY: true, Labels: []string{"a", "b"}, Series: []Series{{Values: []float64{1, 10}}}}))
-	i := strings.Index(out, `stroke-width="2" stroke-linejoin`)
+	i := strings.Index(out, `stroke-width="1.75" stroke-linejoin`)
 	if i < 0 {
 		t.Fatal("line path not found")
 	}
@@ -157,7 +157,7 @@ func TestLineInvertY(t *testing.T) {
 	}
 	// Non inverted: the opposite.
 	out = string(Line(LineOpts{Labels: []string{"a", "b"}, Series: []Series{{Values: []float64{1, 10}}}}))
-	i = strings.Index(out, `stroke-width="2" stroke-linejoin`)
+	i = strings.Index(out, `stroke-width="1.75" stroke-linejoin`)
 	start = strings.LastIndex(out[:i], `d="M`)
 	if _, err := sscanPath(out[start+4:], &x0, &y0, &x1, &y1); err != nil {
 		t.Fatalf("parse path: %v", err)
@@ -199,7 +199,7 @@ func TestBars(t *testing.T) {
 	if !strings.Contains(out, "+20%") || !strings.Contains(out, "−50%") {
 		t.Fatalf("expected delta badges, got %s", out)
 	}
-	if !strings.Contains(out, ColorPositive) || !strings.Contains(out, ColorNegative) {
+	if !strings.Contains(out, badgePositiveText) || !strings.Contains(out, badgeNegativeText) {
 		t.Fatalf("expected tone colors on badges")
 	}
 }
@@ -337,8 +337,8 @@ func TestEmptyState(t *testing.T) {
 }
 
 func TestUniqueIDs(t *testing.T) {
-	a := string(Line(LineOpts{Labels: []string{"a", "b"}, Series: []Series{{Values: []float64{1, 2}, Area: true}}}))
-	b := string(Line(LineOpts{Labels: []string{"a", "b"}, Series: []Series{{Values: []float64{1, 2}, Area: true}}}))
+	a := string(Stacked(StackedOpts{Segments: []StackSegment{{Label: "a", Value: 1}}}))
+	b := string(Stacked(StackedOpts{Segments: []StackSegment{{Label: "a", Value: 1}}}))
 	id := func(s string) string {
 		i := strings.Index(s, `id="`)
 		j := strings.Index(s[i+4:], `"`)
@@ -607,5 +607,67 @@ func TestBarsHeight(t *testing.T) {
 	}
 	if !strings.Contains(filled, `viewBox="0 0 400 104"`) { // rows capped at 1.6x
 		t.Fatalf("Height not applied: %.200s", filled)
+	}
+}
+
+func TestHover(t *testing.T) {
+	prev := 80.0
+	charts := map[string]template.HTML{
+		"line":    Line(LineOpts{Labels: []string{"2024-03-12", evil}, Series: []Series{{Name: evil, Values: []float64{1, 2}}, {Name: "b", Values: []float64{2, nan}, Dashed: true}}}),
+		"bars":    Bars(BarsOpts{ShowDelta: true, PreviousLabel: evil, Items: []BarItem{{Label: evil, Value: 100, Previous: &prev}}}),
+		"columns": Columns(ColumnsOpts{Labels: []string{evil}, Current: []float64{2}, Previous: []float64{1}, CurrentName: evil, PreviousName: evil}),
+		"donut":   Donut(DonutOpts{Slices: []Slice{{Label: evil, Value: 1}, {Label: "b", Value: 2}}}),
+		"donut1":  Donut(DonutOpts{Slices: []Slice{{Label: evil, Value: 1}}}),
+		"stacked": Stacked(StackedOpts{Segments: []StackSegment{{Label: evil, Value: 1}, {Label: "b", Value: 3}}}),
+		"gauge":   Gauge(GaugeOpts{Value: 42, Label: evil}),
+		"spark":   Sparkline(SparkOpts{Values: []float64{1, nan, 3}, Labels: []string{"2024-03-12", evil, "2024-03-14"}}),
+	}
+	for name, svg := range charts {
+		s := string(svg)
+		wellFormed(t, name, svg)
+		for _, want := range []string{`<g class="sgc-hover">`, `class="sgc-hz"`, `class="sgc-tip"`, `.sgc-hz:hover .sgc-tip{opacity:1}`, `@media print{.sgc-hover{display:none}}`} {
+			if !strings.Contains(s, want) {
+				t.Errorf("%s: missing %q", name, want)
+			}
+		}
+		if strings.Contains(s, "<script") {
+			t.Errorf("%s: unescaped user data", name)
+		}
+		st := Static(svg)
+		wellFormed(t, name+"-static", st)
+		if strings.Contains(string(st), "sgc-hover") || strings.Contains(string(st), "<style>") {
+			t.Errorf("%s: Static kept the hover layer", name)
+		}
+		if len(st) >= len(svg) {
+			t.Errorf("%s: Static did not shrink the output", name)
+		}
+	}
+	// Tooltip content: localized label and values.
+	s := string(Line(LineOpts{Labels: []string{"2024-03-12", "2024-03-13"}, TooltipXFormat: func(string) string { return "TIP-DATE" },
+		YFormat: func(v float64) string { return "Y" + FormatInt(v) }, Series: []Series{{Name: "Clicks", Values: []float64{5, 6}}}}))
+	for _, want := range []string{">TIP-DATE<", ">Clicks<", ">Y5<", ">Y6<", `class="sgc-guide"`} {
+		if !strings.Contains(s, want) {
+			t.Errorf("line tooltip: missing %q", want)
+		}
+	}
+	// Empty charts have no hover layer.
+	if strings.Contains(string(Line(LineOpts{})), "sgc-hover") {
+		t.Error("empty chart should not have a hover layer")
+	}
+	if Static("<svg></svg>") != "<svg></svg>" {
+		t.Error("Static must keep charts without hover layer unchanged")
+	}
+}
+
+func TestTooltipInsideViewBox(t *testing.T) {
+	// Tooltips near the right edge flip left and stay inside the viewBox.
+	var c canvas
+	tooltip(&c, 715, 5, 720, 100, "a rather long tooltip header", []tipRow{{name: "Series", value: "123 456"}}, 12)
+	var x, y float64
+	if _, err := fmt.Sscanf(c.b.String(), `<g transform="translate(%f %f)"`, &x, &y); err != nil {
+		t.Fatal(err)
+	}
+	if x < 0 || y < 0 || x > 715-50 {
+		t.Fatalf("tooltip not flipped/clamped: %v,%v", x, y)
 	}
 }

@@ -123,7 +123,7 @@ func (b *builder) searchConsole() *section {
 			return b.donut(charts.DonutOpts{
 				Slices: []charts.Slice{
 					{Label: b.t("lbl.branded"), Value: bs.Branded.Current, Color: b.accent},
-					{Label: b.t("lbl.non_branded"), Value: bs.NonBranded.Current, Color: "#f59e0b"},
+					{Label: b.t("lbl.non_branded"), Value: bs.NonBranded.Current, Color: charts.ColorWarning},
 				},
 				CenterValue: b.pct0(bs.NonBranded.Current / total * 100),
 				CenterLabel: b.t("lbl.non_branded"),

@@ -24,12 +24,16 @@ func sparkline(o SparkOpts) template.HTML {
 			last = v
 		}
 	}
+	sf := o.Format
+	if sf == nil {
+		sf = FormatCompact
+	}
+	lf := o.LabelFormat
+	if lf == nil {
+		lf = longLabel
+	}
 	title := ""
 	if !math.IsNaN(first) {
-		sf := o.Format
-		if sf == nil {
-			sf = FormatCompact
-		}
 		title = sf(first) + " → " + sf(last)
 	}
 
@@ -96,7 +100,34 @@ func sparkline(o SparkOpts) template.HTML {
 	lastSeg := segs[len(segs)-1]
 	p := lastSeg[len(lastSeg)-1]
 	c.printf(`<circle cx="%s" cy="%s" r="2.75" fill="%s" %s/>`, n(p.x), n(p.y), col, strings.Replace(surfaceStroke, `stroke-width="2"`, `stroke-width="1.5"`, 1))
-	c.close()
+	// Hover: one zone per point (every few points on long series, to keep
+	// the markup light) with a dot and a one-line tooltip.
+	var hv canvas
+	if cnt > 1 {
+		stride := (cnt + 44) / 45
+		bw := (W - 2*pad) / float64(cnt-1) * float64(stride)
+		for i := 0; i < cnt; i += stride {
+			v := o.Values[i]
+			if !finite(v) {
+				continue
+			}
+			x, y := xs(i), ys(v)
+			hv.printf(`<g class="sgc-hz"><rect class="sgc-hit" x="%s" y="0" width="%s" height="%s"/><g class="sgc-tip">`,
+				n1(clampF(x-bw/2, 0, W)), n1(math.Max(bw, 1)), n1(H))
+			hv.printf(`<circle class="sgc-dot" cx="%s" cy="%s" r="2.5" fill="%s" stroke-width="1.5"/>`, n1(x), n1(y), col)
+			txt := sf(v)
+			if i < len(o.Labels) && o.Labels[i] != "" {
+				txt = lf(o.Labels[i]) + " · " + txt
+			}
+			ay := H * 0.75
+			if y > H/2 {
+				ay = H * 0.25
+			}
+			tooltip(&hv, x, ay, W, H, "", []tipRow{{value: txt}}, 8)
+			hv.raw(`</g></g>`)
+		}
+	}
+	c.closeHover(&hv)
 	return c.html()
 }
 

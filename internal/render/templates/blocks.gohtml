@@ -18,10 +18,7 @@
 
 {{define "hint"}}
 {{- if .Hint}}
-<div class="hint">
-  <span class="hint-ico" aria-hidden="true">{{icon "bulb"}}</span>
-  <p><strong>{{if eq .HintKind "table"}}{{t "hint.title_table"}}{{else}}{{t "hint.title"}}{{end}}</strong> {{.Hint}}</p>
-</div>
+<p class="hint"><span class="hint-k">{{if eq .HintKind "table"}}{{t "hint.title_table"}}{{else}}{{t "hint.title"}}{{end}}</span> {{.Hint}}</p>
 {{- end}}
 {{- end}}
 
@@ -47,14 +44,15 @@
     <p class="hero-kicker">{{t "hero.headline"}}</p>
     {{- end}}
     {{- if .Hero.NoCompare}}<p class="hero-desc muted">{{.Hero.NoCompare}}</p>{{end}}
-    <p class="hero-period">{{icon "calendar"}}<span>{{.Hero.Period}}</span></p>
+    <p class="hero-period">{{.Hero.Period}}</p>
     {{- if .Hero.Stats}}
-    <div class="hero-stats">
-      {{- range .Hero.Stats}}
-      <div class="hs">
-        <div class="hs-label">{{.Label}}</div>
-        <div class="hs-value">{{.Value}}</div>
-        {{- with .Delta}}<div class="hs-delta">{{template "delta" .}}</div>{{end}}
+    {{- $g := bal "hero-stats" (len .Hero.Stats)}}
+    <div class="hero-stats bal" style="{{$g.Style}}">
+      {{- range $i, $s := .Hero.Stats}}
+      <div class="hs" style="{{$g.At $i}}">
+        <div class="hs-label">{{$s.Label}}</div>
+        <div class="hs-value">{{$s.Value}}</div>
+        {{- with $s.Delta}}<div class="hs-delta">{{template "delta" .}}</div>{{end}}
       </div>
       {{- end}}
     </div>
@@ -65,7 +63,7 @@
 {{end}}
 
 {{define "kpi"}}
-<div class="kpi{{if .Tone}} tone-{{.Tone}}{{end}}">
+<div class="kpi{{if .Tone}} tone-{{.Tone}}{{end}}"{{with .Style}} style="{{.}}"{{end}}>
   <div class="kpi-label">{{.Label}}</div>
   <div class="kpi-main"><span class="kpi-value">{{.Value}}</span></div>
   <div class="kpi-delta">{{with .Delta}}{{template "delta" .}}{{end}}{{if .Prev}}<span class="kpi-prev">{{.Prev}}</span>{{end}}</div>
@@ -76,8 +74,9 @@
 
 {{define "kpis"}}
 {{- if .Title}}<h3 class="grp-title">{{.Title}}</h3>{{end}}
-<div class="kpi-grid{{if eq .Tone "compact"}} compact{{end}}{{if eq .Tone "hero"}} big{{end}}">
-  {{- range .KPIs}}{{template "kpi" .}}{{end}}
+{{- $g := bal (kpiPreset .Tone) (len .KPIs)}}
+<div class="kpi-grid bal n-{{len .KPIs}}{{if eq .Tone "compact"}} compact{{end}}{{if eq .Tone "hero"}} big{{end}}" style="{{$g.Style}}">
+  {{- range $i, $k := .KPIs}}{{template "kpi" (withStyle $k ($g.At $i))}}{{end}}
 </div>
 {{end}}
 
@@ -90,13 +89,13 @@
 {{- end}}
 {{- end}}
 
-{{define "stats"}}<div class="mini-stats">{{range .}}<div class="stat{{if .Tone}} tone-{{.Tone}}{{end}}"><div class="stat-label">{{.Label}}</div><div class="stat-value">{{.Value}}</div>{{if .Sub}}<div class="stat-sub">{{.Sub}}</div>{{end}}{{with .Delta}}<div class="stat-delta">{{template "delta" .}}</div>{{end}}</div>{{end}}</div>{{end}}
+{{define "stats"}}{{$g := bal (statsPreset .Span) (len .Stats)}}<div class="mini-stats bal" style="{{$g.Style}}">{{range $i, $s := .Stats}}{{with $s}}<div class="stat{{if .Tone}} tone-{{.Tone}}{{end}}" style="{{$g.At $i}}"><div class="stat-label">{{.Label}}</div><div class="stat-value">{{.Value}}</div>{{if .Sub}}<div class="stat-sub">{{.Sub}}</div>{{end}}{{with .Delta}}<div class="stat-delta">{{template "delta" .}}</div>{{end}}</div>{{end}}{{end}}</div>{{end}}
 
 {{define "chart"}}
 <figure class="card chart-card{{if .Tone}} tone-{{.Tone}}{{end}}">
   {{template "cardhead" .}}
   <div class="chart">{{if .ChartSm}}<div class="chart-lg">{{.Chart}}</div><div class="chart-sm">{{.ChartSm}}</div>{{with .ChartPr}}<div class="chart-pr">{{.}}</div>{{end}}{{else}}{{.Chart}}{{end}}</div>
-  {{- if .Stats}}{{template "stats" .Stats}}{{end}}
+  {{- if .Stats}}{{template "stats" .}}{{end}}
   {{template "hint" .}}
 </figure>
 {{end}}
@@ -104,7 +103,7 @@
 {{define "statscard"}}
 <div class="card stats-card{{if .Tone}} tone-{{.Tone}}{{end}}">
   {{template "cardhead" .}}
-  {{template "stats" .Stats}}
+  {{template "stats" .}}
   {{template "hint" .}}
 </div>
 {{end}}
@@ -141,19 +140,18 @@
 {{- end}}
 
 {{define "callouts"}}
+<div class="insights-block">
 {{- if or .Title .Sub}}
 <div class="blk-head">
   {{- if .Title}}<h3>{{.Title}}</h3>{{end}}
-  {{- if .Sub}}<span class="pill">{{icon "spark"}}{{.Sub}}</span>{{end}}
+  {{- if .Sub}}<span class="blk-sub">{{.Sub}}</span>{{end}}
 </div>
 {{- end}}
-<div class="callouts">
+<ul class="insights">
   {{- range .Callouts}}
-  <div class="callout c-{{.Tone}}">
-    <span class="c-ico" aria-hidden="true">{{.Icon}}</span>
-    <p>{{if .Title}}<strong>{{.Title}}</strong> {{end}}{{.Text}}{{.HTML}}</p>
-  </div>
+  <li class="ins i-{{.Tone}}"><span class="ins-mark" aria-hidden="true"></span><p>{{if .Title}}<strong>{{.Title}}</strong> {{end}}{{.Text}}{{.HTML}}</p></li>
   {{- end}}
+</ul>
 </div>
 {{end}}
 
@@ -166,10 +164,10 @@
 
 {{define "list"}}
 <div class="card list-card tone-{{.Tone}}">
-  <div class="card-head"><h3><span class="lc-ico" aria-hidden="true">{{if eq .Tone "pos"}}{{icon "trend-up"}}{{else}}{{icon "alert"}}{{end}}</span>{{.Title}}</h3></div>
+  <div class="card-head"><h3>{{.Title}}</h3></div>
   <ul class="checklist">
     {{- range .Items}}
-    <li><span class="li-ico" aria-hidden="true">{{if eq $.Tone "pos"}}{{icon "check"}}{{else}}{{icon "dot"}}{{end}}</span><span class="li-text">{{.HTML}}{{.Text}}</span></li>
+    <li><span class="li-mark" aria-hidden="true"></span><span class="li-text">{{.HTML}}{{.Text}}</span></li>
     {{- end}}
   </ul>
 </div>
@@ -179,7 +177,7 @@
 <div class="card timeline-card">
   {{- if .ActSum}}
   <div class="act-sum">
-    {{- range .ActSum}}<span class="pill-stat tone-{{.Tone}}"><strong>{{.Value}}</strong> {{.Label}}</span>{{end}}
+    {{- range .ActSum}}<span class="sum-stat tone-{{.Tone}}"><strong>{{.Value}}</strong> {{.Label}}</span>{{end}}
   </div>
   {{- end}}
   <ol class="timeline">
@@ -194,7 +192,7 @@
         </div>
         <h4>{{.Title}}</h4>
         {{- if .Description}}<div class="md">{{.Description}}</div>{{end}}
-        {{- if .Impact}}<p class="impact">{{icon "trend-up"}}<span><strong>{{t "actions.impact"}}</strong> {{.Impact}}</span></p>{{end}}
+        {{- if .Impact}}<p class="impact"><strong>{{t "actions.impact"}}</strong> {{.Impact}}</p>{{end}}
       </div>
     </li>
     {{- end}}
@@ -203,22 +201,22 @@
 {{end}}
 
 {{define "recs"}}
-<div class="recs">
+<ol class="recs">
   {{- range .Recs}}
-  <article class="rec{{if .Priority}} prio-{{.Priority}}{{end}}">
+  <li class="rec{{if .Priority}} prio-{{.Priority}}{{end}}">
     <div class="rec-num">{{.Num}}</div>
     <div class="rec-body">
-      <div class="rec-badges">
+      <h4>{{.Title}}</h4>
+      <p class="rec-badges">
         {{- if .PrioLabel}}<span class="badge prio-{{.Priority}}">{{.PrioLabel}}</span>{{end}}
         {{- if .EffortLabel}}<span class="badge effort">{{.EffortLabel}}</span>{{end}}
         {{- if .Category}}<span class="tag">{{.Category}}</span>{{end}}
-      </div>
-      <h4>{{.Title}}</h4>
+      </p>
       {{- if .Description}}<div class="md">{{.Description}}</div>{{end}}
     </div>
-  </article>
+  </li>
   {{- end}}
-</div>
+</ol>
 {{end}}
 
 {{define "glossary"}}

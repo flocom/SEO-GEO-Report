@@ -23,7 +23,7 @@
 </main>
 <footer class="foot">
   <span>{{.Generated}}</span>
-  <span class="foot-brand">{{icon "spark"}} {{t "footer.with"}}</span>
+  <span class="foot-brand">{{t "footer.with"}}</span>
 </footer>
 </div>
 </body>
@@ -35,7 +35,7 @@
   <div class="cover-bar">
     <div class="brand">
       {{- if .Cover.Logo}}<img class="logo" src="{{.Cover.Logo}}" alt="{{.Cover.SiteName}}">
-      {{- else if .Cover.Favicon}}<span class="logo-fav"><img src="{{.Cover.Favicon}}" alt=""></span>
+      {{- else if .Cover.Favicon}}<img class="logo-fav" src="{{.Cover.Favicon}}" alt="">
       {{- else}}<span class="logo-mono" aria-hidden="true">{{.Cover.Initials}}</span>{{end}}
       <div class="brand-text">
         {{- if .Cover.SiteName}}<div class="brand-name">{{if and .Cover.Logo .Cover.Favicon}}<img class="fav-inline" src="{{.Cover.Favicon}}" alt="">{{end}}{{.Cover.SiteName}}</div>{{end}}
@@ -50,27 +50,25 @@
     {{- end}}
   </div>
   <div class="cover-main">
-    <p class="eyebrow">{{t "cover.eyebrow"}}</p>
+    <p class="cover-kicker">{{t "cover.eyebrow"}}</p>
     <h1>{{.Cover.Title}}</h1>
     <p class="cover-lead">{{t "cover.lead"}}</p>
   </div>
-  <dl class="cover-meta">
-    <div class="cm">
-      <dt>{{icon "calendar"}}{{t "cover.period"}}</dt>
-      <dd>{{.Cover.Period}}{{if .Cover.PeriodDays}} <span class="cm-sub">· {{.Cover.PeriodDays}}</span>{{end}}</dd>
-    </div>
-    <div class="cm">
-      <dt>{{icon "compare"}}{{t "cover.comparison"}}</dt>
-      <dd>{{if .Cover.Comparison}}{{.Cover.Comparison}}{{else}}<span class="cm-sub">{{t "cover.no_comparison"}}</span>{{end}}</dd>
-    </div>
-    {{- if .Cover.PreparedFor}}
-    <div class="cm"><dt>{{icon "user"}}{{t "cover.prepared_for"}}</dt><dd>{{.Cover.PreparedFor}}</dd></div>
+  {{- $n := 2}}{{if .Cover.PreparedFor}}{{$n = add $n 1}}{{end}}{{if .Cover.PreparedBy}}{{$n = add $n 1}}{{end}}{{if .Cover.Sources}}{{$n = add $n 1}}{{end}}
+  {{- $g := bal "meta" $n}}
+  <dl class="cover-meta bal" style="{{$g.Style}}">
+    {{- $i := 0}}
+    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.period"}}</dt><dd>{{.Cover.Period}}{{if .Cover.PeriodDays}} <span class="cm-sub">· {{.Cover.PeriodDays}}</span>{{end}}</dd></div>
+    {{- $i = add $i 1}}
+    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.comparison"}}</dt><dd>{{if .Cover.Comparison}}{{.Cover.Comparison}}{{else}}<span class="cm-sub">{{t "cover.no_comparison"}}</span>{{end}}</dd></div>
+    {{- if .Cover.PreparedFor}}{{$i = add $i 1}}
+    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.prepared_for"}}</dt><dd>{{.Cover.PreparedFor}}</dd></div>
     {{- end}}
-    {{- if .Cover.PreparedBy}}
-    <div class="cm"><dt>{{icon "pen"}}{{t "cover.prepared_by"}}</dt><dd>{{.Cover.PreparedBy}}</dd></div>
+    {{- if .Cover.PreparedBy}}{{$i = add $i 1}}
+    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.prepared_by"}}</dt><dd>{{.Cover.PreparedBy}}</dd></div>
     {{- end}}
-    {{- if .Cover.Sources}}
-    <div class="cm cm-wide"><dt>{{icon "db"}}{{t "cover.sources"}}</dt><dd class="chips">{{range .Cover.Sources}}<span class="chip">{{.}}</span>{{end}}</dd></div>
+    {{- if .Cover.Sources}}{{$i = add $i 1}}
+    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.sources"}}</dt><dd>{{range $k, $s := .Cover.Sources}}{{if $k}}, {{end}}{{$s}}{{end}}</dd></div>
     {{- end}}
   </dl>
   {{- if .TOC}}
@@ -79,7 +77,7 @@
     <div class="toc-parts">
       {{- range .TOC}}
       <div class="toc-part">
-        <p class="toc-part-title"><span>{{.Num}}</span>{{.Title}}</p>
+        <p class="toc-part-title"><span>{{.Num}}</span> {{.Title}}</p>
         <ol>
           {{- range .Items}}
           <li><a href="#{{.Anchor}}"><span class="toc-num">{{.Num}}</span><span class="toc-title">{{.Title}}</span></a></li>
@@ -104,16 +102,15 @@
 <section class="section{{if .Major}} major{{end}}{{if .Custom}} custom style-{{.Style}}{{end}}" id="{{.Anchor}}">
   <div class="sec-keep">
   <header class="sec-head">
-    <span class="sec-ico" aria-hidden="true">{{.Icon}}</span>
+    {{- if .Num}}<p class="sec-num">{{.Num}}</p>{{end}}
     <div class="sec-titles">
-      <p class="sec-num">{{.Num}}</p>
       <h2>{{.Title}}</h2>
       {{- if .Intro}}<p class="sec-intro">{{.Intro}}</p>{{end}}
     </div>
   </header>
   {{- if .Note}}
   <aside class="note">
-    <div class="note-head">{{icon "pen"}}<span>{{t "note.title"}}</span></div>
+    <p class="note-head">{{t "note.title"}}</p>
     <div class="md">{{.Note}}</div>
   </aside>
   {{- end}}
