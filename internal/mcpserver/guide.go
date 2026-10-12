@@ -14,9 +14,9 @@ import (
 
 // Instructions are sent to clients at initialization (claude.ai shows them to
 // the model). Keep them short: the full guide is a tool / resource.
-const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console), its traffic (GA4) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews...).
-It NEVER connects to Google or any other service: all numbers come from the user (exports, screenshots, copy-paste) and you pass them through the tools.
-Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_analytics / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
+const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
+It NEVER connects to Google, Bing or any other service: all numbers come from the user (exports, screenshots, copy-paste) and you pass them through the tools.
+Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
 Conventions: percentages in percent (3.2 = 3.2 %), dates YYYY-MM-DD, durations in seconds, every metric = {"current": x, "previous": y} where previous is the comparison period (drives the progress visuals).`
 
 // GuideMarkdown returns the full workflow guide, in English, for the model.
@@ -54,6 +54,7 @@ you collect the numbers from the user and pass them in.
 3. Fill the data, section by section (each call can be repeated; ` + "`mode: \"merge\"`" + ` (default) only
    replaces the keys you send, ` + "`mode: \"replace\"`" + ` replaces the whole section):
    - ` + "`set_search_console`" + ` (or ` + "`import_search_console_csv`" + ` with the raw text of a GSC CSV export: Queries, Pages, Countries, Devices, Dates, Search appearance),
+   - ` + "`set_bing`" + ` (or ` + "`import_bing_csv`" + ` with the raw text of a Bing Webmaster Tools CSV export: Search Performance keywords / pages / daily chart, AI Performance grounding queries / pages / daily chart),
    - ` + "`set_analytics`" + ` (or ` + "`import_analytics_csv`" + ` with a GA4 "Download CSV" export: channels, source/medium, landing pages, daily),
    - ` + "`set_geo`" + ` for AI visibility (AI referrals, citation checks, share of voice, AI Overviews, AI crawlers).
 4. ` + "`set_narrative`" + `: write the executive summary, highlights, concerns, actions done and
@@ -98,6 +99,15 @@ Search appearance, Dates):
 - optional: Indexing > Pages (indexed / not indexed + reasons), Core Web Vitals (good / needs
   improvement / poor URLs, mobile and desktop), sitemaps, branded vs non-branded split
   (give the brand terms; you can compute it from the queries).
+
+**Bing Webmaster Tools** (optional, if the site is verified there; Bing also powers DuckDuckGo,
+Ecosia, Yahoo and Microsoft Copilot):
+- Search Performance (set the date range and enable the comparison, then export): totals (clicks,
+  impressions, average CTR, average position, current + previous), the daily chart, keywords and pages,
+- AI Performance (citations of the site in Copilot and Bing AI answers): total citations and average
+  cited pages (current + previous), the daily chart, grounding queries (citations, citation share,
+  intent, topic) and cited pages. Total citations are computed from the daily chart or the pages
+  when omitted.
 
 **Google Analytics 4** (Reports > Acquisition > Traffic acquisition, Engagement > Landing page;
 with a comparison date range; "Share this report" > "Download file" > CSV):

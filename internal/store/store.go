@@ -224,7 +224,7 @@ func (s *Store) Delete(id string) error {
 
 // DuplicateOptions configure Duplicate.
 type DuplicateOptions struct {
-	// KeepData keeps search_console, analytics and geo data. When false (the
+	// KeepData keeps search_console, bing, analytics and geo data. When false (the
 	// default) data is cleared so the copy can be filled for the next period.
 	KeepData bool
 	// KeepNarrative keeps the narrative texts as they are. When false, the
@@ -255,7 +255,7 @@ func (s *Store) Duplicate(id string, opts DuplicateOptions) (*Record, error) {
 		return nil, err
 	}
 	if !opts.KeepData {
-		r.SearchConsole, r.Analytics, r.GEO = nil, nil, nil
+		r.SearchConsole, r.Bing, r.Analytics, r.GEO = nil, nil, nil, nil
 	}
 	if !opts.KeepNarrative && r.Narrative != nil {
 		n := r.Narrative
@@ -458,6 +458,13 @@ func writeFileAtomic(path string, data []byte, perm os.FileMode) error {
 		return err
 	}
 	if err := os.Chmod(tmp, perm); err != nil {
+		return err
+	}
+	// The file system stamps files with a coarse clock that can lag
+	// time.Now(): a file written right after a report update could look
+	// older than the update and its cache be thrown away. Stamp it exactly.
+	now := time.Now()
+	if err := os.Chtimes(tmp, now, now); err != nil {
 		return err
 	}
 	if err := os.Rename(tmp, path); err != nil {

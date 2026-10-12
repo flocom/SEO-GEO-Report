@@ -4,6 +4,32 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- Bing Webmaster Tools section ("Performance dans Bing" / "Bing Search
+  performance"), placed after Google's countries and devices: Bing clicks,
+  impressions, CTR and position with daily charts, a Google vs Bing comparison,
+  top keywords and pages, and the AI Performance report (citations of the site
+  in Microsoft Copilot and Bing AI answers, cited pages, grounding queries with
+  intent and topic).
+- `bing` in the report format, MCP tools `set_bing` and `import_bing_csv`, CLI
+  command `import-bing` (zip, folder or single CSV; Search Performance and AI
+  Performance exports, French or English headers).
+- Bing clicks and AI citations feed the KPI tones, the automatic insights and
+  the progress index; the demo reports include Bing data.
+
+### Fixed
+- Rendering no longer fails when a table compares a value with a previous
+  value of 0 (e.g. impressions rising from 0).
+- A report rendered right after an update is no longer seen as out of date
+  because of the file system's coarse timestamps (the HTML cache was thrown
+  away, and a store test failed intermittently).
+- CSV import reads every date of a file in the same day / month order.
+
+### Changed
+- Search Console CSV import: change columns ("Clicks change") are ignored
+  instead of being read as comparison values, and "Keyword" / "URL" headers
+  are recognized.
+
 ## [0.1.3] - 2026-10-09
 
 ### Fixed

@@ -55,7 +55,7 @@ func templateFuncs(lang string) template.FuncMap {
 
 // majorSections start on a new printed page (in part 2).
 var majorSections = map[string]bool{
-	"summary": true, "search_console": true, "analytics": true, "geo": true,
+	"summary": true, "search_console": true, "bing": true, "analytics": true, "geo": true,
 	"technical": true, "actions": true, "glossary": true,
 }
 
@@ -187,6 +187,9 @@ func (b *builder) cover(opts Options) cover {
 	if b.r.SearchConsole != nil {
 		c.Sources = append(c.Sources, b.t("src.gsc"))
 	}
+	if b.r.Bing != nil {
+		c.Sources = append(c.Sources, b.t("src.bing"))
+	}
 	if b.r.Analytics != nil {
 		c.Sources = append(c.Sources, b.t("src.ga4"))
 	}
@@ -218,7 +221,7 @@ var anchorClean = regexp.MustCompile(`[^a-z0-9-]+`)
 // placement of custom sections.
 var (
 	part1IDs = []string{"summary", "kpis", idAIGlance, idPlanGlance}
-	part2IDs = []string{"search_console", "queries", "pages", "countries_devices", "analytics",
+	part2IDs = []string{"search_console", "queries", "pages", "countries_devices", "bing", "analytics",
 		"channels", "landing_pages", "geo", "technical", "actions", "recommendations", "glossary"}
 )
 
@@ -229,7 +232,7 @@ func (b *builder) sections() []*section {
 	builders := map[string]func() *section{
 		"summary": b.summary, "kpis": b.kpis, idAIGlance: b.aiGlance, idPlanGlance: b.planGlance,
 		"search_console": b.searchConsole, "queries": b.queries, "pages": b.pages,
-		"countries_devices": b.countriesDevices, "analytics": b.analytics, "channels": b.channels,
+		"countries_devices": b.countriesDevices, "bing": b.bing, "analytics": b.analytics, "channels": b.channels,
 		"landing_pages": b.landingPages, "geo": b.geo, "technical": b.technical, "actions": b.actions,
 		"recommendations": b.recommendations, "glossary": b.glossary,
 	}

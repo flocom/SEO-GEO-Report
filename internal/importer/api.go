@@ -1,11 +1,13 @@
-// Package importer converts raw exports (CSV files from Google Search Console
-// and Google Analytics 4, in French or English) into model structures.
+// Package importer converts raw exports (CSV files from Google Search Console,
+// Bing Webmaster Tools and Google Analytics 4, in French or English) into
+// model structures.
 package importer
 
 import "github.com/flocom/SEO-GEO-Report/internal/model"
 
 // Implementations live in gsc.go (ParseGSCCSV, ImportGSCExport,
-// ApplyGSCTable) and ga4.go (ParseGA4CSV).
+// ApplyGSCTable), bing.go (ParseBingCSV, ImportBingExport, ApplyBingTable)
+// and ga4.go (ParseGA4CSV).
 
 // GSCKind is the kind of Search Console export table.
 type GSCKind string
@@ -27,6 +29,32 @@ type GSCTable struct {
 	Rows          []model.GSCRow
 	Daily         []model.GSCDailyPoint
 	PreviousDaily []model.GSCDailyPoint
+}
+
+// BingKind is the kind of Bing Webmaster Tools export table.
+type BingKind string
+
+const (
+	BingQueries   BingKind = "queries"    // Search Performance > Keywords
+	BingPages     BingKind = "pages"      // Search Performance > Pages
+	BingDates     BingKind = "dates"      // Search Performance chart, one row per day
+	BingAIQueries BingKind = "ai_queries" // AI Performance > Grounding queries
+	BingAIPages   BingKind = "ai_pages"   // AI Performance > Pages
+	BingAIDates   BingKind = "ai_dates"   // AI Performance chart, one row per day
+)
+
+// BingTable is the parsed content of one Bing Webmaster Tools CSV. Search
+// Performance tables fill Rows or Daily (like a Search Console table), AI
+// Performance tables fill GroundingQueries, CitedPages or AIDaily.
+type BingTable struct {
+	Kind             BingKind
+	Rows             []model.GSCRow
+	Daily            []model.GSCDailyPoint
+	PreviousDaily    []model.GSCDailyPoint
+	GroundingQueries []model.BingGroundingQuery
+	CitedPages       []model.BingCitedPage
+	AIDaily          []model.BingAIDailyPoint
+	AIPreviousDaily  []model.BingAIDailyPoint
 }
 
 // GA4Kind is the kind of GA4 table.

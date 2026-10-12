@@ -12,9 +12,9 @@ import (
 // version is set at build time with -ldflags "-X main.version=...".
 var version = "dev"
 
-const usage = `seogeo — SEO & GEO visibility reports (Search Console + GA4 + AI assistants)
+const usage = `seogeo — SEO & GEO visibility reports (Search Console + Bing + GA4 + AI assistants)
 
-The tool never connects to Google: you (or Claude) supply the data, it formats it.
+The tool never connects to Google or Bing: you (or Claude) supply the data, it formats it.
 
 Usage:
   seogeo <command> [options]
@@ -28,6 +28,8 @@ Report commands:
   schema                           Print the JSON schema of the report format.
   import-gsc <export.zip|dir> [-o gsc.json] [--into data.json]
              Convert a Search Console export (zip or folder of CSV files).
+  import-bing <export.zip|dir|file.csv> [-o bing.json] [--into data.json]
+             Convert Bing Webmaster Tools exports (Search Performance, AI Performance).
   import-ga4 <file.csv>... [-o ga4.json] [--into data.json]
              Convert GA4 "Download file > CSV" exports.
 
@@ -71,6 +73,8 @@ func main() {
 		err = cmdSchema(args)
 	case "import-gsc":
 		err = cmdImportGSC(args)
+	case "import-bing":
+		err = cmdImportBing(args)
 	case "import-ga4":
 		err = cmdImportGA4(args)
 	case "serve":

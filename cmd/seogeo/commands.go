@@ -239,6 +239,8 @@ func mergeInto(into, key string, v any) ([]byte, error) {
 	switch key {
 	case "search_console":
 		r.SearchConsole = v.(*model.SearchConsole)
+	case "bing":
+		r.Bing = v.(*model.Bing)
 	case "analytics":
 		r.Analytics = v.(*model.Analytics)
 	}
@@ -265,6 +267,29 @@ func cmdImportGSC(args []string) error {
 		return errors.New("no Search Console data found in " + pos[0])
 	}
 	b, err := mergeInto(*into, "search_console", sc)
+	if err != nil {
+		return err
+	}
+	return writeOutput(*out, append(b, '\n'))
+}
+
+func cmdImportBing(args []string) error {
+	fs := newFlagSet("import-bing", "<export.zip|dir|file.csv> [-o bing.json] [--into data.json]")
+	out := fs.String("o", "", "output file (default stdout)")
+	into := fs.String("into", "", "report JSON to merge the data into (bing is replaced); the result goes to -o")
+	pos, err := parseInterspersed(fs, args)
+	if err != nil {
+		return err
+	}
+	if len(pos) != 1 {
+		fs.Usage()
+		return errSilent
+	}
+	bg, err := importer.ImportBingExport(pos[0])
+	if err != nil {
+		return err
+	}
+	b, err := mergeInto(*into, "bing", bg)
 	if err != nil {
 		return err
 	}

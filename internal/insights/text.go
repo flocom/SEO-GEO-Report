@@ -104,6 +104,9 @@ func buildInsights(r *model.Report, a *Analysis) []Insight {
 	if sc := r.SearchConsole; sc != nil {
 		gscInsights(w, sc, a)
 	}
+	if r.Bing != nil {
+		bingInsights(w, r)
+	}
 	if ga := r.Analytics; ga != nil {
 		ga4Insights(w, ga)
 	}

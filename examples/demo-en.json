@@ -1885,6 +1885,2537 @@
       }
     }
   },
+  "bing": {
+    "totals": {
+      "clicks": {
+        "current": 2468,
+        "previous": 1975
+      },
+      "impressions": {
+        "current": 66555,
+        "previous": 56811
+      },
+      "ctr": {
+        "current": 3.71,
+        "previous": 3.48
+      },
+      "position": {
+        "current": 9.4,
+        "previous": 10.3
+      }
+    },
+    "daily": [
+      {
+        "date": "2026-07-01",
+        "clicks": 26,
+        "impressions": 710,
+        "ctr": 3.66,
+        "position": 10
+      },
+      {
+        "date": "2026-07-02",
+        "clicks": 25,
+        "impressions": 731,
+        "ctr": 3.42,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-03",
+        "clicks": 22,
+        "impressions": 641,
+        "ctr": 3.43,
+        "position": 9.5
+      },
+      {
+        "date": "2026-07-04",
+        "clicks": 21,
+        "impressions": 612,
+        "ctr": 3.43,
+        "position": 10.1
+      },
+      {
+        "date": "2026-07-05",
+        "clicks": 24,
+        "impressions": 682,
+        "ctr": 3.52,
+        "position": 9.8
+      },
+      {
+        "date": "2026-07-06",
+        "clicks": 26,
+        "impressions": 750,
+        "ctr": 3.47,
+        "position": 9.9
+      },
+      {
+        "date": "2026-07-07",
+        "clicks": 26,
+        "impressions": 729,
+        "ctr": 3.57,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-08",
+        "clicks": 28,
+        "impressions": 801,
+        "ctr": 3.5,
+        "position": 9.9
+      },
+      {
+        "date": "2026-07-09",
+        "clicks": 24,
+        "impressions": 656,
+        "ctr": 3.66,
+        "position": 10
+      },
+      {
+        "date": "2026-07-10",
+        "clicks": 22,
+        "impressions": 605,
+        "ctr": 3.64,
+        "position": 9.9
+      },
+      {
+        "date": "2026-07-11",
+        "clicks": 22,
+        "impressions": 593,
+        "ctr": 3.71,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-12",
+        "clicks": 24,
+        "impressions": 660,
+        "ctr": 3.64,
+        "position": 9.9
+      },
+      {
+        "date": "2026-07-13",
+        "clicks": 26,
+        "impressions": 698,
+        "ctr": 3.72,
+        "position": 9.5
+      },
+      {
+        "date": "2026-07-14",
+        "clicks": 26,
+        "impressions": 746,
+        "ctr": 3.49,
+        "position": 9.8
+      },
+      {
+        "date": "2026-07-15",
+        "clicks": 28,
+        "impressions": 762,
+        "ctr": 3.67,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-16",
+        "clicks": 27,
+        "impressions": 733,
+        "ctr": 3.68,
+        "position": 10
+      },
+      {
+        "date": "2026-07-17",
+        "clicks": 23,
+        "impressions": 627,
+        "ctr": 3.67,
+        "position": 9.4
+      },
+      {
+        "date": "2026-07-18",
+        "clicks": 20,
+        "impressions": 547,
+        "ctr": 3.66,
+        "position": 9.8
+      },
+      {
+        "date": "2026-07-19",
+        "clicks": 25,
+        "impressions": 677,
+        "ctr": 3.69,
+        "position": 9.4
+      },
+      {
+        "date": "2026-07-20",
+        "clicks": 29,
+        "impressions": 798,
+        "ctr": 3.63,
+        "position": 9.7
+      },
+      {
+        "date": "2026-07-21",
+        "clicks": 28,
+        "impressions": 772,
+        "ctr": 3.63,
+        "position": 9.7
+      },
+      {
+        "date": "2026-07-22",
+        "clicks": 29,
+        "impressions": 792,
+        "ctr": 3.66,
+        "position": 9.5
+      },
+      {
+        "date": "2026-07-23",
+        "clicks": 25,
+        "impressions": 712,
+        "ctr": 3.51,
+        "position": 9.5
+      },
+      {
+        "date": "2026-07-24",
+        "clicks": 24,
+        "impressions": 644,
+        "ctr": 3.73,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-25",
+        "clicks": 23,
+        "impressions": 643,
+        "ctr": 3.58,
+        "position": 9.7
+      },
+      {
+        "date": "2026-07-26",
+        "clicks": 24,
+        "impressions": 652,
+        "ctr": 3.68,
+        "position": 9.2
+      },
+      {
+        "date": "2026-07-27",
+        "clicks": 29,
+        "impressions": 797,
+        "ctr": 3.64,
+        "position": 9.6
+      },
+      {
+        "date": "2026-07-28",
+        "clicks": 29,
+        "impressions": 769,
+        "ctr": 3.77,
+        "position": 9.5
+      },
+      {
+        "date": "2026-07-29",
+        "clicks": 28,
+        "impressions": 743,
+        "ctr": 3.77,
+        "position": 9.7
+      },
+      {
+        "date": "2026-07-30",
+        "clicks": 26,
+        "impressions": 730,
+        "ctr": 3.56,
+        "position": 9.4
+      },
+      {
+        "date": "2026-07-31",
+        "clicks": 25,
+        "impressions": 709,
+        "ctr": 3.53,
+        "position": 9.8
+      },
+      {
+        "date": "2026-08-01",
+        "clicks": 21,
+        "impressions": 554,
+        "ctr": 3.79,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-02",
+        "clicks": 25,
+        "impressions": 692,
+        "ctr": 3.61,
+        "position": 9.6
+      },
+      {
+        "date": "2026-08-03",
+        "clicks": 30,
+        "impressions": 847,
+        "ctr": 3.54,
+        "position": 9.3
+      },
+      {
+        "date": "2026-08-04",
+        "clicks": 30,
+        "impressions": 821,
+        "ctr": 3.65,
+        "position": 9.5
+      },
+      {
+        "date": "2026-08-05",
+        "clicks": 29,
+        "impressions": 782,
+        "ctr": 3.71,
+        "position": 9.2
+      },
+      {
+        "date": "2026-08-06",
+        "clicks": 27,
+        "impressions": 726,
+        "ctr": 3.72,
+        "position": 9.5
+      },
+      {
+        "date": "2026-08-07",
+        "clicks": 26,
+        "impressions": 687,
+        "ctr": 3.78,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-08",
+        "clicks": 23,
+        "impressions": 610,
+        "ctr": 3.77,
+        "position": 9.8
+      },
+      {
+        "date": "2026-08-09",
+        "clicks": 27,
+        "impressions": 727,
+        "ctr": 3.71,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-10",
+        "clicks": 30,
+        "impressions": 835,
+        "ctr": 3.59,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-11",
+        "clicks": 31,
+        "impressions": 827,
+        "ctr": 3.75,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-12",
+        "clicks": 28,
+        "impressions": 773,
+        "ctr": 3.62,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-13",
+        "clicks": 27,
+        "impressions": 712,
+        "ctr": 3.79,
+        "position": 9
+      },
+      {
+        "date": "2026-08-14",
+        "clicks": 25,
+        "impressions": 654,
+        "ctr": 3.82,
+        "position": 9.6
+      },
+      {
+        "date": "2026-08-15",
+        "clicks": 24,
+        "impressions": 646,
+        "ctr": 3.72,
+        "position": 9.3
+      },
+      {
+        "date": "2026-08-16",
+        "clicks": 26,
+        "impressions": 725,
+        "ctr": 3.59,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-17",
+        "clicks": 30,
+        "impressions": 780,
+        "ctr": 3.85,
+        "position": 9.6
+      },
+      {
+        "date": "2026-08-18",
+        "clicks": 32,
+        "impressions": 896,
+        "ctr": 3.57,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-19",
+        "clicks": 29,
+        "impressions": 776,
+        "ctr": 3.74,
+        "position": 9.3
+      },
+      {
+        "date": "2026-08-20",
+        "clicks": 27,
+        "impressions": 714,
+        "ctr": 3.78,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-21",
+        "clicks": 27,
+        "impressions": 741,
+        "ctr": 3.64,
+        "position": 9.1
+      },
+      {
+        "date": "2026-08-22",
+        "clicks": 23,
+        "impressions": 595,
+        "ctr": 3.87,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-23",
+        "clicks": 28,
+        "impressions": 746,
+        "ctr": 3.75,
+        "position": 9.2
+      },
+      {
+        "date": "2026-08-24",
+        "clicks": 32,
+        "impressions": 861,
+        "ctr": 3.72,
+        "position": 9
+      },
+      {
+        "date": "2026-08-25",
+        "clicks": 33,
+        "impressions": 877,
+        "ctr": 3.76,
+        "position": 9.5
+      },
+      {
+        "date": "2026-08-26",
+        "clicks": 29,
+        "impressions": 747,
+        "ctr": 3.88,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-27",
+        "clicks": 28,
+        "impressions": 767,
+        "ctr": 3.65,
+        "position": 9.2
+      },
+      {
+        "date": "2026-08-28",
+        "clicks": 28,
+        "impressions": 771,
+        "ctr": 3.63,
+        "position": 9.3
+      },
+      {
+        "date": "2026-08-29",
+        "clicks": 24,
+        "impressions": 636,
+        "ctr": 3.77,
+        "position": 9.4
+      },
+      {
+        "date": "2026-08-30",
+        "clicks": 27,
+        "impressions": 697,
+        "ctr": 3.87,
+        "position": 9.3
+      },
+      {
+        "date": "2026-08-31",
+        "clicks": 31,
+        "impressions": 803,
+        "ctr": 3.86,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-01",
+        "clicks": 31,
+        "impressions": 848,
+        "ctr": 3.66,
+        "position": 9.2
+      },
+      {
+        "date": "2026-09-02",
+        "clicks": 30,
+        "impressions": 795,
+        "ctr": 3.77,
+        "position": 9
+      },
+      {
+        "date": "2026-09-03",
+        "clicks": 28,
+        "impressions": 745,
+        "ctr": 3.76,
+        "position": 8.9
+      },
+      {
+        "date": "2026-09-04",
+        "clicks": 26,
+        "impressions": 701,
+        "ctr": 3.71,
+        "position": 9
+      },
+      {
+        "date": "2026-09-05",
+        "clicks": 25,
+        "impressions": 679,
+        "ctr": 3.68,
+        "position": 9.2
+      },
+      {
+        "date": "2026-09-06",
+        "clicks": 27,
+        "impressions": 734,
+        "ctr": 3.68,
+        "position": 8.9
+      },
+      {
+        "date": "2026-09-07",
+        "clicks": 32,
+        "impressions": 841,
+        "ctr": 3.8,
+        "position": 9
+      },
+      {
+        "date": "2026-09-08",
+        "clicks": 31,
+        "impressions": 791,
+        "ctr": 3.92,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-09",
+        "clicks": 32,
+        "impressions": 821,
+        "ctr": 3.9,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-10",
+        "clicks": 30,
+        "impressions": 805,
+        "ctr": 3.73,
+        "position": 8.9
+      },
+      {
+        "date": "2026-09-11",
+        "clicks": 28,
+        "impressions": 718,
+        "ctr": 3.9,
+        "position": 9
+      },
+      {
+        "date": "2026-09-12",
+        "clicks": 24,
+        "impressions": 610,
+        "ctr": 3.93,
+        "position": 8.8
+      },
+      {
+        "date": "2026-09-13",
+        "clicks": 27,
+        "impressions": 713,
+        "ctr": 3.79,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-14",
+        "clicks": 31,
+        "impressions": 821,
+        "ctr": 3.78,
+        "position": 9.2
+      },
+      {
+        "date": "2026-09-15",
+        "clicks": 32,
+        "impressions": 871,
+        "ctr": 3.67,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-16",
+        "clicks": 33,
+        "impressions": 898,
+        "ctr": 3.67,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-17",
+        "clicks": 32,
+        "impressions": 865,
+        "ctr": 3.7,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-18",
+        "clicks": 27,
+        "impressions": 726,
+        "ctr": 3.72,
+        "position": 8.8
+      },
+      {
+        "date": "2026-09-19",
+        "clicks": 24,
+        "impressions": 645,
+        "ctr": 3.72,
+        "position": 9.3
+      },
+      {
+        "date": "2026-09-20",
+        "clicks": 31,
+        "impressions": 787,
+        "ctr": 3.94,
+        "position": 8.8
+      },
+      {
+        "date": "2026-09-21",
+        "clicks": 31,
+        "impressions": 813,
+        "ctr": 3.81,
+        "position": 9
+      },
+      {
+        "date": "2026-09-22",
+        "clicks": 34,
+        "impressions": 914,
+        "ctr": 3.72,
+        "position": 9.1
+      },
+      {
+        "date": "2026-09-23",
+        "clicks": 31,
+        "impressions": 811,
+        "ctr": 3.82,
+        "position": 8.7
+      },
+      {
+        "date": "2026-09-24",
+        "clicks": 30,
+        "impressions": 770,
+        "ctr": 3.9,
+        "position": 9.2
+      },
+      {
+        "date": "2026-09-25",
+        "clicks": 29,
+        "impressions": 757,
+        "ctr": 3.83,
+        "position": 9.1
+      },
+      {
+        "date": "2026-09-26",
+        "clicks": 26,
+        "impressions": 656,
+        "ctr": 3.96,
+        "position": 9.1
+      },
+      {
+        "date": "2026-09-27",
+        "clicks": 30,
+        "impressions": 755,
+        "ctr": 3.97,
+        "position": 9
+      },
+      {
+        "date": "2026-09-28",
+        "clicks": 35,
+        "impressions": 919,
+        "ctr": 3.81,
+        "position": 8.9
+      }
+    ],
+    "previous_daily": [
+      {
+        "date": "2026-04-02",
+        "clicks": 21,
+        "impressions": 612,
+        "ctr": 3.43,
+        "position": 10.5
+      },
+      {
+        "date": "2026-04-03",
+        "clicks": 20,
+        "impressions": 576,
+        "ctr": 3.47,
+        "position": 10.8
+      },
+      {
+        "date": "2026-04-04",
+        "clicks": 18,
+        "impressions": 515,
+        "ctr": 3.5,
+        "position": 10.8
+      },
+      {
+        "date": "2026-04-05",
+        "clicks": 20,
+        "impressions": 583,
+        "ctr": 3.43,
+        "position": 10.6
+      },
+      {
+        "date": "2026-04-06",
+        "clicks": 23,
+        "impressions": 686,
+        "ctr": 3.35,
+        "position": 10.6
+      },
+      {
+        "date": "2026-04-07",
+        "clicks": 24,
+        "impressions": 719,
+        "ctr": 3.34,
+        "position": 10.7
+      },
+      {
+        "date": "2026-04-08",
+        "clicks": 22,
+        "impressions": 628,
+        "ctr": 3.5,
+        "position": 10.2
+      },
+      {
+        "date": "2026-04-09",
+        "clicks": 21,
+        "impressions": 630,
+        "ctr": 3.33,
+        "position": 10.9
+      },
+      {
+        "date": "2026-04-10",
+        "clicks": 20,
+        "impressions": 563,
+        "ctr": 3.55,
+        "position": 10.8
+      },
+      {
+        "date": "2026-04-11",
+        "clicks": 17,
+        "impressions": 498,
+        "ctr": 3.41,
+        "position": 10.3
+      },
+      {
+        "date": "2026-04-12",
+        "clicks": 21,
+        "impressions": 593,
+        "ctr": 3.54,
+        "position": 10.3
+      },
+      {
+        "date": "2026-04-13",
+        "clicks": 24,
+        "impressions": 714,
+        "ctr": 3.36,
+        "position": 10.7
+      },
+      {
+        "date": "2026-04-14",
+        "clicks": 23,
+        "impressions": 679,
+        "ctr": 3.39,
+        "position": 10.4
+      },
+      {
+        "date": "2026-04-15",
+        "clicks": 24,
+        "impressions": 669,
+        "ctr": 3.59,
+        "position": 10.8
+      },
+      {
+        "date": "2026-04-16",
+        "clicks": 21,
+        "impressions": 588,
+        "ctr": 3.57,
+        "position": 10.9
+      },
+      {
+        "date": "2026-04-17",
+        "clicks": 19,
+        "impressions": 540,
+        "ctr": 3.52,
+        "position": 10.2
+      },
+      {
+        "date": "2026-04-18",
+        "clicks": 18,
+        "impressions": 517,
+        "ctr": 3.48,
+        "position": 10.7
+      },
+      {
+        "date": "2026-04-19",
+        "clicks": 20,
+        "impressions": 571,
+        "ctr": 3.5,
+        "position": 10.5
+      },
+      {
+        "date": "2026-04-20",
+        "clicks": 22,
+        "impressions": 617,
+        "ctr": 3.57,
+        "position": 10.4
+      },
+      {
+        "date": "2026-04-21",
+        "clicks": 25,
+        "impressions": 742,
+        "ctr": 3.37,
+        "position": 10.8
+      },
+      {
+        "date": "2026-04-22",
+        "clicks": 23,
+        "impressions": 648,
+        "ctr": 3.55,
+        "position": 10.5
+      },
+      {
+        "date": "2026-04-23",
+        "clicks": 21,
+        "impressions": 591,
+        "ctr": 3.55,
+        "position": 10.6
+      },
+      {
+        "date": "2026-04-24",
+        "clicks": 20,
+        "impressions": 576,
+        "ctr": 3.47,
+        "position": 10.4
+      },
+      {
+        "date": "2026-04-25",
+        "clicks": 17,
+        "impressions": 505,
+        "ctr": 3.37,
+        "position": 10.7
+      },
+      {
+        "date": "2026-04-26",
+        "clicks": 21,
+        "impressions": 582,
+        "ctr": 3.61,
+        "position": 10.4
+      },
+      {
+        "date": "2026-04-27",
+        "clicks": 23,
+        "impressions": 681,
+        "ctr": 3.38,
+        "position": 10.5
+      },
+      {
+        "date": "2026-04-28",
+        "clicks": 23,
+        "impressions": 681,
+        "ctr": 3.38,
+        "position": 10.4
+      },
+      {
+        "date": "2026-04-29",
+        "clicks": 22,
+        "impressions": 657,
+        "ctr": 3.35,
+        "position": 10.1
+      },
+      {
+        "date": "2026-04-30",
+        "clicks": 21,
+        "impressions": 591,
+        "ctr": 3.55,
+        "position": 10.6
+      },
+      {
+        "date": "2026-05-01",
+        "clicks": 19,
+        "impressions": 550,
+        "ctr": 3.45,
+        "position": 10.7
+      },
+      {
+        "date": "2026-05-02",
+        "clicks": 18,
+        "impressions": 515,
+        "ctr": 3.5,
+        "position": 10.1
+      },
+      {
+        "date": "2026-05-03",
+        "clicks": 21,
+        "impressions": 626,
+        "ctr": 3.35,
+        "position": 10.5
+      },
+      {
+        "date": "2026-05-04",
+        "clicks": 25,
+        "impressions": 739,
+        "ctr": 3.38,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-05",
+        "clicks": 24,
+        "impressions": 689,
+        "ctr": 3.48,
+        "position": 10.5
+      },
+      {
+        "date": "2026-05-06",
+        "clicks": 23,
+        "impressions": 655,
+        "ctr": 3.51,
+        "position": 10.1
+      },
+      {
+        "date": "2026-05-07",
+        "clicks": 22,
+        "impressions": 654,
+        "ctr": 3.36,
+        "position": 10.4
+      },
+      {
+        "date": "2026-05-08",
+        "clicks": 21,
+        "impressions": 585,
+        "ctr": 3.59,
+        "position": 10.6
+      },
+      {
+        "date": "2026-05-09",
+        "clicks": 19,
+        "impressions": 534,
+        "ctr": 3.56,
+        "position": 10.4
+      },
+      {
+        "date": "2026-05-10",
+        "clicks": 22,
+        "impressions": 614,
+        "ctr": 3.58,
+        "position": 10.4
+      },
+      {
+        "date": "2026-05-11",
+        "clicks": 25,
+        "impressions": 748,
+        "ctr": 3.34,
+        "position": 10.5
+      },
+      {
+        "date": "2026-05-12",
+        "clicks": 23,
+        "impressions": 667,
+        "ctr": 3.45,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-13",
+        "clicks": 24,
+        "impressions": 674,
+        "ctr": 3.56,
+        "position": 10.2
+      },
+      {
+        "date": "2026-05-14",
+        "clicks": 23,
+        "impressions": 670,
+        "ctr": 3.43,
+        "position": 10.5
+      },
+      {
+        "date": "2026-05-15",
+        "clicks": 21,
+        "impressions": 590,
+        "ctr": 3.56,
+        "position": 10
+      },
+      {
+        "date": "2026-05-16",
+        "clicks": 19,
+        "impressions": 544,
+        "ctr": 3.49,
+        "position": 10.1
+      },
+      {
+        "date": "2026-05-17",
+        "clicks": 22,
+        "impressions": 650,
+        "ctr": 3.38,
+        "position": 10.7
+      },
+      {
+        "date": "2026-05-18",
+        "clicks": 24,
+        "impressions": 692,
+        "ctr": 3.47,
+        "position": 10
+      },
+      {
+        "date": "2026-05-19",
+        "clicks": 23,
+        "impressions": 639,
+        "ctr": 3.6,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-20",
+        "clicks": 25,
+        "impressions": 740,
+        "ctr": 3.38,
+        "position": 10.1
+      },
+      {
+        "date": "2026-05-21",
+        "clicks": 22,
+        "impressions": 628,
+        "ctr": 3.5,
+        "position": 10.5
+      },
+      {
+        "date": "2026-05-22",
+        "clicks": 20,
+        "impressions": 557,
+        "ctr": 3.59,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-23",
+        "clicks": 18,
+        "impressions": 528,
+        "ctr": 3.41,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-24",
+        "clicks": 21,
+        "impressions": 589,
+        "ctr": 3.57,
+        "position": 10.1
+      },
+      {
+        "date": "2026-05-25",
+        "clicks": 24,
+        "impressions": 716,
+        "ctr": 3.35,
+        "position": 10.3
+      },
+      {
+        "date": "2026-05-26",
+        "clicks": 24,
+        "impressions": 673,
+        "ctr": 3.57,
+        "position": 10
+      },
+      {
+        "date": "2026-05-27",
+        "clicks": 25,
+        "impressions": 739,
+        "ctr": 3.38,
+        "position": 10.2
+      },
+      {
+        "date": "2026-05-28",
+        "clicks": 23,
+        "impressions": 673,
+        "ctr": 3.42,
+        "position": 10.4
+      },
+      {
+        "date": "2026-05-29",
+        "clicks": 20,
+        "impressions": 570,
+        "ctr": 3.51,
+        "position": 10
+      },
+      {
+        "date": "2026-05-30",
+        "clicks": 18,
+        "impressions": 506,
+        "ctr": 3.56,
+        "position": 10.2
+      },
+      {
+        "date": "2026-05-31",
+        "clicks": 22,
+        "impressions": 611,
+        "ctr": 3.6,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-01",
+        "clicks": 24,
+        "impressions": 712,
+        "ctr": 3.37,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-02",
+        "clicks": 25,
+        "impressions": 744,
+        "ctr": 3.36,
+        "position": 10
+      },
+      {
+        "date": "2026-06-03",
+        "clicks": 22,
+        "impressions": 630,
+        "ctr": 3.49,
+        "position": 10
+      },
+      {
+        "date": "2026-06-04",
+        "clicks": 24,
+        "impressions": 686,
+        "ctr": 3.5,
+        "position": 10
+      },
+      {
+        "date": "2026-06-05",
+        "clicks": 20,
+        "impressions": 560,
+        "ctr": 3.57,
+        "position": 10
+      },
+      {
+        "date": "2026-06-06",
+        "clicks": 19,
+        "impressions": 552,
+        "ctr": 3.44,
+        "position": 10
+      },
+      {
+        "date": "2026-06-07",
+        "clicks": 21,
+        "impressions": 591,
+        "ctr": 3.55,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-08",
+        "clicks": 24,
+        "impressions": 682,
+        "ctr": 3.52,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-09",
+        "clicks": 25,
+        "impressions": 706,
+        "ctr": 3.54,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-10",
+        "clicks": 25,
+        "impressions": 708,
+        "ctr": 3.53,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-11",
+        "clicks": 23,
+        "impressions": 684,
+        "ctr": 3.36,
+        "position": 9.9
+      },
+      {
+        "date": "2026-06-12",
+        "clicks": 21,
+        "impressions": 587,
+        "ctr": 3.58,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-13",
+        "clicks": 19,
+        "impressions": 529,
+        "ctr": 3.59,
+        "position": 10
+      },
+      {
+        "date": "2026-06-14",
+        "clicks": 23,
+        "impressions": 650,
+        "ctr": 3.54,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-15",
+        "clicks": 24,
+        "impressions": 703,
+        "ctr": 3.41,
+        "position": 10.5
+      },
+      {
+        "date": "2026-06-16",
+        "clicks": 26,
+        "impressions": 767,
+        "ctr": 3.39,
+        "position": 10.2
+      },
+      {
+        "date": "2026-06-17",
+        "clicks": 23,
+        "impressions": 643,
+        "ctr": 3.58,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-18",
+        "clicks": 24,
+        "impressions": 700,
+        "ctr": 3.43,
+        "position": 9.9
+      },
+      {
+        "date": "2026-06-19",
+        "clicks": 21,
+        "impressions": 590,
+        "ctr": 3.56,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-20",
+        "clicks": 19,
+        "impressions": 533,
+        "ctr": 3.56,
+        "position": 9.9
+      },
+      {
+        "date": "2026-06-21",
+        "clicks": 21,
+        "impressions": 600,
+        "ctr": 3.5,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-22",
+        "clicks": 23,
+        "impressions": 674,
+        "ctr": 3.41,
+        "position": 10.3
+      },
+      {
+        "date": "2026-06-23",
+        "clicks": 24,
+        "impressions": 665,
+        "ctr": 3.61,
+        "position": 10.2
+      },
+      {
+        "date": "2026-06-24",
+        "clicks": 23,
+        "impressions": 651,
+        "ctr": 3.53,
+        "position": 10.1
+      },
+      {
+        "date": "2026-06-25",
+        "clicks": 23,
+        "impressions": 653,
+        "ctr": 3.52,
+        "position": 10.2
+      },
+      {
+        "date": "2026-06-26",
+        "clicks": 22,
+        "impressions": 623,
+        "ctr": 3.53,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-27",
+        "clicks": 20,
+        "impressions": 594,
+        "ctr": 3.37,
+        "position": 9.9
+      },
+      {
+        "date": "2026-06-28",
+        "clicks": 23,
+        "impressions": 653,
+        "ctr": 3.52,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-29",
+        "clicks": 24,
+        "impressions": 711,
+        "ctr": 3.38,
+        "position": 10.4
+      },
+      {
+        "date": "2026-06-30",
+        "clicks": 26,
+        "impressions": 713,
+        "ctr": 3.65,
+        "position": 9.8
+      }
+    ],
+    "queries": [
+      {
+        "key": "maison lumen",
+        "clicks": 310,
+        "impressions": 2900,
+        "ctr": 10.69,
+        "position": 1,
+        "prev_clicks": 270,
+        "prev_impressions": 2600,
+        "prev_position": 1.1
+      },
+      {
+        "key": "luminaire salon",
+        "clicks": 96,
+        "impressions": 4100,
+        "ctr": 2.34,
+        "position": 4.8,
+        "prev_clicks": 81,
+        "prev_impressions": 3900,
+        "prev_position": 5.6
+      },
+      {
+        "key": "suspension rotin",
+        "clicks": 88,
+        "impressions": 2300,
+        "ctr": 3.83,
+        "position": 2.4,
+        "prev_clicks": 52,
+        "prev_impressions": 1700,
+        "prev_position": 3.9
+      },
+      {
+        "key": "lampadaire arc",
+        "clicks": 61,
+        "impressions": 1500,
+        "ctr": 4.07,
+        "position": 3.6,
+        "prev_clicks": 58,
+        "prev_impressions": 1500,
+        "prev_position": 3.8
+      },
+      {
+        "key": "applique murale design",
+        "clicks": 54,
+        "impressions": 1900,
+        "ctr": 2.84,
+        "position": 4.6,
+        "prev_clicks": 40,
+        "prev_impressions": 1650,
+        "prev_position": 5.3
+      },
+      {
+        "key": "lampe de chevet tactile",
+        "clicks": 47,
+        "impressions": 1350,
+        "ctr": 3.48,
+        "position": 3.4,
+        "prev_clicks": 22,
+        "prev_impressions": 900,
+        "prev_position": 6
+      },
+      {
+        "key": "ampoule filament e27",
+        "clicks": 39,
+        "impressions": 3300,
+        "ctr": 1.18,
+        "position": 8.6,
+        "prev_clicks": 44,
+        "prev_impressions": 3200,
+        "prev_position": 8.1
+      },
+      {
+        "key": "suspension cuisine",
+        "clicks": 35,
+        "impressions": 1700,
+        "ctr": 2.06,
+        "position": 6.1,
+        "prev_clicks": 21,
+        "prev_impressions": 1400,
+        "prev_position": 9.8
+      },
+      {
+        "key": "plafonnier chambre",
+        "clicks": 28,
+        "impressions": 1600,
+        "ctr": 1.75,
+        "position": 8.2,
+        "prev_clicks": 26,
+        "prev_impressions": 1550,
+        "prev_position": 8.9
+      },
+      {
+        "key": "lampe de bureau vintage",
+        "clicks": 24,
+        "impressions": 950,
+        "ctr": 2.53,
+        "position": 6.9,
+        "prev_clicks": 29,
+        "prev_impressions": 1000,
+        "prev_position": 5.8
+      },
+      {
+        "key": "luminaire extérieur",
+        "clicks": 19,
+        "impressions": 1450,
+        "ctr": 1.31,
+        "position": 9.7,
+        "prev_clicks": 11,
+        "prev_impressions": 1050,
+        "prev_position": 13.5
+      },
+      {
+        "key": "variateur lumière",
+        "clicks": 12,
+        "impressions": 1150,
+        "ctr": 1.04,
+        "position": 13.1,
+        "prev_clicks": 13,
+        "prev_impressions": 1100,
+        "prev_position": 12.6
+      }
+    ],
+    "pages": [
+      {
+        "key": "https://www.maison-lumen.fr/",
+        "clicks": 420,
+        "impressions": 5200,
+        "ctr": 8.08,
+        "position": 1.5,
+        "prev_clicks": 365,
+        "prev_impressions": 4700,
+        "prev_position": 1.7
+      },
+      {
+        "key": "https://www.maison-lumen.fr/luminaires/salon",
+        "clicks": 150,
+        "impressions": 6900,
+        "ctr": 2.17,
+        "position": 5.6,
+        "prev_clicks": 121,
+        "prev_impressions": 6400,
+        "prev_position": 6.4
+      },
+      {
+        "key": "https://www.maison-lumen.fr/suspensions/rotin",
+        "clicks": 131,
+        "impressions": 3900,
+        "ctr": 3.36,
+        "position": 3.1,
+        "prev_clicks": 80,
+        "prev_impressions": 2900,
+        "prev_position": 4.7
+      },
+      {
+        "key": "https://www.maison-lumen.fr/lampadaires",
+        "clicks": 92,
+        "impressions": 2600,
+        "ctr": 3.54,
+        "position": 4.1,
+        "prev_clicks": 85,
+        "prev_impressions": 2550,
+        "prev_position": 4.4
+      },
+      {
+        "key": "https://www.maison-lumen.fr/appliques-murales",
+        "clicks": 84,
+        "impressions": 3100,
+        "ctr": 2.71,
+        "position": 5,
+        "prev_clicks": 63,
+        "prev_impressions": 2700,
+        "prev_position": 5.9
+      },
+      {
+        "key": "https://www.maison-lumen.fr/lampes-a-poser/chevet-tactile",
+        "clicks": 71,
+        "impressions": 2200,
+        "ctr": 3.23,
+        "position": 3.7,
+        "prev_clicks": 34,
+        "prev_impressions": 1500,
+        "prev_position": 6.3
+      },
+      {
+        "key": "https://www.maison-lumen.fr/blog/comment-choisir-une-suspension",
+        "clicks": 66,
+        "impressions": 3600,
+        "ctr": 1.83,
+        "position": 3.9,
+        "prev_clicks": 18,
+        "prev_impressions": 1300,
+        "prev_position": 8.4
+      },
+      {
+        "key": "https://www.maison-lumen.fr/ampoules/filament",
+        "clicks": 58,
+        "impressions": 5100,
+        "ctr": 1.14,
+        "position": 8.9,
+        "prev_clicks": 63,
+        "prev_impressions": 4900,
+        "prev_position": 8.4
+      }
+    ],
+    "ai_performance": {
+      "citations": {
+        "current": 2482,
+        "previous": 1210
+      },
+      "cited_pages": {
+        "current": 7.6,
+        "previous": 4.9
+      },
+      "daily": [
+        {
+          "date": "2026-07-01",
+          "citations": 18,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-07-02",
+          "citations": 19,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-07-03",
+          "citations": 20,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-04",
+          "citations": 18,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-05",
+          "citations": 20,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-07-06",
+          "citations": 24,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-07",
+          "citations": 24,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-07-08",
+          "citations": 20,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-09",
+          "citations": 20,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-10",
+          "citations": 16,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-11",
+          "citations": 15,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-12",
+          "citations": 18,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-13",
+          "citations": 24,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-14",
+          "citations": 24,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-15",
+          "citations": 21,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-16",
+          "citations": 21,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-17",
+          "citations": 21,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-18",
+          "citations": 19,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-07-19",
+          "citations": 19,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-20",
+          "citations": 26,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-21",
+          "citations": 27,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-22",
+          "citations": 28,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-07-23",
+          "citations": 26,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-07-24",
+          "citations": 23,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-25",
+          "citations": 17,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-07-26",
+          "citations": 25,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-27",
+          "citations": 27,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-28",
+          "citations": 25,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-29",
+          "citations": 23,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-07-30",
+          "citations": 26,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-07-31",
+          "citations": 22,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-08-01",
+          "citations": 22,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-02",
+          "citations": 22,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-03",
+          "citations": 26,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-08-04",
+          "citations": 25,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-05",
+          "citations": 28,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-06",
+          "citations": 25,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-08-07",
+          "citations": 24,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-08",
+          "citations": 20,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-09",
+          "citations": 29,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-10",
+          "citations": 31,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-11",
+          "citations": 26,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-12",
+          "citations": 33,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-13",
+          "citations": 24,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-14",
+          "citations": 25,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-15",
+          "citations": 24,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-16",
+          "citations": 26,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-17",
+          "citations": 31,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-18",
+          "citations": 29,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-19",
+          "citations": 33,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-20",
+          "citations": 28,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-21",
+          "citations": 27,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-22",
+          "citations": 24,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-23",
+          "citations": 27,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-08-24",
+          "citations": 30,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-25",
+          "citations": 37,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-08-26",
+          "citations": 32,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-27",
+          "citations": 34,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-08-28",
+          "citations": 29,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-29",
+          "citations": 25,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-30",
+          "citations": 25,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-08-31",
+          "citations": 34,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-01",
+          "citations": 35,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-02",
+          "citations": 35,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-03",
+          "citations": 30,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-04",
+          "citations": 30,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-05",
+          "citations": 26,
+          "cited_pages": 10
+        },
+        {
+          "date": "2026-09-06",
+          "citations": 31,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-07",
+          "citations": 30,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-08",
+          "citations": 37,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-09",
+          "citations": 32,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-10",
+          "citations": 35,
+          "cited_pages": 10
+        },
+        {
+          "date": "2026-09-11",
+          "citations": 35,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-12",
+          "citations": 30,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-13",
+          "citations": 31,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-14",
+          "citations": 33,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-15",
+          "citations": 38,
+          "cited_pages": 10
+        },
+        {
+          "date": "2026-09-16",
+          "citations": 32,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-17",
+          "citations": 36,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-09-18",
+          "citations": 33,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-19",
+          "citations": 30,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-20",
+          "citations": 35,
+          "cited_pages": 8
+        },
+        {
+          "date": "2026-09-21",
+          "citations": 43,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-22",
+          "citations": 35,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-23",
+          "citations": 32,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-09-24",
+          "citations": 38,
+          "cited_pages": 10
+        },
+        {
+          "date": "2026-09-25",
+          "citations": 37,
+          "cited_pages": 10
+        },
+        {
+          "date": "2026-09-26",
+          "citations": 32,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-27",
+          "citations": 39,
+          "cited_pages": 9
+        },
+        {
+          "date": "2026-09-28",
+          "citations": 41,
+          "cited_pages": 10
+        }
+      ],
+      "previous_daily": [
+        {
+          "date": "2026-04-02",
+          "citations": 10,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-03",
+          "citations": 9,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-04",
+          "citations": 8,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-05",
+          "citations": 10,
+          "cited_pages": 3
+        },
+        {
+          "date": "2026-04-06",
+          "citations": 10,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-07",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-08",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-09",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-10",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-11",
+          "citations": 9,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-12",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-13",
+          "citations": 12,
+          "cited_pages": 3
+        },
+        {
+          "date": "2026-04-14",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-15",
+          "citations": 13,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-16",
+          "citations": 10,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-17",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-18",
+          "citations": 10,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-19",
+          "citations": 13,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-20",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-21",
+          "citations": 11,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-22",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-23",
+          "citations": 13,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-24",
+          "citations": 10,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-25",
+          "citations": 10,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-26",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-04-27",
+          "citations": 12,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-28",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-04-29",
+          "citations": 12,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-04-30",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-01",
+          "citations": 12,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-02",
+          "citations": 10,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-03",
+          "citations": 12,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-04",
+          "citations": 15,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-05",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-06",
+          "citations": 13,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-07",
+          "citations": 14,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-08",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-09",
+          "citations": 11,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-10",
+          "citations": 11,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-11",
+          "citations": 15,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-12",
+          "citations": 16,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-13",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-14",
+          "citations": 12,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-15",
+          "citations": 12,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-05-16",
+          "citations": 10,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-17",
+          "citations": 13,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-18",
+          "citations": 15,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-19",
+          "citations": 16,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-20",
+          "citations": 16,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-21",
+          "citations": 15,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-05-22",
+          "citations": 11,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-23",
+          "citations": 11,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-05-24",
+          "citations": 13,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-25",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-26",
+          "citations": 15,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-27",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-28",
+          "citations": 15,
+          "cited_pages": 4
+        },
+        {
+          "date": "2026-05-29",
+          "citations": 12,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-30",
+          "citations": 13,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-05-31",
+          "citations": 13,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-01",
+          "citations": 17,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-02",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-03",
+          "citations": 15,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-04",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-05",
+          "citations": 15,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-06",
+          "citations": 11,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-07",
+          "citations": 13,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-08",
+          "citations": 18,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-09",
+          "citations": 17,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-10",
+          "citations": 17,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-11",
+          "citations": 18,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-12",
+          "citations": 16,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-13",
+          "citations": 11,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-14",
+          "citations": 13,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-15",
+          "citations": 15,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-16",
+          "citations": 17,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-17",
+          "citations": 19,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-06-18",
+          "citations": 15,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-19",
+          "citations": 16,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-20",
+          "citations": 14,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-21",
+          "citations": 16,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-22",
+          "citations": 18,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-23",
+          "citations": 18,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-24",
+          "citations": 17,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-25",
+          "citations": 17,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-26",
+          "citations": 16,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-27",
+          "citations": 16,
+          "cited_pages": 7
+        },
+        {
+          "date": "2026-06-28",
+          "citations": 19,
+          "cited_pages": 6
+        },
+        {
+          "date": "2026-06-29",
+          "citations": 19,
+          "cited_pages": 5
+        },
+        {
+          "date": "2026-06-30",
+          "citations": 18,
+          "cited_pages": 6
+        }
+      ],
+      "grounding_queries": [
+        {
+          "query": "comment choisir une suspension pour salon",
+          "citations": 412,
+          "prev_citations": 198,
+          "citation_share": 21.4,
+          "cited_pages": 1.6,
+          "intent": "Informational",
+          "topic": "Lighting"
+        },
+        {
+          "query": "meilleure lampe de chevet tactile 2026",
+          "citations": 286,
+          "prev_citations": 120,
+          "citation_share": 14.8,
+          "cited_pages": 1.2,
+          "intent": "Comparison",
+          "topic": "Lighting"
+        },
+        {
+          "query": "température de couleur idéale chambre",
+          "citations": 241,
+          "prev_citations": 150,
+          "citation_share": 17.9,
+          "cited_pages": 1.1,
+          "intent": "Informational",
+          "topic": "Lighting"
+        },
+        {
+          "query": "suspension rotin grande taille",
+          "citations": 198,
+          "prev_citations": 88,
+          "citation_share": 12.5,
+          "cited_pages": 1.3,
+          "intent": "Commercial",
+          "topic": "Home decor"
+        },
+        {
+          "query": "hauteur suspension au-dessus table à manger",
+          "citations": 176,
+          "prev_citations": 131,
+          "citation_share": 19.2,
+          "cited_pages": 1,
+          "intent": "Informational",
+          "topic": "Home decor"
+        },
+        {
+          "query": "ampoule filament e27 consommation",
+          "citations": 121,
+          "prev_citations": 140,
+          "citation_share": 8.3,
+          "cited_pages": 1,
+          "intent": "Informational",
+          "topic": "Lighting"
+        },
+        {
+          "query": "lampadaire arc ou lampadaire droit",
+          "citations": 98,
+          "prev_citations": 47,
+          "citation_share": 11,
+          "cited_pages": 1,
+          "intent": "Comparison",
+          "topic": "Home decor"
+        },
+        {
+          "query": "maison lumen avis livraison",
+          "citations": 87,
+          "prev_citations": 61,
+          "citation_share": 46.5,
+          "cited_pages": 1.4,
+          "intent": "Navigational",
+          "topic": "Customer reviews"
+        },
+        {
+          "query": "luminaire extérieur ip65",
+          "citations": 64,
+          "prev_citations": 22,
+          "citation_share": 6.9,
+          "cited_pages": 1,
+          "intent": "Commercial",
+          "topic": "Lighting"
+        },
+        {
+          "query": "applique murale sans fil rechargeable",
+          "citations": 52,
+          "prev_citations": 40,
+          "citation_share": 5.8,
+          "cited_pages": 1,
+          "intent": "Commercial",
+          "topic": "Home decor"
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://www.maison-lumen.fr/blog/comment-choisir-une-suspension",
+          "citations": 690,
+          "prev_citations": 301
+        },
+        {
+          "url": "https://www.maison-lumen.fr/blog/guide-temperature-couleur",
+          "citations": 452,
+          "prev_citations": 270
+        },
+        {
+          "url": "https://www.maison-lumen.fr/lampes-a-poser/chevet-tactile",
+          "citations": 318,
+          "prev_citations": 128
+        },
+        {
+          "url": "https://www.maison-lumen.fr/suspensions/rotin",
+          "citations": 247,
+          "prev_citations": 119
+        },
+        {
+          "url": "https://www.maison-lumen.fr/pages/livraison-retours",
+          "citations": 168,
+          "prev_citations": 122
+        },
+        {
+          "url": "https://www.maison-lumen.fr/lampadaires",
+          "citations": 112,
+          "prev_citations": 58
+        },
+        {
+          "url": "https://www.maison-lumen.fr/ampoules/filament",
+          "citations": 96,
+          "prev_citations": 110
+        }
+      ]
+    }
+  },
   "analytics": {
     "totals": {
       "sessions": {

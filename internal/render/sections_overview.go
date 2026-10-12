@@ -81,23 +81,30 @@ func (b *builder) gscKPIs() []kpiCard {
 	if sc == nil {
 		return nil
 	}
-	t := sc.Totals
-	if t.Clicks.Current == 0 && t.Impressions.Current == 0 && len(sc.Daily) == 0 {
+	return b.searchKPIs("gsc.", "", sc.Totals, sc.Daily)
+}
+
+// searchKPIs builds the clicks / impressions / CTR / position cards of a
+// search engine. Keys are keyPrefix + metric (gsc.clicks) and labels come
+// from kpi.<labelPrefix><metric>.label.
+func (b *builder) searchKPIs(keyPrefix, labelPrefix string, t model.GSCTotals, daily []model.GSCDailyPoint) []kpiCard {
+	if t.Clicks.Current == 0 && t.Impressions.Current == 0 && len(daily) == 0 {
 		return nil
 	}
+	dates := gscDates(daily)
 	cards := []kpiCard{
-		b.withSpark(b.card("gsc.clicks", "clicks", b.num(t.Clicks.Current), &t.Clicks, b.num, b.deltaRel(t.Clicks, false, b.num)),
-			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Clicks }), false, b.num),
-		b.withSpark(b.card("gsc.impressions", "impressions", b.num(t.Impressions.Current), &t.Impressions, b.num, b.deltaRel(t.Impressions, false, b.num)),
-			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Impressions }), false, b.num),
+		b.withSpark(b.card(keyPrefix+"clicks", labelPrefix+"clicks", b.num(t.Clicks.Current), &t.Clicks, b.num, b.deltaRel(t.Clicks, false, b.num)),
+			dates, gscSeries(daily, func(p model.GSCDailyPoint) float64 { return p.Clicks }), false, b.num),
+		b.withSpark(b.card(keyPrefix+"impressions", labelPrefix+"impressions", b.num(t.Impressions.Current), &t.Impressions, b.num, b.deltaRel(t.Impressions, false, b.num)),
+			dates, gscSeries(daily, func(p model.GSCDailyPoint) float64 { return p.Impressions }), false, b.num),
 	}
 	if t.CTR != nil {
-		cards = append(cards, b.withSpark(b.card("gsc.ctr", "ctr", i18nPct2(b, t.CTR.Current), t.CTR, func(v float64) string { return i18nPct2(b, v) }, b.deltaPts(*t.CTR)),
-			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.CTR }), false, func(v float64) string { return i18nPct2(b, v) }))
+		cards = append(cards, b.withSpark(b.card(keyPrefix+"ctr", labelPrefix+"ctr", i18nPct2(b, t.CTR.Current), t.CTR, func(v float64) string { return i18nPct2(b, v) }, b.deltaPts(*t.CTR)),
+			dates, gscSeries(daily, func(p model.GSCDailyPoint) float64 { return p.CTR }), false, func(v float64) string { return i18nPct2(b, v) }))
 	}
 	if t.Position != nil && t.Position.Current > 0 {
-		cards = append(cards, b.withSpark(b.card("gsc.position", "position", b.pos(t.Position.Current), t.Position, b.pos, b.deltaPosition(*t.Position)),
-			gscDates(sc.Daily), gscSeries(sc.Daily, func(p model.GSCDailyPoint) float64 { return p.Position }), true, b.pos))
+		cards = append(cards, b.withSpark(b.card(keyPrefix+"position", labelPrefix+"position", b.pos(t.Position.Current), t.Position, b.pos, b.deltaPosition(*t.Position)),
+			dates, gscSeries(daily, func(p model.GSCDailyPoint) float64 { return p.Position }), true, b.pos))
 	}
 	return cards
 }
@@ -187,6 +194,16 @@ func (b *builder) geoKPIs() []kpiCard {
 	return cards
 }
 
+// allKPIs returns every KPI card: Google, website traffic, AI, then Bing
+// (last, so that it only fills free slots of the key indicators).
+func (b *builder) allKPIs() []kpiCard {
+	var all []kpiCard
+	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs()} {
+		all = append(all, cards...)
+	}
+	return all
+}
+
 // ---------------------------------------------------------------------------
 // Summary ("At a glance")
 
@@ -211,7 +228,7 @@ func (b *builder) summary() *section {
 	// Hero band: gauge + verdict + headline numbers.
 	h := &hero{Period: b.periodLine()}
 	all := map[string]kpiCard{}
-	for _, c := range append(append(b.gscKPIs(), b.ga4KPIs()...), b.geoKPIs()...) {
+	for _, c := range b.allKPIs() {
 		all[c.Key] = c
 	}
 	// The headline numbers duplicate the KPI cards that follow; they are only
@@ -265,7 +282,7 @@ func (b *builder) summary() *section {
 		s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Title: b.t("insights.title"), Sub: b.t("insights.auto"), Callouts: cs})
 	}
 	if len(s.Blocks) == 0 {
-		if b.r.SearchConsole == nil && b.r.Analytics == nil && b.r.GEO == nil {
+		if b.r.SearchConsole == nil && b.r.Bing == nil && b.r.Analytics == nil && b.r.GEO == nil {
 			s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Callouts: []callout{{Tone: "info", Icon: icoInfo, Title: b.t("empty.title"), Text: b.t("empty.text")}}})
 			return s
 		}
@@ -332,7 +349,7 @@ func (b *builder) kpis() *section {
 	s := &section{ID: "kpis"}
 	all := map[string]kpiCard{}
 	var order []string
-	for _, c := range append(append(b.gscKPIs(), b.ga4KPIs()...), b.geoKPIs()...) {
+	for _, c := range b.allKPIs() {
 		all[c.Key] = c
 		order = append(order, c.Key)
 	}

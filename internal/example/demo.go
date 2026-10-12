@@ -24,6 +24,7 @@ const (
 	prevEnd   = "2026-06-30"
 
 	seed1, seed2 = 2026, 0x4c756d656e // "Lumen"
+	seedBing     = 0x42696e67         // "Bing": its own stream keeps the other demo data unchanged
 )
 
 func demo(lang string) *model.Report {
@@ -35,6 +36,7 @@ func demo(lang string) *model.Report {
 	r := &model.Report{
 		Meta:          meta(lang),
 		SearchConsole: sc,
+		Bing:          bing(lang),
 		Analytics:     ga,
 		GEO:           geo(lang, ga),
 	}
@@ -347,6 +349,105 @@ func searchConsole(rng *rand.Rand, lang string) *model.SearchConsole {
 		Desktop: &model.CWVStatus{Good: 1640, NeedsImprovement: 150, Poor: 50},
 	}
 	return sc
+}
+
+// ---------------------------------------------------------------------------
+// Bing Webmaster Tools
+
+var demoBingQueries = []queryData{
+	{"maison lumen", 310, 270, 2900, 2600, 1.0, 1.1},
+	{"luminaire salon", 96, 81, 4100, 3900, 4.8, 5.6},
+	{"suspension rotin", 88, 52, 2300, 1700, 2.4, 3.9},
+	{"lampadaire arc", 61, 58, 1500, 1500, 3.6, 3.8},
+	{"applique murale design", 54, 40, 1900, 1650, 4.6, 5.3},
+	{"lampe de chevet tactile", 47, 22, 1350, 900, 3.4, 6.0},
+	{"ampoule filament e27", 39, 44, 3300, 3200, 8.6, 8.1},
+	{"suspension cuisine", 35, 21, 1700, 1400, 6.1, 9.8},
+	{"plafonnier chambre", 28, 26, 1600, 1550, 8.2, 8.9},
+	{"lampe de bureau vintage", 24, 29, 950, 1000, 6.9, 5.8},
+	{"luminaire extérieur", 19, 11, 1450, 1050, 9.7, 13.5},
+	{"variateur lumière", 12, 13, 1150, 1100, 13.1, 12.6},
+}
+
+var demoBingPages = []queryData{
+	{SiteURL + "/", 420, 365, 5200, 4700, 1.5, 1.7},
+	{SiteURL + "/luminaires/salon", 150, 121, 6900, 6400, 5.6, 6.4},
+	{SiteURL + "/suspensions/rotin", 131, 80, 3900, 2900, 3.1, 4.7},
+	{SiteURL + "/lampadaires", 92, 85, 2600, 2550, 4.1, 4.4},
+	{SiteURL + "/appliques-murales", 84, 63, 3100, 2700, 5.0, 5.9},
+	{SiteURL + "/lampes-a-poser/chevet-tactile", 71, 34, 2200, 1500, 3.7, 6.3},
+	{SiteURL + "/blog/comment-choisir-une-suspension", 66, 18, 3600, 1300, 3.9, 8.4},
+	{SiteURL + "/ampoules/filament", 58, 63, 5100, 4900, 8.9, 8.4},
+}
+
+func bing(lang string) *model.Bing {
+	rng := rand.New(rand.NewPCG(seed1, seedBing))
+	daily := gscSeries(rng, seriesSpec{curStart, 24, 31, 3.55, 3.85, 9.8, 8.9})
+	prevDaily := gscSeries(rng, seriesSpec{prevStart, 21, 23, 3.45, 3.50, 10.6, 10.1})
+	c, im, ctr, pos := gscTotals(daily)
+	pc, pim, pctr, ppos := gscTotals(prevDaily)
+
+	// AI Performance: citations in Copilot and Bing AI answers. Data starts
+	// in November 2025, so the comparison period exists.
+	var aiDaily, aiPrev []model.BingAIDailyPoint
+	var cit, pcit, pages, ppages float64
+	for i, d := range days(curStart, periodDay) {
+		t := float64(i) / float64(periodDay-1)
+		n := math.Round(lerp(19, 36, t) * weekly[d.Weekday()] * (1 + noise(rng, 0.15)))
+		p := math.Max(1, math.Round(lerp(6, 9, t)*(1+noise(rng, 0.2))))
+		aiDaily = append(aiDaily, model.BingAIDailyPoint{Date: d.Format("2006-01-02"), Citations: n, CitedPages: p})
+		cit, pages = cit+n, pages+p
+	}
+	for i, d := range days(prevStart, periodDay) {
+		t := float64(i) / float64(periodDay-1)
+		n := math.Round(lerp(10, 17, t) * weekly[d.Weekday()] * (1 + noise(rng, 0.15)))
+		p := math.Max(1, math.Round(lerp(4, 6, t)*(1+noise(rng, 0.2))))
+		aiPrev = append(aiPrev, model.BingAIDailyPoint{Date: d.Format("2006-01-02"), Citations: n, CitedPages: p})
+		pcit, ppages = pcit+n, ppages+p
+	}
+	intent := func(fr, en string) string { return tr(lang, fr, en) }
+	info, comm, comp := intent("Informationnelle", "Informational"), intent("Commerciale", "Commercial"), intent("Comparaison", "Comparison")
+	deco, light := intent("Décoration intérieure", "Home decor"), intent("Éclairage", "Lighting")
+	gq := []model.BingGroundingQuery{
+		{Query: "comment choisir une suspension pour salon", Citations: 412, PrevCitations: f(198), CitationShare: 21.4, CitedPages: 1.6, Intent: info, Topic: light},
+		{Query: "meilleure lampe de chevet tactile 2026", Citations: 286, PrevCitations: f(120), CitationShare: 14.8, CitedPages: 1.2, Intent: comp, Topic: light},
+		{Query: "température de couleur idéale chambre", Citations: 241, PrevCitations: f(150), CitationShare: 17.9, CitedPages: 1.1, Intent: info, Topic: light},
+		{Query: "suspension rotin grande taille", Citations: 198, PrevCitations: f(88), CitationShare: 12.5, CitedPages: 1.3, Intent: comm, Topic: deco},
+		{Query: "hauteur suspension au-dessus table à manger", Citations: 176, PrevCitations: f(131), CitationShare: 19.2, CitedPages: 1.0, Intent: info, Topic: deco},
+		{Query: "ampoule filament e27 consommation", Citations: 121, PrevCitations: f(140), CitationShare: 8.3, CitedPages: 1.0, Intent: info, Topic: light},
+		{Query: "lampadaire arc ou lampadaire droit", Citations: 98, PrevCitations: f(47), CitationShare: 11.0, CitedPages: 1.0, Intent: comp, Topic: deco},
+		{Query: "maison lumen avis livraison", Citations: 87, PrevCitations: f(61), CitationShare: 46.5, CitedPages: 1.4, Intent: intent("Navigationnelle", "Navigational"), Topic: intent("Avis clients", "Customer reviews")},
+		{Query: "luminaire extérieur ip65", Citations: 64, PrevCitations: f(22), CitationShare: 6.9, CitedPages: 1.0, Intent: comm, Topic: light},
+		{Query: "applique murale sans fil rechargeable", Citations: 52, PrevCitations: f(40), CitationShare: 5.8, CitedPages: 1.0, Intent: comm, Topic: deco},
+	}
+	return &model.Bing{
+		Totals: model.GSCTotals{
+			Clicks:      model.M(c, pc),
+			Impressions: model.M(im, pim),
+			CTR:         &model.Metric{Current: ctr, Previous: f(pctr)},
+			Position:    &model.Metric{Current: pos, Previous: f(ppos)},
+		},
+		Daily:         daily,
+		PreviousDaily: prevDaily,
+		Queries:       gscRows(demoBingQueries),
+		Pages:         gscRows(demoBingPages),
+		AIPerformance: &model.BingAIPerformance{
+			Citations:        model.M(cit, pcit),
+			CitedPages:       &model.Metric{Current: round(pages/periodDay, 1), Previous: f(round(ppages/periodDay, 1))},
+			Daily:            aiDaily,
+			PreviousDaily:    aiPrev,
+			GroundingQueries: gq,
+			Pages: []model.BingCitedPage{
+				{URL: SiteURL + "/blog/comment-choisir-une-suspension", Citations: 690, PrevCitations: f(301)},
+				{URL: SiteURL + "/blog/guide-temperature-couleur", Citations: 452, PrevCitations: f(270)},
+				{URL: SiteURL + "/lampes-a-poser/chevet-tactile", Citations: 318, PrevCitations: f(128)},
+				{URL: SiteURL + "/suspensions/rotin", Citations: 247, PrevCitations: f(119)},
+				{URL: SiteURL + "/pages/livraison-retours", Citations: 168, PrevCitations: f(122)},
+				{URL: SiteURL + "/lampadaires", Citations: 112, PrevCitations: f(58)},
+				{URL: SiteURL + "/ampoules/filament", Citations: 96, PrevCitations: f(110)},
+			},
+		},
+	}
 }
 
 // ---------------------------------------------------------------------------
