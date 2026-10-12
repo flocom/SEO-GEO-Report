@@ -29,7 +29,7 @@ docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 | `internal/model` | report data model (JSON + schema tags) |
 | `internal/render`, `internal/charts`, `internal/i18n` | HTML report, SVG charts, translations |
 | `internal/insights` | automatic analysis |
-| `internal/importer` | Search Console / GA4 CSV import |
+| `internal/importer` | Search Console / Bing Webmaster Tools / GA4 CSV import |
 | `internal/mcpserver` | MCP tools, HTTP routes, report hosting |
 | `internal/oauth` | OAuth 2.1 authorization server, URL detection |
 | `internal/store` | file-based report storage |
