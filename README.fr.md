@@ -2,7 +2,7 @@
 
 🇬🇧 [English version](README.md)
 
-Des rapports de visibilité **SEO** (Google Search Console), **trafic** (Google Analytics 4) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
+Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools), **trafic** (Google Analytics 4) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
 
 - Vous exportez vos données (ou vous les collez / faites une capture), Claude les comprend, remplit le rapport et rédige l'analyse.
 - Le serveur produit un **rapport HTML hébergé** (lien partageable), un **fichier HTML autonome** à télécharger et un **PDF** A4.
@@ -134,7 +134,7 @@ ou entièrement en local (stdio, via Docker ou le binaire) :
 >
 > **Claude** : *(create_report → import_search_console_csv × 6 → import_analytics_csv × 2 → set_geo → set_narrative → validate_report → render_report)* Voici votre rapport : lien en ligne, HTML et PDF. Points clés : clics Google +36 %, trafic depuis les IA ×2,6 (ChatGPT en tête), CTR en baisse sur les pages les plus vues…
 
-Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
+Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
 
 **MCP Apps** : sur les hôtes compatibles, `render_report` / `generate_report` affichent le rapport directement dans la conversation (ressource `ui://seogeo/report-viewer.html`). Désactivable avec `MCP_APPS=false` ; les autres hôtes reçoivent simplement les liens.
 
@@ -159,6 +159,7 @@ seogeo render -i data.json -o rapport.pdf   # PDF (Chromium requis)
 seogeo render -i - --lang en < data.json > report.html
 seogeo import-gsc export-gsc.zip -o gsc.json            # zip ou dossier de CSV Search Console
 seogeo import-gsc export-gsc.zip --into data.json -o data.json
+seogeo import-bing exports-bing/ --into data.json -o data.json   # zip, dossier ou un seul CSV Bing Webmaster Tools
 seogeo import-ga4 canaux.csv sources.csv --into data.json -o data.json
 seogeo serve            # serveur HTTP (MCP /mcp, OAuth, hébergement des rapports)
 seogeo mcp              # serveur MCP stdio
@@ -173,6 +174,7 @@ Un rapport est un document JSON (`seogeo schema` pour le schéma complet, `examp
 
 - `meta` : site, période, période de comparaison, langue (`fr`/`en`), auteur, client, logo, couleur, favicon (`favicon_url` : vide = récupéré automatiquement depuis `site_url`, `none` = aucun) ;
 - `search_console` : totaux (clics, impressions, CTR, position), séries quotidiennes, requêtes, pages, pays, appareils, apparence, marque/hors marque, indexation, Core Web Vitals ;
+- `bing` : données Bing Webmaster Tools : totaux, séries quotidiennes, mots-clés et pages (même structure que `search_console`), `ai_performance` (citations dans Copilot, pages citées, requêtes d'ancrage, citations par jour) ;
 - `analytics` : totaux (tous canaux et recherche organique), séries quotidiennes, canaux, sources/supports (les assistants IA y sont détectés automatiquement), pages de destination ;
 - `geo` : trafic venant des IA, tests de citations, part de voix, AI Overviews, robots IA ;
 - `narrative` : synthèse, points forts, points d'attention, actions, recommandations, commentaires par section ;

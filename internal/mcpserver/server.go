@@ -48,7 +48,7 @@ func (s *Service) registerPrompts(srv *mcp.Server) {
 	srv.AddPrompt(&mcp.Prompt{
 		Name:        "create_seo_geo_report",
 		Title:       "Create a SEO & GEO report",
-		Description: "Guided workflow: collect Search Console, GA4 and AI-visibility data from the user and produce a visual report (HTML + PDF).",
+		Description: "Guided workflow: collect Search Console, Bing Webmaster Tools, GA4 and AI-visibility data from the user and produce a visual report (HTML + PDF).",
 		Arguments: []*mcp.PromptArgument{
 			{Name: "site", Description: "Website name or URL", Required: false},
 			{Name: "language", Description: "Report language: fr or en (default fr)", Required: false},
@@ -77,7 +77,7 @@ func (s *Service) registerPrompts(srv *mcp.Server) {
 		}
 		b.WriteString(`
 
-Use the seogeo tools. First call get_report_guide. Then ask me, in one short message, for whatever is missing among: site URL, exact period and comparison period, my Google Search Console export (Performance report with comparison: totals, dates, queries, pages, countries, devices), my GA4 export (traffic acquisition by channel and by source / medium, landing pages, totals, with comparison), and any AI-visibility checks (prompts tested in ChatGPT, Perplexity, Gemini, AI Overviews: cited or not). Explain briefly how to export each one. I can paste tables, attach CSV files or screenshots.
+Use the seogeo tools. First call get_report_guide. Then ask me, in one short message, for whatever is missing among: site URL, exact period and comparison period, my Google Search Console export (Performance report with comparison: totals, dates, queries, pages, countries, devices), optionally my Bing Webmaster Tools exports (Search Performance keywords, pages and daily chart; AI Performance grounding queries, cited pages and daily citations), my GA4 export (traffic acquisition by channel and by source / medium, landing pages, totals, with comparison), and any AI-visibility checks (prompts tested in ChatGPT, Perplexity, Gemini, AI Overviews: cited or not). Explain briefly how to export each one. I can paste tables, attach CSV files or screenshots.
 Never invent numbers. When I have sent the data: create_report, fill it (set_* or import_*_csv), write the narrative from the numbers in the report language (executive summary with figures, highlights, concerns, actions, recommendations), validate_report, render_report, then give me the links (online view, HTML and PDF downloads) and comment the key takeaways.`)
 		return &mcp.GetPromptResult{
 			Description: "SEO & GEO report workflow",

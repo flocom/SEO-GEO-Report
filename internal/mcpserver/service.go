@@ -179,6 +179,16 @@ func Summarize(rep model.Report) Summary {
 		add("gsc.ctr", "Average CTR (%)", sc.Totals.CTR)
 		add("gsc.position", "Average position (lower is better)", sc.Totals.Position)
 	}
+	if bg := r.Bing; bg != nil {
+		if bg.Totals.Clicks.Current > 0 || bg.Totals.Impressions.Current > 0 {
+			add("bing.clicks", "Bing clicks", &bg.Totals.Clicks)
+			add("bing.impressions", "Bing impressions", &bg.Totals.Impressions)
+			add("bing.position", "Bing average position (lower is better)", bg.Totals.Position)
+		}
+		if ai := bg.AIPerformance; ai != nil {
+			add("bing.ai_citations", "Citations in Copilot / Bing AI answers", &ai.Citations)
+		}
+	}
 	if an := r.Analytics; an != nil {
 		add("ga4.sessions", "Sessions (all channels)", an.Totals.Sessions)
 		add("ga4.users", "Active users", an.Totals.Users)
@@ -254,6 +264,9 @@ func CheckCompleteness(r *model.Report) Completeness {
 	check(sc != nil && (len(sc.Countries) > 0 || len(sc.Devices) > 0), "search_console.countries/devices")
 	check(sc != nil && sc.Indexing != nil, "search_console.indexing")
 	check(sc != nil && sc.CoreWebVitals != nil, "search_console.core_web_vitals")
+	bg := r.Bing
+	check(bg != nil && bg.Totals.Impressions.Current > 0, "bing.totals")
+	check(bg != nil && bg.AIPerformance != nil, "bing.ai_performance")
 	an := r.Analytics
 	check(an != nil && an.Totals.Sessions != nil, "analytics.totals")
 	check(an != nil && an.OrganicTotals != nil, "analytics.organic_totals")
@@ -277,6 +290,9 @@ func CheckCompleteness(r *model.Report) Completeness {
 	}
 	if sc != nil && len(sc.Daily) > 0 && len(sc.PreviousDaily) == 0 {
 		c.Suggestions = append(c.Suggestions, "search_console.previous_daily (comparison period) adds a dashed overlay on the trend chart.")
+	}
+	if bg == nil {
+		c.Suggestions = append(c.Suggestions, "If the site is verified in Bing Webmaster Tools, its Search Performance and AI Performance (Copilot citations) exports add a Bing section: set_bing or import_bing_csv.")
 	}
 	if an != nil && an.Totals.Sessions != nil && !an.Totals.Sessions.HasPrevious() {
 		c.Suggestions = append(c.Suggestions, "Add previous values to analytics.totals.")

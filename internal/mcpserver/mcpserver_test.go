@@ -79,9 +79,9 @@ func structured(t *testing.T, res *mcp.CallToolResult) map[string]any {
 }
 
 var wantTools = []string{
-	"get_report_guide", "create_report", "update_meta", "set_search_console", "set_analytics", "set_geo",
+	"get_report_guide", "create_report", "update_meta", "set_search_console", "set_bing", "set_analytics", "set_geo",
 	"set_narrative", "add_text_section", "update_text_section", "remove_text_section", "set_options",
-	"import_search_console_csv", "import_analytics_csv", "validate_report", "render_report",
+	"import_search_console_csv", "import_bing_csv", "import_analytics_csv", "validate_report", "render_report",
 	"generate_report", "get_report", "list_reports", "duplicate_report", "delete_report",
 }
 
@@ -138,6 +138,28 @@ func TestInMemoryWorkflow(t *testing.T) {
 	rec, _ := svc.store.Get(id)
 	if rec.Report.SearchConsole.Totals.Clicks.Current != 1200 || len(rec.Report.SearchConsole.Queries) != 1 {
 		t.Fatalf("merge failed: %+v", rec.Report.SearchConsole)
+	}
+
+	// Bing: totals with set_bing, then keywords and AI citations from CSV exports.
+	call(t, cs, "set_bing", map[string]any{"report_id": id, "bing": map[string]any{
+		"totals": map[string]any{
+			"clicks":      map[string]any{"current": 90, "previous": 70},
+			"impressions": map[string]any{"current": 3000, "previous": 2800},
+		},
+	}})
+	kw := call(t, cs, "import_bing_csv", map[string]any{"report_id": id, "file_name": "Keywords.csv",
+		"csv": "Keyword,Clicks,Impressions,CTR,Avg. Position\nacme shoes,40,900,4.4%,2.3\n"})
+	if structured(t, kw)["kind"] != "queries" {
+		t.Errorf("import_bing_csv keywords: %s", text(kw))
+	}
+	ai := call(t, cs, "import_bing_csv", map[string]any{"report_id": id,
+		"csv": "Grounding query,Citations,Citation share\nbest running shoes,25,12%\n"})
+	if structured(t, ai)["kind"] != "ai_queries" {
+		t.Errorf("import_bing_csv grounding queries: %s", text(ai))
+	}
+	rec, _ = svc.store.Get(id)
+	if bg := rec.Report.Bing; bg == nil || bg.Totals.Clicks.Current != 90 || len(bg.Queries) != 1 || bg.AIPerformance == nil || len(bg.AIPerformance.GroundingQueries) != 1 {
+		t.Fatalf("bing data: %+v", rec.Report.Bing)
 	}
 
 	call(t, cs, "set_narrative", map[string]any{"report_id": id, "narrative": map[string]any{

@@ -224,7 +224,7 @@ func (s *Store) Delete(id string) error {
 
 // DuplicateOptions configure Duplicate.
 type DuplicateOptions struct {
-	// KeepData keeps search_console, analytics and geo data. When false (the
+	// KeepData keeps search_console, bing, analytics and geo data. When false (the
 	// default) data is cleared so the copy can be filled for the next period.
 	KeepData bool
 	// KeepNarrative keeps the narrative texts as they are. When false, the
@@ -255,7 +255,7 @@ func (s *Store) Duplicate(id string, opts DuplicateOptions) (*Record, error) {
 		return nil, err
 	}
 	if !opts.KeepData {
-		r.SearchConsole, r.Analytics, r.GEO = nil, nil, nil
+		r.SearchConsole, r.Bing, r.Analytics, r.GEO = nil, nil, nil, nil
 	}
 	if !opts.KeepNarrative && r.Narrative != nil {
 		n := r.Narrative

@@ -23,6 +23,11 @@ const (
 	KeyGSCCTR            = "gsc.ctr"
 	KeyGSCPosition       = "gsc.position"
 	KeyGSCIndexed        = "gsc.indexed"
+	KeyBingClicks        = "bing.clicks"
+	KeyBingImpressions   = "bing.impressions"
+	KeyBingCTR           = "bing.ctr"
+	KeyBingPosition      = "bing.position"
+	KeyBingAICitations   = "bing.ai_citations"
 	KeyGA4Sessions       = "ga4.sessions"
 	KeyGA4Users          = "ga4.users"
 	KeyGA4EngagementRate = "ga4.engagement_rate"
@@ -55,6 +60,11 @@ func analyze(r *model.Report) Analysis {
 		}
 		a.Positions = positions(sc)
 		a.Winners, a.Losers = movers(sc.Queries)
+	}
+
+	// --- Bing Webmaster Tools KPIs
+	if r.Bing != nil {
+		bingKPIs(&a, r.Bing)
 	}
 
 	// --- GA4 KPIs
@@ -443,7 +453,8 @@ func movers(rows []model.GSCRow) (winners, losers []model.GSCRow) {
 // Each available component i yields a relative change d_i in percent:
 //
 //	clicks, impressions, organic sessions, AI sessions, key events,
-//	citation rate: (current - previous) / previous × 100
+//	citation rate, Bing clicks, Bing AI citations:
+//	                (current - previous) / previous × 100
 //	                (+100 when previous is 0 and current > 0)
 //	average position: (previous - current) / previous × 100 (lower is better)
 //
@@ -451,7 +462,8 @@ func movers(rows []model.GSCRow) (winners, losers []model.GSCRow) {
 // outliers (e.g. +900 % AI sessions) saturate at ±1 instead of dominating.
 // With the weights w below (clicks 0.25, impressions 0.10, position 0.15,
 // organic sessions 0.15, AI sessions 0.10, citation rate 0.10, key events
-// 0.15), renormalised over the available components:
+// 0.15, Bing clicks 0.10, Bing AI citations 0.05), renormalised over the
+// available components:
 //
 //	progress = 50 + 50 × Σ(w_i × s_i) / Σ(w_i)
 //
@@ -475,6 +487,12 @@ func progressIndex(r *model.Report, a *Analysis) *float64 {
 		comps = append(comps, comp{0.15, organicSessions(ga), false}, comp{0.15, ga.Totals.KeyEvents, false})
 	}
 	comps = append(comps, comp{0.10, a.AISessions, false}, comp{0.10, a.CitationRate, false})
+	if bg := r.Bing; bg != nil {
+		comps = append(comps, comp{0.10, &bg.Totals.Clicks, false})
+		if bg.AIPerformance != nil {
+			comps = append(comps, comp{0.05, &bg.AIPerformance.Citations, false})
+		}
+	}
 
 	var sumW, sum float64
 	for _, c := range comps {

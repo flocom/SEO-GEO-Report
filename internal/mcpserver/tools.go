@@ -52,6 +52,12 @@ type scInput struct {
 	Mode          string              `json:"mode,omitempty" jsonschema:"merge (default): replace only the top-level keys you send; replace: replace the whole search_console section"`
 }
 
+type bingInput struct {
+	ReportID string     `json:"report_id" jsonschema:"Report id"`
+	Bing     model.Bing `json:"bing" jsonschema:"Bing Webmaster Tools data. In merge mode only the keys you send are replaced (e.g. send only queries)"`
+	Mode     string     `json:"mode,omitempty" jsonschema:"merge (default): replace only the top-level keys you send; replace: replace the whole bing section"`
+}
+
 type gaInput struct {
 	ReportID  string          `json:"report_id" jsonschema:"Report id"`
 	Analytics model.Analytics `json:"analytics" jsonschema:"Google Analytics 4 data. In merge mode only the keys you send are replaced"`
@@ -105,6 +111,13 @@ type importGSCInput struct {
 	FileName string `json:"file_name,omitempty" jsonschema:"Original file name (helps guessing the kind)"`
 }
 
+type importBingInput struct {
+	ReportID string `json:"report_id" jsonschema:"Report id"`
+	CSV      string `json:"csv" jsonschema:"Full raw text of ONE CSV file exported from Bing Webmaster Tools (Search Performance keywords, pages or daily chart; AI Performance grounding queries, pages or daily chart)"`
+	Kind     string `json:"kind,omitempty" jsonschema:"queries, pages, dates (Search Performance) or ai_queries, ai_pages, ai_dates (AI Performance). Guessed from the header or file name when omitted"`
+	FileName string `json:"file_name,omitempty" jsonschema:"Original file name (helps guessing the kind)"`
+}
+
 type importGAInput struct {
 	ReportID string `json:"report_id" jsonschema:"Report id"`
 	CSV      string `json:"csv" jsonschema:"Full raw text of a GA4 'Download file > CSV' export (comment lines starting with # are fine)"`
@@ -130,7 +143,7 @@ type generateInput struct {
 
 type duplicateInput struct {
 	ReportID         string        `json:"report_id" jsonschema:"Report to copy"`
-	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, analytics and geo data (default false: cleared for the next period)"`
+	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics and geo data (default false: cleared for the next period)"`
 	KeepNarrative    bool          `json:"keep_narrative,omitempty" jsonschema:"Keep all narrative texts (default false: only pending actions and recommendations are kept)"`
 	Period           *model.Period `json:"period,omitempty" jsonschema:"New analysed period"`
 	ComparisonPeriod *model.Period `json:"comparison_period,omitempty" jsonschema:"New comparison period"`
@@ -188,7 +201,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_report",
 		Title:       "Create a report draft",
-		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_analytics / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
+		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
 		Annotations: additive,
 	}, s.toolCreate)
 
@@ -208,6 +221,16 @@ func (s *Service) registerTools(srv *mcp.Server) {
 		InputSchema: relaxed[scInput]("search_console"),
 		Annotations: idempotent,
 	}, s.toolSetSC)
+
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:  "set_bing",
+		Title: "Set Bing Webmaster Tools data",
+		Description: "Store Bing Webmaster Tools data supplied by the user (this tool does not fetch anything). Search Performance, same shape as search_console: totals {clicks, impressions, ctr, position} as {current, previous} metrics (CTR in percent), daily and previous_daily [{date, clicks, impressions, ctr, position}], queries (keywords) and pages rows [{key, clicks, impressions, ctr, position, prev_clicks, prev_impressions, prev_position}]. " +
+			"AI Performance (citations of the site in Microsoft Copilot and Bing AI answers): ai_performance {citations {current, previous}, cited_pages (average cited pages per day) {current, previous}, daily / previous_daily [{date, citations, cited_pages}], grounding_queries [{query, citations, prev_citations, citation_share (percent), cited_pages, intent, topic}], pages [{url, citations, prev_citations}]}. " +
+			"Default mode merge replaces only the top-level keys you send. For raw CSV exports use import_bing_csv instead.",
+		InputSchema: relaxed[bingInput]("bing"),
+		Annotations: idempotent,
+	}, s.toolSetBing)
 
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:  "set_analytics",
@@ -239,7 +262,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "add_text_section",
 		Title:       "Add a free text section",
-		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, analytics, channels, landing_pages, geo, technical, actions, recommendations), start or end. Returns the section id.",
+		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations), start or end. Returns the section id.",
 		Annotations: additive,
 	}, s.toolAddSection)
 
@@ -273,6 +296,14 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	}, s.toolImportGSC)
 
 	mcp.AddTool(srv, &mcp.Tool{
+		Name:  "import_bing_csv",
+		Title: "Import a Bing Webmaster Tools CSV",
+		Description: "Parse the raw text of ONE CSV file exported from Bing Webmaster Tools and merge it into report.bing: Search Performance (keywords, pages, or the daily chart, which also recomputes the totals) or AI Performance (grounding queries, cited pages, or the daily citations chart, recognized by their Citations column). French or English headers; comparison columns fill the previous values. " +
+			"Call once per file. Use this when the user attaches or pastes the CSV files; otherwise use set_bing.",
+		Annotations: idempotent,
+	}, s.toolImportBing)
+
+	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "import_analytics_csv",
 		Title:       "Import a GA4 CSV",
 		Description: "Parse the raw text of a Google Analytics 4 report CSV ('Share > Download file > CSV'; French or English headers; channel group, source / medium, landing page or date tables) and merge it into report.analytics. Totals are not always present in these files: complete them with set_analytics if needed.",
@@ -298,7 +329,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "generate_report",
 		Title:       "Generate a report in one call",
-		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, analytics, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
+		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
 		Annotations: additive,
 		Meta:        viewerMeta,
 	}, s.toolGenerate)
@@ -474,6 +505,7 @@ func (s *Service) toolCreate(_ context.Context, req *mcp.CallToolRequest, in cre
 	links := LinksFor(s.baseURL(req), rec, "")
 	next := []string{
 		"set_search_console (or import_search_console_csv) with the user's Google Search Console numbers",
+		"set_bing (or import_bing_csv) with Bing Webmaster Tools numbers, if the user has them",
 		"set_analytics (or import_analytics_csv) with GA4 numbers",
 		"set_geo with AI visibility data (citation checks, AI referrals, share of voice)",
 		"set_narrative with the executive summary, highlights, actions and recommendations",
@@ -536,6 +568,30 @@ func (s *Service) toolSetSC(_ context.Context, req *mcp.CallToolRequest, in scIn
 		return nil, nil, err
 	}
 	return s.savedText(rec, "Search Console data"), nil, nil
+}
+
+func (s *Service) toolSetBing(_ context.Context, req *mcp.CallToolRequest, in bingInput) (*mcp.CallToolResult, any, error) {
+	mode, err := checkMode(in.Mode, "merge", "replace", "append")
+	if err != nil {
+		return nil, nil, err
+	}
+	raw := rawArg(req, "bing")
+	rec, err := s.update(in.ReportID, func(r *model.Report) error {
+		var existing any
+		if mode != "replace" && r.Bing != nil {
+			existing = r.Bing
+		}
+		var bg model.Bing
+		if err := mergeObject(existing, raw, mode == "append", &bg); err != nil {
+			return fmt.Errorf("bing: %w", err)
+		}
+		r.Bing = &bg
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return s.savedText(rec, "Bing Webmaster Tools data"), nil, nil
 }
 
 func (s *Service) toolSetGA(_ context.Context, req *mcp.CallToolRequest, in gaInput) (*mcp.CallToolResult, any, error) {
@@ -778,6 +834,43 @@ func (s *Service) toolImportGSC(_ context.Context, _ *mcp.CallToolRequest, in im
 	res.StructuredContent.(map[string]any)["kind"] = t.Kind
 	res.StructuredContent.(map[string]any)["rows"] = len(t.Rows)
 	res.StructuredContent.(map[string]any)["days"] = len(t.Daily)
+	return res, nil, nil
+}
+
+func (s *Service) toolImportBing(_ context.Context, _ *mcp.CallToolRequest, in importBingInput) (*mcp.CallToolResult, any, error) {
+	if strings.TrimSpace(in.CSV) == "" {
+		return nil, nil, errors.New("csv is empty: pass the full text content of the CSV file")
+	}
+	kind := importer.BingKind(strings.TrimSpace(in.Kind))
+	if kind == "" && in.FileName != "" {
+		kind = importer.GuessBingKind(filepath.Base(in.FileName))
+	}
+	t, err := importer.ParseBingCSV([]byte(in.CSV), kind)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot parse the Bing Webmaster Tools CSV: %w", err)
+	}
+	var noTotals bool
+	rec, err := s.update(in.ReportID, func(r *model.Report) error {
+		r.Bing = importer.ApplyBingTable(r.Bing, t)
+		noTotals = r.Bing.Totals.Clicks.Current == 0 && r.Bing.Totals.Impressions.Current == 0 && (len(r.Bing.Queries) > 0 || len(r.Bing.Pages) > 0)
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	n := len(t.Rows) + len(t.GroundingQueries) + len(t.CitedPages)
+	days := len(t.Daily) + len(t.AIDaily)
+	what := fmt.Sprintf("Bing Webmaster Tools %s table (%d rows, %d days", t.Kind, n, days)
+	if p := len(t.PreviousDaily) + len(t.AIPreviousDaily); p > 0 {
+		what += fmt.Sprintf(", %d comparison days", p)
+	}
+	what += ")"
+	res := s.savedText(rec, what)
+	if noTotals {
+		res.Content[0].(*mcp.TextContent).Text += "\nBing totals are still empty: import the daily chart export, or send bing.totals (clicks, impressions, ctr, position with previous values) with set_bing."
+	}
+	sc := res.StructuredContent.(map[string]any)
+	sc["kind"], sc["rows"], sc["days"] = t.Kind, n, days
 	return res, nil, nil
 }
 

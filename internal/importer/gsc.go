@@ -21,20 +21,35 @@ const (
 	gscImpressions
 	gscCTR
 	gscPosition
+	gscSkip // known column without use: a change column, Bing's average click position
 )
 
+// classifyGSCHeader maps a folded header to a metric. Position is matched
+// before clicks and impressions because Bing exports may label it "Avg.
+// Impression Position"; change columns ("Clicks change") are skipped so that
+// they are not read as comparison values.
 func classifyGSCHeader(h string) gscMetric {
 	switch {
+	case isChangeHeader(h):
+		return gscSkip
 	case containsAny(h, "ctr", "taux de clic"):
 		return gscCTR
+	case strings.Contains(h, "position") && containsAny(h, "click", "clic"):
+		return gscSkip // Bing's "Avg. Click Position": the impression position is the one GSC reports
+	case strings.Contains(h, "position"):
+		return gscPosition
 	case containsAny(h, "clicks", "clics", "click", "clic"):
 		return gscClicks
 	case strings.Contains(h, "impression"):
 		return gscImpressions
-	case strings.Contains(h, "position"):
-		return gscPosition
 	}
 	return gscNone
+}
+
+// isChangeHeader reports whether a (folded) header is a change column
+// ("Clicks change", "Évolution des clics", "Impressions Δ").
+func isChangeHeader(h string) bool {
+	return containsAny(h, "change", "evolution", "variation", "delta", "δ", "difference", "ecart")
 }
 
 // GuessGSCKind guesses the table kind from a header or a file name (French
@@ -44,9 +59,9 @@ func GuessGSCKind(name string) GSCKind {
 	switch {
 	case containsAny(h, "appearance", "apparence"):
 		return GSCAppearance
-	case containsAny(h, "quer", "requete", "recherche"):
+	case containsAny(h, "quer", "requete", "recherche", "keyword", "mot cle", "mots cles", "mot-cle", "mots-cles"):
 		return GSCQueries
-	case containsAny(h, "page"):
+	case containsAny(h, "page", "url"):
 		return GSCPages
 	case containsAny(h, "countr", "pays"):
 		return GSCCountries
@@ -86,6 +101,9 @@ func mapGSCColumns(headers []string) (gscColumns, bool) {
 	seen := map[gscMetric]int{}
 	for i, h := range headers {
 		m := classifyGSCHeader(h)
+		if m == gscSkip {
+			continue
+		}
 		if m == gscNone {
 			if c.key < 0 {
 				c.key = i

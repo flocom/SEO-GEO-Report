@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/github/license/flocom/SEO-GEO-Report)](LICENSE)
 [![Go version](https://img.shields.io/github/go-mod/go-version/flocom/SEO-GEO-Report)](go.mod)
 
-**Beautiful, bilingual (French / English) visibility reports for websites — SEO (Google Search Console), traffic (Google Analytics 4) and GEO (visibility in AI assistants: ChatGPT, Perplexity, Gemini, Google AI Overviews…) — built with Claude.**
+**Beautiful, bilingual (French / English) visibility reports for websites — SEO (Google Search Console, Bing Webmaster Tools), traffic (Google Analytics 4) and GEO (visibility in AI assistants: ChatGPT, Perplexity, Gemini, Google AI Overviews…) — built with Claude.**
 
 You export your data (or paste a table, or attach a screenshot), Claude reads it, fills the report and writes the analysis. The server turns it into a polished report: a hosted web page with a shareable link, a standalone HTML file and an A4 PDF.
 
@@ -18,8 +18,8 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 
 - 📊 **Two reports in one**
   - **Part 1 – at a glance**: a visual, beginner-friendly summary for clients and managers: progress gauge, KPI cards with trends, plain-language takeaways, "how to read this chart" hints, glossary.
-  - **Part 2 – detailed analysis**: the technical part for SEO specialists: Google performance, queries, pages, countries and devices, traffic channels, landing pages, AI visibility, Core Web Vitals, indexing, actions and recommendations.
-- 🤖 **GEO, built in**: traffic from AI assistants is detected automatically in your GA4 sources (chatgpt.com, perplexity.ai, gemini.google.com…), and the report also covers AI citation checks, share of voice, AI Overviews and AI crawler hits.
+  - **Part 2 – detailed analysis**: the technical part for SEO specialists: Google performance, queries, pages, countries and devices, Bing performance (with Copilot citations), traffic channels, landing pages, AI visibility, Core Web Vitals, indexing, actions and recommendations.
+- 🤖 **GEO, built in**: traffic from AI assistants is detected automatically in your GA4 sources (chatgpt.com, perplexity.ai, gemini.google.com…), and the report also covers AI citation checks, share of voice, AI Overviews, AI crawler hits and the Bing Webmaster Tools AI Performance report (how often Microsoft Copilot cites your pages, and for which grounding queries).
 - 🌍 **French and English**: one data file, rendered in either language (`?lang=en`).
 - 📄 **HTML and PDF export**: hosted page, self-contained HTML file (inline CSS and SVG charts, works offline) and print-ready PDF (Chromium is included in the Docker image).
 - 🧠 **Automatic insights**: trends, wins, alerts and a progress index computed from the numbers, on top of the narrative Claude writes.
@@ -28,7 +28,7 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 - 🔄 **Automatic updates**: Watchtower pulls new releases from GHCR, and the home page tells you when a new version is out.
 - 🧭 **URL auto-detection**: no base URL to configure. The public URL comes from `X-Forwarded-*` / `Forwarded` / `Host` headers, so it works behind Cloudflare Tunnel, Caddy, Traefik or nginx.
 - 🖼️ **Favicon**: the site's icon is fetched once and embedded in the report, with SSRF protection.
-- 🧰 **CLI**: render, validate and import Search Console / GA4 CSV exports from the command line.
+- 🧰 **CLI**: render, validate and import Search Console / Bing Webmaster Tools / GA4 CSV exports from the command line.
 
 ## Screenshots
 
@@ -154,7 +154,7 @@ or fully local over stdio:
 >
 > **Claude:** *(create_report → import_search_console_csv → import_analytics_csv → set_geo → set_narrative → validate_report → render_report)* Here is your report: online view, HTML and PDF. Key takeaways: Google clicks +36 %, AI-assistant traffic ×2.6 (led by ChatGPT), click-through rate slipping on your most viewed pages…
 
-**Tools:** `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report`.
+**Tools:** `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report`.
 
 **Prompt:** `create_seo_geo_report`.
 
@@ -180,6 +180,7 @@ seogeo render -i data.json -o report.html   # standalone HTML
 seogeo render -i data.json -o report.pdf    # PDF (needs Chromium / Chrome)
 seogeo render -i data.json -o report.html --lang fr --no-favicon
 seogeo import-gsc gsc-export.zip --into data.json -o data.json
+seogeo import-bing bing-exports/ --into data.json -o data.json   # zip, folder or one CSV
 seogeo import-ga4 channels.csv sources.csv --into data.json -o data.json
 seogeo serve                                # HTTP server (MCP /mcp, OAuth, hosted reports)
 seogeo mcp                                  # MCP over stdio
@@ -196,6 +197,7 @@ A report is a JSON document. Run `seogeo schema` for the full schema; [`examples
 |---|---|
 | `meta` | site, period, comparison period, language, author, client, logo, brand color, `favicon_url` (empty = fetched from `site_url`, `none` = disabled) |
 | `search_console` | totals, daily series, queries, pages, countries, devices, search appearance, brand split, indexing, Core Web Vitals |
+| `bing` | Bing Webmaster Tools: totals, daily series, keywords and pages (same shape as `search_console`), `ai_performance` (Copilot citations, cited pages, grounding queries, daily citations) |
 | `analytics` | totals (all channels and organic), daily series, channels, source / medium, landing pages |
 | `geo` | AI-assistant traffic, citation checks, share of voice, AI Overviews, AI crawlers |
 | `narrative` | executive summary, highlights, concerns, actions, recommendations, per-section notes (Markdown) |
@@ -254,6 +256,7 @@ To use it from claude.ai, yes: any machine running Docker with an HTTPS URL. A C
 
 **Which exports should I give Claude?**
 - Search Console: Performance → Search results, with "Compare" dates, then Export.
+- Bing Webmaster Tools (optional): Search Performance (keywords, pages, daily chart) and AI Performance (grounding queries, cited pages, daily citations).
 - GA4: Traffic acquisition (channel group and source / medium), Landing pages, with a comparison range.
 - Optionally, a few AI citation checks.
 

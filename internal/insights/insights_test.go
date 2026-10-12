@@ -311,6 +311,23 @@ func stripPrevious(r *model.Report) {
 	sc.BrandSplit.Branded.Previous, sc.BrandSplit.NonBranded.Previous = nil, nil
 	sc.PositionDistribution = nil
 	sc.Indexing.Indexed.Previous, sc.Indexing.NotIndexed.Previous = nil, nil
+	bg := r.Bing
+	bg.Totals.Clicks.Previous, bg.Totals.Impressions.Previous = nil, nil
+	bg.Totals.CTR.Previous, bg.Totals.Position.Previous = nil, nil
+	bg.PreviousDaily = nil
+	for _, rows := range [][]model.GSCRow{bg.Queries, bg.Pages} {
+		for i := range rows {
+			rows[i].PrevClicks, rows[i].PrevImpressions, rows[i].PrevPosition = nil, nil, nil
+		}
+	}
+	ai := bg.AIPerformance
+	ai.Citations.Previous, ai.CitedPages.Previous, ai.PreviousDaily = nil, nil, nil
+	for i := range ai.GroundingQueries {
+		ai.GroundingQueries[i].PrevCitations = nil
+	}
+	for i := range ai.Pages {
+		ai.Pages[i].PrevCitations = nil
+	}
 	for _, t := range []*model.GA4Totals{&ga.Totals, ga.OrganicTotals} {
 		for _, m := range []*model.Metric{t.Sessions, t.Users, t.NewUsers, t.EngagedSessions, t.EngagementRate, t.AvgEngagementTime, t.PageViews, t.KeyEvents, t.Revenue} {
 			if m != nil {
@@ -344,7 +361,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		r := example.Demo(lang)
 		r.Normalize()
 		a := Analyze(r)
-		want := []string{KeyGA4EngagementRate, KeyGA4KeyEvents, KeyGA4Organic, KeyGA4Revenue, KeyGA4Sessions, KeyGA4Users,
+		want := []string{KeyBingAICitations, KeyBingClicks, KeyBingCTR, KeyBingImpressions, KeyBingPosition, KeyGA4EngagementRate, KeyGA4KeyEvents, KeyGA4Organic, KeyGA4Revenue, KeyGA4Sessions, KeyGA4Users,
 			KeyGEOAISessions, KeyGEOCitationRate, KeyGSCClicks, KeyGSCCTR, KeyGSCImpressions, KeyGSCIndexed, KeyGSCPosition}
 		if got := keys(a.KPIs); !slices.Equal(got, want) {
 			t.Errorf("%s: KPIs = %v", lang, got)

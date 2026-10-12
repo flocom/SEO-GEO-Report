@@ -1,8 +1,9 @@
 // Package model defines the input data of a SEO/GEO visibility report.
 //
 // Every value is supplied by the user (or by Claude through MCP): the tool never
-// connects to Google. Data typically comes from Google Search Console and
-// Google Analytics 4 exports, plus optional manual GEO checks (AI citations).
+// connects to Google or Bing. Data typically comes from Google Search Console,
+// Bing Webmaster Tools and Google Analytics 4 exports, plus optional manual
+// GEO checks (AI citations).
 //
 // Conventions:
 //   - Dates are "YYYY-MM-DD".
@@ -17,6 +18,7 @@ package model
 type Report struct {
 	Meta          Meta           `json:"meta" jsonschema:"Report identity: site, period, language, branding"`
 	SearchConsole *SearchConsole `json:"search_console,omitempty" jsonschema:"Data exported from Google Search Console (organic Google search performance)"`
+	Bing          *Bing          `json:"bing,omitempty" jsonschema:"Data exported from Bing Webmaster Tools (organic Bing search performance and AI Performance citations in Microsoft Copilot)"`
 	Analytics     *Analytics     `json:"analytics,omitempty" jsonschema:"Data exported from Google Analytics 4 (traffic, engagement, conversions)"`
 	GEO           *GEO           `json:"geo,omitempty" jsonschema:"Generative Engine Optimization data: traffic from AI assistants, citation checks in AI answers, share of voice"`
 	Narrative     *Narrative     `json:"narrative,omitempty" jsonschema:"Free text written by the analyst: executive summary, highlights, actions, recommendations, per-section notes"`
@@ -148,6 +150,56 @@ type CWVStatus struct {
 	Good             float64 `json:"good" jsonschema:"URLs rated Good"`
 	NeedsImprovement float64 `json:"needs_improvement" jsonschema:"URLs rated Needs improvement"`
 	Poor             float64 `json:"poor" jsonschema:"URLs rated Poor"`
+}
+
+// ---------------------------------------------------------------------------
+// Bing Webmaster Tools
+
+// Bing holds Bing Webmaster Tools data. The Search Performance report has the
+// same metrics as Search Console (clicks, impressions, CTR, average position),
+// so it reuses the Search Console types.
+type Bing struct {
+	Totals        GSCTotals          `json:"totals" jsonschema:"Totals of the Bing Search Performance report: clicks, impressions, ctr (percent), position"`
+	Daily         []GSCDailyPoint    `json:"daily,omitempty" jsonschema:"Daily Bing performance for the analysed period (chronological)"`
+	PreviousDaily []GSCDailyPoint    `json:"previous_daily,omitempty" jsonschema:"Daily Bing performance for the comparison period (used as a dashed overlay)"`
+	Queries       []GSCRow           `json:"queries,omitempty" jsonschema:"Top Bing keywords (key = keyword)"`
+	Pages         []GSCRow           `json:"pages,omitempty" jsonschema:"Top pages in Bing (key = URL)"`
+	AIPerformance *BingAIPerformance `json:"ai_performance,omitempty" jsonschema:"AI Performance report: how often the site is cited as a source in Microsoft Copilot, Bing AI summaries and partner AI experiences"`
+}
+
+// BingAIPerformance is the Bing Webmaster Tools AI Performance report.
+type BingAIPerformance struct {
+	Citations        Metric               `json:"citations" jsonschema:"Total citations: times the site was cited as a source in AI answers over the period. Computed from daily or pages when omitted"`
+	CitedPages       *Metric              `json:"cited_pages,omitempty" jsonschema:"Average cited pages: daily average of unique pages of the site cited in AI answers"`
+	Daily            []BingAIDailyPoint   `json:"daily,omitempty" jsonschema:"Daily citations for the analysed period (chronological)"`
+	PreviousDaily    []BingAIDailyPoint   `json:"previous_daily,omitempty" jsonschema:"Daily citations for the comparison period"`
+	GroundingQueries []BingGroundingQuery `json:"grounding_queries,omitempty" jsonschema:"Grounding queries: the phrases the AI used to retrieve the cited content"`
+	Pages            []BingCitedPage      `json:"pages,omitempty" jsonschema:"Pages of the site cited in AI answers"`
+}
+
+// BingAIDailyPoint is one day of the AI Performance report.
+type BingAIDailyPoint struct {
+	Date       string  `json:"date" jsonschema:"YYYY-MM-DD"`
+	Citations  float64 `json:"citations"`
+	CitedPages float64 `json:"cited_pages,omitempty" jsonschema:"Unique pages cited that day"`
+}
+
+// BingGroundingQuery is one grounding query of the AI Performance report.
+type BingGroundingQuery struct {
+	Query         string   `json:"query"`
+	Citations     float64  `json:"citations"`
+	PrevCitations *float64 `json:"prev_citations,omitempty" jsonschema:"Citations in the comparison period"`
+	CitationShare float64  `json:"citation_share,omitempty" jsonschema:"Percent of the citations for this query that go to the site (12.5 = 12.5%)"`
+	CitedPages    float64  `json:"cited_pages,omitempty" jsonschema:"Average unique pages of the site cited per day for this query"`
+	Intent        string   `json:"intent,omitempty" jsonschema:"Query intent as shown by Bing: Informational, Commercial, Navigational..."`
+	Topic         string   `json:"topic,omitempty"`
+}
+
+// BingCitedPage is one page of the AI Performance report.
+type BingCitedPage struct {
+	URL           string   `json:"url"`
+	Citations     float64  `json:"citations"`
+	PrevCitations *float64 `json:"prev_citations,omitempty" jsonschema:"Citations in the comparison period"`
 }
 
 // ---------------------------------------------------------------------------
@@ -295,7 +347,7 @@ type Narrative struct {
 	Concerns         []string          `json:"concerns,omitempty" jsonschema:"Points of attention, one sentence each"`
 	Actions          []Action          `json:"actions,omitempty" jsonschema:"Work done or in progress during the period"`
 	Recommendations  []Recommendation  `json:"recommendations,omitempty" jsonschema:"Next steps"`
-	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, analytics, channels, landing_pages, geo, technical, actions, recommendations"`
+	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations"`
 }
 
 // Action is a task performed for the site.
@@ -322,7 +374,7 @@ type TextSection struct {
 	ID    string `json:"id,omitempty" jsonschema:"Identifier, generated when omitted"`
 	Title string `json:"title" jsonschema:"Section title"`
 	Body  string `json:"body" jsonschema:"Markdown content (lists, tables, links, bold...)"`
-	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, analytics, channels, landing_pages, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
+	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
 	Style string `json:"style,omitempty" jsonschema:"plain, info, success, warning or note. Defaults to plain"`
 }
 
@@ -337,7 +389,7 @@ type Options struct {
 
 // SectionIDs lists built-in sections in display order.
 var SectionIDs = []string{
-	"summary", "kpis", "search_console", "queries", "pages", "countries_devices",
+	"summary", "kpis", "search_console", "queries", "pages", "countries_devices", "bing",
 	"analytics", "channels", "landing_pages", "geo", "technical",
 	"actions", "recommendations", "glossary",
 }
