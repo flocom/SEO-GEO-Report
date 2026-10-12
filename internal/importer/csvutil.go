@@ -302,6 +302,34 @@ func parseDate(s string, dayFirst bool) (string, bool) {
 	return "", false
 }
 
+// dayFirstDates decides the day / month order of a whole date column: a
+// first number above 12 ("15/01/2026") means day first, a second one above
+// 12 ("1/15/2026") month first. Without such a value the hint is kept, so
+// that every row of a file is read the same way.
+func dayFirstDates(rows [][]string, col int, hint bool) bool {
+	for _, rec := range rows {
+		s := cell(rec, col)
+		if i := strings.IndexByte(s, ' '); i > 0 {
+			s = s[:i]
+		}
+		for _, sep := range []string{"/", ".", "-"} {
+			parts := strings.Split(s, sep)
+			if len(parts) != 3 || len(parts[0]) > 2 || !allDigits(parts[0]) || !allDigits(parts[1]) {
+				continue
+			}
+			a, _ := strconv.Atoi(parts[0])
+			b, _ := strconv.Atoi(parts[1])
+			switch {
+			case a > 12 && b <= 12:
+				return true
+			case b > 12 && a <= 12:
+				return false
+			}
+		}
+	}
+	return hint
+}
+
 func allDigits(s string) bool {
 	if s == "" {
 		return false

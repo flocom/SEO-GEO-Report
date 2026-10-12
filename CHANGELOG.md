@@ -17,6 +17,14 @@ All notable changes to this project are documented here. The format follows [Kee
 - Bing clicks and AI citations feed the KPI tones, the automatic insights and
   the progress index; the demo reports include Bing data.
 
+### Fixed
+- Rendering no longer fails when a table compares a value with a previous
+  value of 0 (e.g. impressions rising from 0).
+- A report rendered right after an update is no longer seen as out of date
+  because of the file system's coarse timestamps (the HTML cache was thrown
+  away, and a store test failed intermittently).
+- CSV import reads every date of a file in the same day / month order.
+
 ### Changed
 - Search Console CSV import: change columns ("Clicks change") are ignored
   instead of being read as comparison values, and "Keyword" / "URL" headers

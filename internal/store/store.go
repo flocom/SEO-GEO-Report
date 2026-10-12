@@ -460,6 +460,13 @@ func writeFileAtomic(path string, data []byte, perm os.FileMode) error {
 	if err := os.Chmod(tmp, perm); err != nil {
 		return err
 	}
+	// The file system stamps files with a coarse clock that can lag
+	// time.Now(): a file written right after a report update could look
+	// older than the update and its cache be thrown away. Stamp it exactly.
+	now := time.Now()
+	if err := os.Chtimes(tmp, now, now); err != nil {
+		return err
+	}
 	if err := os.Rename(tmp, path); err != nil {
 		return err
 	}

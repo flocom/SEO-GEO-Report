@@ -246,3 +246,36 @@ func TestGuessBingKindFrenchPages(t *testing.T) {
 		t.Errorf("got %q, want queries", k)
 	}
 }
+
+func TestBingDayFirstPerFile(t *testing.T) {
+	// One day above 12 makes the whole comma-delimited file day-first.
+	csv := "Date,Citations\n01/01/2026,1\n02/01/2026,2\n13/01/2026,3\n"
+	tb, err := ParseBingCSV([]byte(csv), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tb.AIDaily) != 3 || tb.AIDaily[1].Date != "2026-01-02" || tb.AIDaily[2].Date != "2026-01-13" {
+		t.Errorf("AI daily = %+v", tb.AIDaily)
+	}
+	csv = "Date,Clicks,Impressions\n01/01/2026,1,10\n02/01/2026,2,20\n20/01/2026,3,30\n"
+	tb, err = ParseBingCSV([]byte(csv), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tb.Daily) != 3 || tb.Daily[1].Date != "2026-01-02" {
+		t.Errorf("daily = %+v", tb.Daily)
+	}
+}
+
+func TestImportBingHeaderOnlyKeepsData(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "Keywords.csv"), []byte("Query,Clicks,Impressions\nmaison lumen,310,2900\n"), 0o600)
+	os.WriteFile(filepath.Join(dir, "headeronly.csv"), []byte("Query,Clicks,Impressions\n"), 0o600)
+	bg, err := ImportBingExport(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(bg.Queries) != 1 {
+		t.Errorf("queries = %+v", bg.Queries)
+	}
+}

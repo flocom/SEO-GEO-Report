@@ -59,3 +59,11 @@ func TestBingOnlyAndHidden(t *testing.T) {
 		t.Error("bing section should be hidden")
 	}
 }
+
+func TestBingCitedPagesFromZero(t *testing.T) {
+	full := example.Demo("fr")
+	r := &model.Report{Meta: full.Meta, Bing: &model.Bing{AIPerformance: &model.BingAIPerformance{
+		CitedPages: &model.Metric{Current: 5, Previous: model.F(0)},
+	}}}
+	mustRender(t, r, Options{})
+}

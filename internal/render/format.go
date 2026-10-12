@@ -166,6 +166,9 @@ func (b *builder) deltaRel(m model.Metric, lowerBetter bool, abs func(float64) s
 		if d == 0 {
 			return nil
 		}
+		if abs == nil {
+			abs = b.num // "New" needs the absolute change
+		}
 		dir, tone := direction(d, 100, lowerBetter)
 		return &deltaView{Text: b.t("delta.new"), Sub: signed(abs(d), d), Tone: tone, Dir: dir, Arrow: arrowFor(dir, tone)}
 	}

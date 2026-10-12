@@ -256,6 +256,7 @@ func parseBingAI(rows [][]string, cols aiColumns, kind BingKind, decimalComma bo
 	t := &BingTable{Kind: kind}
 	switch kind {
 	case BingAIDates:
+		decimalComma = dayFirstDates(rows, cols.key, decimalComma)
 		var curDates []string
 		type prevPoint struct {
 			date, from string
@@ -333,6 +334,10 @@ func parseBingAI(rows [][]string, cols aiColumns, kind BingKind, decimalComma bo
 		}
 	}
 	return t
+}
+
+func (t *BingTable) empty() bool {
+	return len(t.Rows)+len(t.Daily)+len(t.PreviousDaily)+len(t.GroundingQueries)+len(t.CitedPages)+len(t.AIDaily)+len(t.AIPreviousDaily) == 0
 }
 
 func sortAIDaily(pts []model.BingAIDailyPoint) {
@@ -415,6 +420,10 @@ func ImportBingExport(path string) (*model.Bing, error) {
 		if err != nil {
 			errs = append(errs, base+": "+err.Error())
 			continue
+		}
+		if t.empty() {
+			errs = append(errs, base+": no data rows")
+			continue // a header-only file must not replace data read before
 		}
 		bg = ApplyBingTable(bg, t)
 	}

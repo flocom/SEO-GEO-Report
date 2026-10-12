@@ -201,6 +201,7 @@ func ParseGSCCSV(data []byte, kind GSCKind) (*GSCTable, error) {
 
 	t := &GSCTable{Kind: kind}
 	if kind == GSCDates {
+		decimalComma = dayFirstDates(rows, cols.key, decimalComma)
 		var curDates []string
 		type prevPoint struct {
 			date string // explicit or "" (to be shifted)

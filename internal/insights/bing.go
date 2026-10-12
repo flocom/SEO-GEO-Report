@@ -3,6 +3,7 @@ package insights
 import (
 	"math"
 	"sort"
+	"strings"
 
 	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
@@ -15,8 +16,8 @@ func BingShare(r *model.Report) *model.Metric {
 		return nil
 	}
 	g, b := r.SearchConsole.Totals.Clicks, r.Bing.Totals.Clicks
-	if g.Current+b.Current <= 0 || b.Current <= 0 {
-		return nil
+	if g.Current <= 0 || b.Current <= 0 {
+		return nil // without clicks on both engines a share is meaningless (missing data)
 	}
 	m := model.Metric{Current: round(b.Current/(g.Current+b.Current)*100, 2)}
 	if g.Previous != nil && b.Previous != nil && *g.Previous+*b.Previous > 0 {
@@ -157,7 +158,7 @@ func bingInsights(w *writer, r *model.Report) {
 	if len(ai.GroundingQueries) > 0 {
 		qs := append([]model.BingGroundingQuery(nil), ai.GroundingQueries...)
 		sort.SliceStable(qs, func(i, j int) bool { return qs[i].Citations > qs[j].Citations })
-		if top := qs[0]; top.Citations > 0 {
+		if top := qs[0]; top.Citations > 0 && strings.TrimSpace(top.Query) != "" {
 			w.add(Neutral, sec, 28,
 				"La requête d'ancrage qui vous vaut le plus de citations IA est %s (%s citations).",
 				"The grounding query that earns you the most AI citations is %s (%s citations).",

@@ -246,7 +246,11 @@ func (b *builder) groundingTable(rows []model.BingGroundingQuery) *table {
 			cells = append(cells, c)
 		}
 		if hasPages {
-			cells = append(cells, cell{Text: b.dec(r.CitedPages, 1), Num: true})
+			c := cell{Text: "–", Num: true, Muted: true}
+			if r.CitedPages > 0 {
+				c = cell{Text: b.dec(r.CitedPages, 1), Num: true}
+			}
+			cells = append(cells, c)
 		}
 		if hasIntent {
 			cells = append(cells, cell{Text: r.Intent, Muted: r.Intent == ""})
