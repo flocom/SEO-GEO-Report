@@ -487,10 +487,15 @@ func progressIndex(r *model.Report, a *Analysis) *float64 {
 		comps = append(comps, comp{0.15, organicSessions(ga), false}, comp{0.15, ga.Totals.KeyEvents, false})
 	}
 	comps = append(comps, comp{0.10, a.AISessions, false}, comp{0.10, a.CitationRate, false})
+	// Bing is optional: a component with no activity in either period
+	// (e.g. no Copilot citation yet) says nothing about progress.
+	active := func(m model.Metric) bool { return m.Current > 0 || (m.Previous != nil && *m.Previous > 0) }
 	if bg := r.Bing; bg != nil {
-		comps = append(comps, comp{0.10, &bg.Totals.Clicks, false})
-		if bg.AIPerformance != nil {
-			comps = append(comps, comp{0.05, &bg.AIPerformance.Citations, false})
+		if active(bg.Totals.Clicks) {
+			comps = append(comps, comp{0.10, &bg.Totals.Clicks, false})
+		}
+		if ai := bg.AIPerformance; ai != nil && active(ai.Citations) {
+			comps = append(comps, comp{0.05, &ai.Citations, false})
 		}
 	}
 

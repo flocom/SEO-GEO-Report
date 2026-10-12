@@ -244,9 +244,15 @@ func validDate(y, m, d int) (string, bool) {
 
 // parseDate converts GSC/GA4 date formats to YYYY-MM-DD: "20260701" (GA4),
 // "2026-07-01", "01/07/2026" (dayFirst) or "7/1/2026", "Jul 1, 2026",
-// "1 juil. 2026".
+// "1 juil. 2026", optionally followed by a time ("7/1/2026 12:00:00 AM").
 func parseDate(s string, dayFirst bool) (string, bool) {
 	s = strings.TrimSpace(s)
+	// Bing exports dates with a time: "6/6/2026 12:00:00 AM".
+	if i := strings.IndexByte(s, ' '); i > 0 && strings.Contains(s[i:], ":") {
+		if d, ok := parseDate(s[:i], dayFirst); ok {
+			return d, true
+		}
+	}
 	if len(s) == 8 && allDigits(s) {
 		y, _ := strconv.Atoi(s[:4])
 		m, _ := strconv.Atoi(s[4:6])

@@ -45,6 +45,11 @@ func GuessBingKind(name string) BingKind {
 	case GSCDates:
 		k = BingDates
 	}
+	// "Performances de recherche - Pages": "recherche" names the report, not
+	// the table.
+	if k == BingQueries && containsAny(h, "page", "url") && !containsAny(h, "quer", "requete", "keyword", "mot cle", "mots cles", "mot-cle", "mots-cles") {
+		k = BingPages
+	}
 	if ai {
 		return aiKindOf(k)
 	}
@@ -183,6 +188,12 @@ func ParseBingCSV(data []byte, kind BingKind) (*BingTable, error) {
 			hdr, cols, headers = i, c, hs
 			break
 		}
+		// A Search Performance header ends the search: data rows below it
+		// may contain "citation" (a keyword, a URL) and must not be read as
+		// an AI Performance header.
+		if _, ok := mapGSCColumns(hs); ok {
+			break
+		}
 	}
 	if hdr < 0 {
 		if kind.isAI() {
@@ -268,10 +279,13 @@ func parseBingAI(rows [][]string, cols aiColumns, kind BingKind, decimalComma bo
 			}
 			ppg, _ := num(rec, aiCitedPages, true)
 			pp := prevPoint{from: date, p: model.BingAIDailyPoint{Citations: pc, CitedPages: round2(ppg)}}
-			if cols.prevKey >= 0 {
+			switch {
+			case cols.prevKey >= 0:
 				if d, ok := parseDate(cell(rec, cols.prevKey), decimalComma); ok {
 					pp.date = d
 				}
+			case !cOK:
+				pp.date = date // row of the comparison period itself
 			}
 			prevs = append(prevs, pp)
 		}
@@ -356,6 +370,9 @@ func ApplyBingTable(bg *model.Bing, t *BingTable) *model.Bing {
 	case BingAIPages:
 		a := ai()
 		a.Pages = t.CitedPages
+		if len(a.Daily) == 0 {
+			a.Citations = model.Metric{} // the pages give the total: recompute it
+		}
 		a.ComputeTotals()
 	case BingAIDates:
 		a := ai()

@@ -194,10 +194,11 @@ func (b *builder) geoKPIs() []kpiCard {
 	return cards
 }
 
-// allKPIs returns every KPI card: Google, Bing, website traffic, then AI.
+// allKPIs returns every KPI card: Google, website traffic, AI, then Bing
+// (last, so that it only fills free slots of the key indicators).
 func (b *builder) allKPIs() []kpiCard {
 	var all []kpiCard
-	for _, cards := range [][]kpiCard{b.gscKPIs(), b.bingKPIs(), b.ga4KPIs(), b.geoKPIs()} {
+	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs()} {
 		all = append(all, cards...)
 	}
 	return all

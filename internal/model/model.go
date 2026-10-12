@@ -159,7 +159,7 @@ type CWVStatus struct {
 // same metrics as Search Console (clicks, impressions, CTR, average position),
 // so it reuses the Search Console types.
 type Bing struct {
-	Totals        GSCTotals          `json:"totals" jsonschema:"Totals of the Bing Search Performance report: clicks, impressions, ctr (percent), position"`
+	Totals        GSCTotals          `json:"totals,omitempty" jsonschema:"Totals of the Bing Search Performance report: clicks, impressions, ctr (percent), position"`
 	Daily         []GSCDailyPoint    `json:"daily,omitempty" jsonschema:"Daily Bing performance for the analysed period (chronological)"`
 	PreviousDaily []GSCDailyPoint    `json:"previous_daily,omitempty" jsonschema:"Daily Bing performance for the comparison period (used as a dashed overlay)"`
 	Queries       []GSCRow           `json:"queries,omitempty" jsonschema:"Top Bing keywords (key = keyword)"`
@@ -169,7 +169,7 @@ type Bing struct {
 
 // BingAIPerformance is the Bing Webmaster Tools AI Performance report.
 type BingAIPerformance struct {
-	Citations        Metric               `json:"citations" jsonschema:"Total citations: times the site was cited as a source in AI answers over the period. Computed from daily or pages when omitted"`
+	Citations        Metric               `json:"citations,omitempty" jsonschema:"Total citations: times the site was cited as a source in AI answers over the period. Computed from daily or pages when omitted"`
 	CitedPages       *Metric              `json:"cited_pages,omitempty" jsonschema:"Average cited pages: daily average of unique pages of the site cited in AI answers"`
 	Daily            []BingAIDailyPoint   `json:"daily,omitempty" jsonschema:"Daily citations for the analysed period (chronological)"`
 	PreviousDaily    []BingAIDailyPoint   `json:"previous_daily,omitempty" jsonschema:"Daily citations for the comparison period"`

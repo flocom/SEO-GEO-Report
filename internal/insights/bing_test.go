@@ -69,3 +69,16 @@ func TestBingAnalysis(t *testing.T) {
 		t.Errorf("progress with Bing growth %v should exceed %v", p, q)
 	}
 }
+
+func TestBingInactiveDoesNotMoveProgress(t *testing.T) {
+	r := bingReport("en")
+	r.Bing = nil
+	base := Analyze(r).Progress
+	r.Bing = &model.Bing{
+		Totals:        model.GSCTotals{Clicks: model.M(0, 0), Impressions: model.M(0, 0)},
+		AIPerformance: &model.BingAIPerformance{Citations: model.M(0, 0)},
+	}
+	if p := Analyze(r).Progress; p == nil || base == nil || *p != *base {
+		t.Errorf("progress with an inactive Bing = %v, want %v", p, base)
+	}
+}

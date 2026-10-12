@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
 
 func TestParseBingKeywords(t *testing.T) {
@@ -178,5 +180,69 @@ func TestImportBingExportDir(t *testing.T) {
 	}
 	if _, err := ImportBingExport(t.TempDir()); err == nil {
 		t.Error("empty dir: want an error")
+	}
+}
+
+func TestParseBingRealExportShapes(t *testing.T) {
+	// Daily chart as exported by Bing: dates with a time, "Avg. CTR".
+	daily := "\uFEFFDate,Clicks,Impressions,Avg. CTR\n6/6/2026 12:00:00 AM,12,400,3\n6/7/2026 12:00:00 AM,8,300,2.67\n"
+	tb, err := ParseBingCSV([]byte(daily), GuessBingKind("www.example.fr_SearchPerformanceOverview_All_6_7_2026.csv"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tb.Kind != BingDates || len(tb.Daily) != 2 || tb.Daily[0].Date != "2026-06-06" || tb.Daily[0].CTR != 3 {
+		t.Fatalf("daily chart = %+v", tb)
+	}
+	ai := "Date,Citations,Cited Pages\n6/6/2026 12:00:00 AM,14,5\n"
+	if tb, err := ParseBingCSV([]byte(ai), GuessBingKind("www.example.fr_AIPerformanceOverviewStats_6_7_2026.csv")); err != nil || tb.Kind != BingAIDates || tb.AIDaily[0].CitedPages != 5 {
+		t.Fatalf("AI chart = %+v, %v", tb, err)
+	}
+	gq := "Grounding Query,Intent,Topic,Citations,Citation Share\nbest lamp,Commercial,Lighting,\"1,234\",12.5%\n"
+	if tb, err := ParseBingCSV([]byte(gq), GuessBingKind("www.example.fr_AISearchQueriesReport_6_7_2026.csv")); err != nil || tb.Kind != BingAIQueries || tb.GroundingQueries[0].Citations != 1234 {
+		t.Fatalf("grounding queries = %+v, %v", tb, err)
+	}
+	pages := "Page,Citations\nhttps://www.example.fr/a,7\n"
+	if tb, err := ParseBingCSV([]byte(pages), GuessBingKind("www.example.fr_AIPageStatsReport_6_7_2026.csv")); err != nil || tb.Kind != BingAIPages {
+		t.Fatalf("AI pages = %+v, %v", tb, err)
+	}
+}
+
+func TestParseBingKeywordsMentioningCitations(t *testing.T) {
+	// "citation" in keywords or URLs must not turn a search table into an AI table.
+	csv := "Keyword,Clicks,Impressions,CTR,Avg. Position\nlampe rotin,10,300,3.3%,2\ncitation amour,80,3000,2.6%,4.2\ncitations celebres 2024,50,2000,2.5%,5\n"
+	tb, err := ParseBingCSV([]byte(csv), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tb.Kind != BingQueries || len(tb.Rows) != 3 || len(tb.GroundingQueries) != 0 {
+		t.Fatalf("kind %q, %d rows, %d grounding queries", tb.Kind, len(tb.Rows), len(tb.GroundingQueries))
+	}
+}
+
+func TestBingAIPagesReimportAndPreviousRows(t *testing.T) {
+	first := &BingTable{Kind: BingAIPages, CitedPages: []model.BingCitedPage{{URL: "a", Citations: 100}}}
+	second := &BingTable{Kind: BingAIPages, CitedPages: []model.BingCitedPage{{URL: "a", Citations: 7}}}
+	bg := ApplyBingTable(ApplyBingTable(nil, first), second)
+	if c := bg.AIPerformance.Citations.Current; c != 7 {
+		t.Errorf("citations after re-import = %v, want 7", c)
+	}
+
+	// Rows of the comparison period carry only the previous values.
+	csv := "Date,Citations,Previous period Citations\n2026-07-01,5,\n2026-07-02,6,\n2026-06-29,,3\n2026-06-30,,4\n"
+	tb, err := ParseBingCSV([]byte(csv), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tb.AIPreviousDaily) != 2 || tb.AIPreviousDaily[0].Date != "2026-06-29" {
+		t.Errorf("previous days = %+v", tb.AIPreviousDaily)
+	}
+}
+
+func TestGuessBingKindFrenchPages(t *testing.T) {
+	if k := GuessBingKind("Performances de recherche - Pages.csv"); k != BingPages {
+		t.Errorf("got %q, want pages", k)
+	}
+	if k := GuessBingKind("Performances de recherche - Mots-clés.csv"); k != BingQueries {
+		t.Errorf("got %q, want queries", k)
 	}
 }
