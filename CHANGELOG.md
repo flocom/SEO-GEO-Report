@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-15
+
 ### Added
 - Bing Webmaster Tools section ("Performance dans Bing" / "Bing Search
   performance"), placed after Google's countries and devices: Bing clicks,
@@ -71,5 +73,9 @@ All notable changes to this project are documented here. The format follows [Kee
 - CLI: `render`, `validate`, `example`, `schema`, `import-gsc`, `import-ga4`, `serve`, `mcp`, `version`.
 - Zero-config Docker image (`ghcr.io/flocom/seo-geo-report`, amd64 / arm64), Watchtower auto-updates and in-app new-version notice.
 
-[Unreleased]: https://github.com/flocom/SEO-GEO-Report/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/flocom/SEO-GEO-Report/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/flocom/SEO-GEO-Report/compare/v0.1.3...v0.2.0
+[0.1.3]: https://github.com/flocom/SEO-GEO-Report/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/flocom/SEO-GEO-Report/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/flocom/SEO-GEO-Report/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/flocom/SEO-GEO-Report/releases/tag/v0.1.0
