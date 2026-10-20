@@ -1,13 +1,13 @@
 // Package importer converts raw exports (CSV files from Google Search Console,
-// Bing Webmaster Tools and Google Analytics 4, in French or English) into
-// model structures.
+// Bing Webmaster Tools, Google Analytics 4 and Google Merchant Center, in
+// French or English) into model structures.
 package importer
 
 import "github.com/flocom/SEO-GEO-Report/internal/model"
 
 // Implementations live in gsc.go (ParseGSCCSV, ImportGSCExport,
-// ApplyGSCTable), bing.go (ParseBingCSV, ImportBingExport, ApplyBingTable)
-// and ga4.go (ParseGA4CSV).
+// ApplyGSCTable), bing.go (ParseBingCSV, ImportBingExport, ApplyBingTable),
+// ga4.go (ParseGA4CSV) and gmc.go (ParseGMCCSV).
 
 // GSCKind is the kind of Search Console export table.
 type GSCKind string

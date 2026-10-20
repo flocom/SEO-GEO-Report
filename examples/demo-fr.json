@@ -5907,6 +5907,1318 @@
       }
     ]
   },
+  "merchant_center": {
+    "totals": {
+      "clicks": {
+        "current": 7880,
+        "previous": 6052
+      },
+      "impressions": {
+        "current": 650817,
+        "previous": 533354
+      },
+      "ctr": {
+        "current": 1.21,
+        "previous": 1.13
+      },
+      "conversions": {
+        "current": 268,
+        "previous": 201
+      },
+      "conversion_value": {
+        "current": 36540,
+        "previous": 27210
+      }
+    },
+    "daily": [
+      {
+        "date": "2026-07-01",
+        "clicks": 77,
+        "impressions": 6340
+      },
+      {
+        "date": "2026-07-02",
+        "clicks": 79,
+        "impressions": 6817
+      },
+      {
+        "date": "2026-07-03",
+        "clicks": 72,
+        "impressions": 5913
+      },
+      {
+        "date": "2026-07-04",
+        "clicks": 64,
+        "impressions": 5374
+      },
+      {
+        "date": "2026-07-05",
+        "clicks": 69,
+        "impressions": 5775
+      },
+      {
+        "date": "2026-07-06",
+        "clicks": 79,
+        "impressions": 6551
+      },
+      {
+        "date": "2026-07-07",
+        "clicks": 84,
+        "impressions": 6777
+      },
+      {
+        "date": "2026-07-08",
+        "clicks": 75,
+        "impressions": 6112
+      },
+      {
+        "date": "2026-07-09",
+        "clicks": 73,
+        "impressions": 5954
+      },
+      {
+        "date": "2026-07-10",
+        "clicks": 66,
+        "impressions": 5369
+      },
+      {
+        "date": "2026-07-11",
+        "clicks": 67,
+        "impressions": 5516
+      },
+      {
+        "date": "2026-07-12",
+        "clicks": 81,
+        "impressions": 7059
+      },
+      {
+        "date": "2026-07-13",
+        "clicks": 84,
+        "impressions": 6934
+      },
+      {
+        "date": "2026-07-14",
+        "clicks": 86,
+        "impressions": 6992
+      },
+      {
+        "date": "2026-07-15",
+        "clicks": 89,
+        "impressions": 7128
+      },
+      {
+        "date": "2026-07-16",
+        "clicks": 81,
+        "impressions": 7066
+      },
+      {
+        "date": "2026-07-17",
+        "clicks": 77,
+        "impressions": 6282
+      },
+      {
+        "date": "2026-07-18",
+        "clicks": 71,
+        "impressions": 5806
+      },
+      {
+        "date": "2026-07-19",
+        "clicks": 82,
+        "impressions": 6952
+      },
+      {
+        "date": "2026-07-20",
+        "clicks": 84,
+        "impressions": 7364
+      },
+      {
+        "date": "2026-07-21",
+        "clicks": 83,
+        "impressions": 6910
+      },
+      {
+        "date": "2026-07-22",
+        "clicks": 88,
+        "impressions": 7133
+      },
+      {
+        "date": "2026-07-23",
+        "clicks": 87,
+        "impressions": 7586
+      },
+      {
+        "date": "2026-07-24",
+        "clicks": 80,
+        "impressions": 6651
+      },
+      {
+        "date": "2026-07-25",
+        "clicks": 69,
+        "impressions": 5969
+      },
+      {
+        "date": "2026-07-26",
+        "clicks": 73,
+        "impressions": 6357
+      },
+      {
+        "date": "2026-07-27",
+        "clicks": 81,
+        "impressions": 6875
+      },
+      {
+        "date": "2026-07-28",
+        "clicks": 96,
+        "impressions": 8240
+      },
+      {
+        "date": "2026-07-29",
+        "clicks": 91,
+        "impressions": 7479
+      },
+      {
+        "date": "2026-07-30",
+        "clicks": 83,
+        "impressions": 6887
+      },
+      {
+        "date": "2026-07-31",
+        "clicks": 72,
+        "impressions": 5980
+      },
+      {
+        "date": "2026-08-01",
+        "clicks": 68,
+        "impressions": 5555
+      },
+      {
+        "date": "2026-08-02",
+        "clicks": 85,
+        "impressions": 6989
+      },
+      {
+        "date": "2026-08-03",
+        "clicks": 88,
+        "impressions": 7546
+      },
+      {
+        "date": "2026-08-04",
+        "clicks": 92,
+        "impressions": 7746
+      },
+      {
+        "date": "2026-08-05",
+        "clicks": 89,
+        "impressions": 7380
+      },
+      {
+        "date": "2026-08-06",
+        "clicks": 89,
+        "impressions": 7121
+      },
+      {
+        "date": "2026-08-07",
+        "clicks": 78,
+        "impressions": 6367
+      },
+      {
+        "date": "2026-08-08",
+        "clicks": 75,
+        "impressions": 6257
+      },
+      {
+        "date": "2026-08-09",
+        "clicks": 77,
+        "impressions": 6406
+      },
+      {
+        "date": "2026-08-10",
+        "clicks": 86,
+        "impressions": 7368
+      },
+      {
+        "date": "2026-08-11",
+        "clicks": 97,
+        "impressions": 7987
+      },
+      {
+        "date": "2026-08-12",
+        "clicks": 98,
+        "impressions": 8376
+      },
+      {
+        "date": "2026-08-13",
+        "clicks": 88,
+        "impressions": 7056
+      },
+      {
+        "date": "2026-08-14",
+        "clicks": 84,
+        "impressions": 6694
+      },
+      {
+        "date": "2026-08-15",
+        "clicks": 78,
+        "impressions": 6226
+      },
+      {
+        "date": "2026-08-16",
+        "clicks": 80,
+        "impressions": 6838
+      },
+      {
+        "date": "2026-08-17",
+        "clicks": 99,
+        "impressions": 7873
+      },
+      {
+        "date": "2026-08-18",
+        "clicks": 98,
+        "impressions": 8201
+      },
+      {
+        "date": "2026-08-19",
+        "clicks": 99,
+        "impressions": 8416
+      },
+      {
+        "date": "2026-08-20",
+        "clicks": 93,
+        "impressions": 7957
+      },
+      {
+        "date": "2026-08-21",
+        "clicks": 84,
+        "impressions": 6738
+      },
+      {
+        "date": "2026-08-22",
+        "clicks": 80,
+        "impressions": 6319
+      },
+      {
+        "date": "2026-08-23",
+        "clicks": 83,
+        "impressions": 6564
+      },
+      {
+        "date": "2026-08-24",
+        "clicks": 92,
+        "impressions": 7852
+      },
+      {
+        "date": "2026-08-25",
+        "clicks": 92,
+        "impressions": 7759
+      },
+      {
+        "date": "2026-08-26",
+        "clicks": 97,
+        "impressions": 8101
+      },
+      {
+        "date": "2026-08-27",
+        "clicks": 97,
+        "impressions": 8208
+      },
+      {
+        "date": "2026-08-28",
+        "clicks": 85,
+        "impressions": 7219
+      },
+      {
+        "date": "2026-08-29",
+        "clicks": 73,
+        "impressions": 6139
+      },
+      {
+        "date": "2026-08-30",
+        "clicks": 95,
+        "impressions": 7745
+      },
+      {
+        "date": "2026-08-31",
+        "clicks": 93,
+        "impressions": 7784
+      },
+      {
+        "date": "2026-09-01",
+        "clicks": 95,
+        "impressions": 8087
+      },
+      {
+        "date": "2026-09-02",
+        "clicks": 95,
+        "impressions": 7886
+      },
+      {
+        "date": "2026-09-03",
+        "clicks": 101,
+        "impressions": 8242
+      },
+      {
+        "date": "2026-09-04",
+        "clicks": 88,
+        "impressions": 6932
+      },
+      {
+        "date": "2026-09-05",
+        "clicks": 81,
+        "impressions": 6304
+      },
+      {
+        "date": "2026-09-06",
+        "clicks": 90,
+        "impressions": 7622
+      },
+      {
+        "date": "2026-09-07",
+        "clicks": 105,
+        "impressions": 8912
+      },
+      {
+        "date": "2026-09-08",
+        "clicks": 107,
+        "impressions": 8395
+      },
+      {
+        "date": "2026-09-09",
+        "clicks": 103,
+        "impressions": 7992
+      },
+      {
+        "date": "2026-09-10",
+        "clicks": 96,
+        "impressions": 7961
+      },
+      {
+        "date": "2026-09-11",
+        "clicks": 94,
+        "impressions": 7688
+      },
+      {
+        "date": "2026-09-12",
+        "clicks": 80,
+        "impressions": 6747
+      },
+      {
+        "date": "2026-09-13",
+        "clicks": 97,
+        "impressions": 7732
+      },
+      {
+        "date": "2026-09-14",
+        "clicks": 100,
+        "impressions": 7972
+      },
+      {
+        "date": "2026-09-15",
+        "clicks": 112,
+        "impressions": 9330
+      },
+      {
+        "date": "2026-09-16",
+        "clicks": 109,
+        "impressions": 8968
+      },
+      {
+        "date": "2026-09-17",
+        "clicks": 102,
+        "impressions": 8584
+      },
+      {
+        "date": "2026-09-18",
+        "clicks": 87,
+        "impressions": 7104
+      },
+      {
+        "date": "2026-09-19",
+        "clicks": 82,
+        "impressions": 6765
+      },
+      {
+        "date": "2026-09-20",
+        "clicks": 92,
+        "impressions": 7754
+      },
+      {
+        "date": "2026-09-21",
+        "clicks": 106,
+        "impressions": 8898
+      },
+      {
+        "date": "2026-09-22",
+        "clicks": 116,
+        "impressions": 8932
+      },
+      {
+        "date": "2026-09-23",
+        "clicks": 105,
+        "impressions": 8494
+      },
+      {
+        "date": "2026-09-24",
+        "clicks": 95,
+        "impressions": 7254
+      },
+      {
+        "date": "2026-09-25",
+        "clicks": 97,
+        "impressions": 7965
+      },
+      {
+        "date": "2026-09-26",
+        "clicks": 83,
+        "impressions": 6831
+      },
+      {
+        "date": "2026-09-27",
+        "clicks": 92,
+        "impressions": 7219
+      },
+      {
+        "date": "2026-09-28",
+        "clicks": 115,
+        "impressions": 9312
+      }
+    ],
+    "previous_daily": [
+      {
+        "date": "2026-04-02",
+        "clicks": 60,
+        "impressions": 5398
+      },
+      {
+        "date": "2026-04-03",
+        "clicks": 58,
+        "impressions": 5253
+      },
+      {
+        "date": "2026-04-04",
+        "clicks": 50,
+        "impressions": 4471
+      },
+      {
+        "date": "2026-04-05",
+        "clicks": 65,
+        "impressions": 6081
+      },
+      {
+        "date": "2026-04-06",
+        "clicks": 72,
+        "impressions": 6260
+      },
+      {
+        "date": "2026-04-07",
+        "clicks": 67,
+        "impressions": 6242
+      },
+      {
+        "date": "2026-04-08",
+        "clicks": 70,
+        "impressions": 5965
+      },
+      {
+        "date": "2026-04-09",
+        "clicks": 68,
+        "impressions": 6220
+      },
+      {
+        "date": "2026-04-10",
+        "clicks": 54,
+        "impressions": 4662
+      },
+      {
+        "date": "2026-04-11",
+        "clicks": 51,
+        "impressions": 4650
+      },
+      {
+        "date": "2026-04-12",
+        "clicks": 60,
+        "impressions": 5551
+      },
+      {
+        "date": "2026-04-13",
+        "clicks": 63,
+        "impressions": 5356
+      },
+      {
+        "date": "2026-04-14",
+        "clicks": 66,
+        "impressions": 6038
+      },
+      {
+        "date": "2026-04-15",
+        "clicks": 68,
+        "impressions": 5972
+      },
+      {
+        "date": "2026-04-16",
+        "clicks": 68,
+        "impressions": 6307
+      },
+      {
+        "date": "2026-04-17",
+        "clicks": 58,
+        "impressions": 5264
+      },
+      {
+        "date": "2026-04-18",
+        "clicks": 58,
+        "impressions": 5103
+      },
+      {
+        "date": "2026-04-19",
+        "clicks": 63,
+        "impressions": 5455
+      },
+      {
+        "date": "2026-04-20",
+        "clicks": 70,
+        "impressions": 6080
+      },
+      {
+        "date": "2026-04-21",
+        "clicks": 75,
+        "impressions": 6665
+      },
+      {
+        "date": "2026-04-22",
+        "clicks": 70,
+        "impressions": 6057
+      },
+      {
+        "date": "2026-04-23",
+        "clicks": 67,
+        "impressions": 5676
+      },
+      {
+        "date": "2026-04-24",
+        "clicks": 60,
+        "impressions": 5478
+      },
+      {
+        "date": "2026-04-25",
+        "clicks": 55,
+        "impressions": 4844
+      },
+      {
+        "date": "2026-04-26",
+        "clicks": 62,
+        "impressions": 5627
+      },
+      {
+        "date": "2026-04-27",
+        "clicks": 72,
+        "impressions": 6169
+      },
+      {
+        "date": "2026-04-28",
+        "clicks": 71,
+        "impressions": 6450
+      },
+      {
+        "date": "2026-04-29",
+        "clicks": 66,
+        "impressions": 5804
+      },
+      {
+        "date": "2026-04-30",
+        "clicks": 63,
+        "impressions": 5623
+      },
+      {
+        "date": "2026-05-01",
+        "clicks": 65,
+        "impressions": 5633
+      },
+      {
+        "date": "2026-05-02",
+        "clicks": 51,
+        "impressions": 4694
+      },
+      {
+        "date": "2026-05-03",
+        "clicks": 59,
+        "impressions": 5384
+      },
+      {
+        "date": "2026-05-04",
+        "clicks": 72,
+        "impressions": 6365
+      },
+      {
+        "date": "2026-05-05",
+        "clicks": 76,
+        "impressions": 6948
+      },
+      {
+        "date": "2026-05-06",
+        "clicks": 71,
+        "impressions": 6478
+      },
+      {
+        "date": "2026-05-07",
+        "clicks": 66,
+        "impressions": 5725
+      },
+      {
+        "date": "2026-05-08",
+        "clicks": 59,
+        "impressions": 5370
+      },
+      {
+        "date": "2026-05-09",
+        "clicks": 58,
+        "impressions": 5371
+      },
+      {
+        "date": "2026-05-10",
+        "clicks": 61,
+        "impressions": 5242
+      },
+      {
+        "date": "2026-05-11",
+        "clicks": 66,
+        "impressions": 5770
+      },
+      {
+        "date": "2026-05-12",
+        "clicks": 78,
+        "impressions": 6748
+      },
+      {
+        "date": "2026-05-13",
+        "clicks": 66,
+        "impressions": 6106
+      },
+      {
+        "date": "2026-05-14",
+        "clicks": 67,
+        "impressions": 5808
+      },
+      {
+        "date": "2026-05-15",
+        "clicks": 63,
+        "impressions": 5614
+      },
+      {
+        "date": "2026-05-16",
+        "clicks": 58,
+        "impressions": 4887
+      },
+      {
+        "date": "2026-05-17",
+        "clicks": 65,
+        "impressions": 5797
+      },
+      {
+        "date": "2026-05-18",
+        "clicks": 69,
+        "impressions": 6086
+      },
+      {
+        "date": "2026-05-19",
+        "clicks": 76,
+        "impressions": 6471
+      },
+      {
+        "date": "2026-05-20",
+        "clicks": 76,
+        "impressions": 6729
+      },
+      {
+        "date": "2026-05-21",
+        "clicks": 67,
+        "impressions": 6102
+      },
+      {
+        "date": "2026-05-22",
+        "clicks": 62,
+        "impressions": 5417
+      },
+      {
+        "date": "2026-05-23",
+        "clicks": 61,
+        "impressions": 5300
+      },
+      {
+        "date": "2026-05-24",
+        "clicks": 71,
+        "impressions": 6040
+      },
+      {
+        "date": "2026-05-25",
+        "clicks": 71,
+        "impressions": 5947
+      },
+      {
+        "date": "2026-05-26",
+        "clicks": 78,
+        "impressions": 6951
+      },
+      {
+        "date": "2026-05-27",
+        "clicks": 71,
+        "impressions": 6246
+      },
+      {
+        "date": "2026-05-28",
+        "clicks": 68,
+        "impressions": 6149
+      },
+      {
+        "date": "2026-05-29",
+        "clicks": 66,
+        "impressions": 5708
+      },
+      {
+        "date": "2026-05-30",
+        "clicks": 54,
+        "impressions": 4753
+      },
+      {
+        "date": "2026-05-31",
+        "clicks": 71,
+        "impressions": 6013
+      },
+      {
+        "date": "2026-06-01",
+        "clicks": 74,
+        "impressions": 6248
+      },
+      {
+        "date": "2026-06-02",
+        "clicks": 79,
+        "impressions": 7211
+      },
+      {
+        "date": "2026-06-03",
+        "clicks": 74,
+        "impressions": 6323
+      },
+      {
+        "date": "2026-06-04",
+        "clicks": 70,
+        "impressions": 6143
+      },
+      {
+        "date": "2026-06-05",
+        "clicks": 62,
+        "impressions": 5422
+      },
+      {
+        "date": "2026-06-06",
+        "clicks": 54,
+        "impressions": 4698
+      },
+      {
+        "date": "2026-06-07",
+        "clicks": 67,
+        "impressions": 5717
+      },
+      {
+        "date": "2026-06-08",
+        "clicks": 74,
+        "impressions": 6637
+      },
+      {
+        "date": "2026-06-09",
+        "clicks": 81,
+        "impressions": 7300
+      },
+      {
+        "date": "2026-06-10",
+        "clicks": 79,
+        "impressions": 6737
+      },
+      {
+        "date": "2026-06-11",
+        "clicks": 77,
+        "impressions": 6688
+      },
+      {
+        "date": "2026-06-12",
+        "clicks": 70,
+        "impressions": 6078
+      },
+      {
+        "date": "2026-06-13",
+        "clicks": 59,
+        "impressions": 4986
+      },
+      {
+        "date": "2026-06-14",
+        "clicks": 68,
+        "impressions": 6007
+      },
+      {
+        "date": "2026-06-15",
+        "clicks": 70,
+        "impressions": 6206
+      },
+      {
+        "date": "2026-06-16",
+        "clicks": 79,
+        "impressions": 6962
+      },
+      {
+        "date": "2026-06-17",
+        "clicks": 69,
+        "impressions": 6213
+      },
+      {
+        "date": "2026-06-18",
+        "clicks": 76,
+        "impressions": 6721
+      },
+      {
+        "date": "2026-06-19",
+        "clicks": 67,
+        "impressions": 6085
+      },
+      {
+        "date": "2026-06-20",
+        "clicks": 62,
+        "impressions": 5278
+      },
+      {
+        "date": "2026-06-21",
+        "clicks": 64,
+        "impressions": 5461
+      },
+      {
+        "date": "2026-06-22",
+        "clicks": 81,
+        "impressions": 7356
+      },
+      {
+        "date": "2026-06-23",
+        "clicks": 84,
+        "impressions": 7496
+      },
+      {
+        "date": "2026-06-24",
+        "clicks": 73,
+        "impressions": 6094
+      },
+      {
+        "date": "2026-06-25",
+        "clicks": 78,
+        "impressions": 6814
+      },
+      {
+        "date": "2026-06-26",
+        "clicks": 68,
+        "impressions": 6049
+      },
+      {
+        "date": "2026-06-27",
+        "clicks": 58,
+        "impressions": 4922
+      },
+      {
+        "date": "2026-06-28",
+        "clicks": 69,
+        "impressions": 6031
+      },
+      {
+        "date": "2026-06-29",
+        "clicks": 79,
+        "impressions": 6596
+      },
+      {
+        "date": "2026-06-30",
+        "clicks": 75,
+        "impressions": 6302
+      }
+    ],
+    "programs": [
+      {
+        "key": "Fiches gratuites",
+        "clicks": 4492,
+        "impressions": 416523,
+        "ctr": 1.08,
+        "conversions": 129,
+        "conversion_value": 17539,
+        "prev_clicks": 3147,
+        "prev_impressions": 320012
+      },
+      {
+        "key": "Annonces Shopping",
+        "clicks": 3073,
+        "impressions": 195245,
+        "ctr": 1.57,
+        "conversions": 134,
+        "conversion_value": 18270,
+        "prev_clicks": 2723,
+        "prev_impressions": 192007
+      },
+      {
+        "key": "Google Images",
+        "clicks": 236,
+        "impressions": 29287,
+        "ctr": 0.81,
+        "conversions": 4,
+        "conversion_value": 548,
+        "prev_clicks": 151,
+        "prev_impressions": 16001
+      },
+      {
+        "key": "YouTube",
+        "clicks": 79,
+        "impressions": 9762,
+        "ctr": 0.81,
+        "conversions": 1,
+        "conversion_value": 183,
+        "prev_clicks": 31,
+        "prev_impressions": 5334
+      }
+    ],
+    "products": [
+      {
+        "key": "Suspension en rotin naturel Ø 60 cm",
+        "offer_id": "ML-SUS-ROT-60",
+        "clicks": 812,
+        "impressions": 52400,
+        "ctr": 1.55,
+        "conversions": 41,
+        "conversion_value": 5289,
+        "prev_clicks": 455,
+        "prev_impressions": 41200
+      },
+      {
+        "key": "Lampe de chevet tactile laiton",
+        "offer_id": "ML-LAP-TAC-01",
+        "clicks": 648,
+        "impressions": 47900,
+        "ctr": 1.35,
+        "conversions": 37,
+        "conversion_value": 3293,
+        "prev_clicks": 330,
+        "prev_impressions": 31800
+      },
+      {
+        "key": "Lampadaire arc marbre noir",
+        "offer_id": "ML-LPD-ARC-02",
+        "clicks": 521,
+        "impressions": 39800,
+        "ctr": 1.31,
+        "conversions": 18,
+        "conversion_value": 5382,
+        "prev_clicks": 498,
+        "prev_impressions": 40100
+      },
+      {
+        "key": "Applique murale orientable noir mat",
+        "offer_id": "ML-APP-ORI-03",
+        "clicks": 476,
+        "impressions": 41200,
+        "ctr": 1.16,
+        "conversions": 22,
+        "conversion_value": 1958,
+        "prev_clicks": 352,
+        "prev_impressions": 35600
+      },
+      {
+        "key": "Suspension verre fumé Ø 30 cm",
+        "offer_id": "ML-SUS-VER-30",
+        "clicks": 433,
+        "impressions": 36100,
+        "ctr": 1.2,
+        "conversions": 19,
+        "conversion_value": 2641,
+        "prev_clicks": 240,
+        "prev_impressions": 24900
+      },
+      {
+        "key": "Lampe champignon opaline",
+        "offer_id": "ML-LAP-CHA-04",
+        "clicks": 398,
+        "impressions": 28700,
+        "ctr": 1.39,
+        "conversions": 21,
+        "conversion_value": 2289,
+        "prev_clicks": 151,
+        "prev_impressions": 12600
+      },
+      {
+        "key": "Ampoule filament E27 ambrée (lot de 3)",
+        "offer_id": "ML-AMP-E27-3",
+        "clicks": 362,
+        "impressions": 58300,
+        "ctr": 0.62,
+        "conversions": 34,
+        "conversion_value": 847,
+        "prev_clicks": 391,
+        "prev_impressions": 56900
+      },
+      {
+        "key": "Plafonnier lin blanc Ø 45 cm",
+        "offer_id": "ML-PLA-LIN-45",
+        "clicks": 297,
+        "impressions": 30900,
+        "ctr": 0.96,
+        "conversions": 11,
+        "conversion_value": 1309,
+        "prev_clicks": 274,
+        "prev_impressions": 29800
+      },
+      {
+        "key": "Lampe de bureau vintage laiton",
+        "offer_id": "ML-LAB-VIN-05",
+        "clicks": 268,
+        "impressions": 22600,
+        "ctr": 1.19,
+        "conversions": 9,
+        "conversion_value": 801,
+        "prev_clicks": 322,
+        "prev_impressions": 24100
+      },
+      {
+        "key": "Guirlande guinguette 10 m",
+        "offer_id": "ML-GUI-10M",
+        "clicks": 251,
+        "impressions": 19300,
+        "ctr": 1.3,
+        "conversions": 16,
+        "conversion_value": 1024,
+        "prev_clicks": 88,
+        "prev_impressions": 7400
+      },
+      {
+        "key": "Suspension cuisine triple métal",
+        "offer_id": "ML-SUS-TRI-06",
+        "clicks": 236,
+        "impressions": 24800,
+        "ctr": 0.95,
+        "conversions": 8,
+        "conversion_value": 1432,
+        "prev_clicks": 159,
+        "prev_impressions": 19200
+      },
+      {
+        "key": "Lampadaire trépied bois",
+        "offer_id": "ML-LPD-TRE-07",
+        "clicks": 204,
+        "impressions": 18200,
+        "ctr": 1.12,
+        "conversions": 6,
+        "conversion_value": 894,
+        "prev_clicks": 197,
+        "prev_impressions": 17900
+      },
+      {
+        "key": "Applique extérieure IP65",
+        "offer_id": "ML-APX-IP65",
+        "clicks": 187,
+        "impressions": 21600,
+        "ctr": 0.87,
+        "conversions": 7,
+        "conversion_value": 553,
+        "prev_clicks": 102,
+        "prev_impressions": 14300
+      },
+      {
+        "key": "Spot LED encastrable orientable",
+        "offer_id": "ML-SPT-LED-08",
+        "clicks": 142,
+        "impressions": 26400,
+        "ctr": 0.54,
+        "conversions": 5,
+        "conversion_value": 145,
+        "prev_clicks": 166,
+        "prev_impressions": 27300
+      },
+      {
+        "key": "Variateur de lumière sans fil",
+        "offer_id": "ML-VAR-SF-09",
+        "clicks": 98,
+        "impressions": 15900,
+        "ctr": 0.62,
+        "conversions": 4,
+        "conversion_value": 156,
+        "prev_clicks": 109,
+        "prev_impressions": 16200
+      }
+    ],
+    "categories": [
+      {
+        "key": "Suspensions",
+        "clicks": 2679,
+        "impressions": 188737,
+        "ctr": 1.42,
+        "prev_clicks": 1876,
+        "prev_impressions": 149339
+      },
+      {
+        "key": "Lampes à poser",
+        "clicks": 1891,
+        "impressions": 143180,
+        "ctr": 1.32,
+        "prev_clicks": 1271,
+        "prev_impressions": 101337
+      },
+      {
+        "key": "Lampadaires",
+        "clicks": 1182,
+        "impressions": 91114,
+        "ctr": 1.3,
+        "prev_clicks": 1150,
+        "prev_impressions": 90670
+      },
+      {
+        "key": "Appliques murales",
+        "clicks": 946,
+        "impressions": 84606,
+        "ctr": 1.12,
+        "prev_clicks": 787,
+        "prev_impressions": 74670
+      },
+      {
+        "key": "Ampoules et accessoires",
+        "clicks": 709,
+        "impressions": 97623,
+        "ctr": 0.73,
+        "prev_clicks": 726,
+        "prev_impressions": 90670
+      },
+      {
+        "key": "Luminaires extérieurs",
+        "clicks": 473,
+        "impressions": 45557,
+        "ctr": 1.04,
+        "prev_clicks": 242,
+        "prev_impressions": 26668
+      }
+    ],
+    "countries": [
+      {
+        "key": "France",
+        "clicks": 6777,
+        "impressions": 546686,
+        "ctr": 1.24,
+        "prev_clicks": 5326,
+        "prev_impressions": 464018
+      },
+      {
+        "key": "Belgique",
+        "clicks": 709,
+        "impressions": 65082,
+        "ctr": 1.09,
+        "prev_clicks": 484,
+        "prev_impressions": 42668
+      },
+      {
+        "key": "Suisse",
+        "clicks": 394,
+        "impressions": 39049,
+        "ctr": 1.01,
+        "prev_clicks": 242,
+        "prev_impressions": 26668
+      }
+    ],
+    "product_status": {
+      "approved": {
+        "current": 418,
+        "previous": 371
+      },
+      "limited": {
+        "current": 31,
+        "previous": 46
+      },
+      "not_approved": {
+        "current": 14,
+        "previous": 22
+      },
+      "pending": {
+        "current": 5,
+        "previous": 8
+      }
+    },
+    "issues": [
+      {
+        "issue": "Code GTIN manquant",
+        "products": 24,
+        "prev_products": 38,
+        "severity": "warning",
+        "affects": "Fiches gratuites, annonces Shopping"
+      },
+      {
+        "issue": "Prix non concordant (page produit / flux)",
+        "products": 8,
+        "prev_products": 13,
+        "severity": "critical",
+        "affects": "Toutes les surfaces"
+      },
+      {
+        "issue": "Image trop petite",
+        "products": 6,
+        "prev_products": 9,
+        "severity": "critical",
+        "affects": "Toutes les surfaces"
+      },
+      {
+        "issue": "Superposition promotionnelle sur l'image",
+        "products": 7,
+        "prev_products": 4,
+        "severity": "warning",
+        "affects": "Fiches gratuites, annonces Shopping"
+      },
+      {
+        "issue": "Poids d'expédition manquant",
+        "products": 11,
+        "prev_products": 11,
+        "severity": "info",
+        "affects": "Annonces Shopping"
+      }
+    ],
+    "price_benchmarks": [
+      {
+        "product": "Suspension en rotin naturel Ø 60 cm",
+        "offer_id": "ML-SUS-ROT-60",
+        "price": 129,
+        "benchmark_price": 139.9
+      },
+      {
+        "product": "Lampe de chevet tactile laiton",
+        "offer_id": "ML-LAP-TAC-01",
+        "price": 89,
+        "benchmark_price": 84.5
+      },
+      {
+        "product": "Lampadaire arc marbre noir",
+        "offer_id": "ML-LPD-ARC-02",
+        "price": 299,
+        "benchmark_price": 259
+      },
+      {
+        "product": "Applique murale orientable noir mat",
+        "offer_id": "ML-APP-ORI-03",
+        "price": 89,
+        "benchmark_price": 91.2
+      },
+      {
+        "product": "Suspension verre fumé Ø 30 cm",
+        "offer_id": "ML-SUS-VER-30",
+        "price": 139,
+        "benchmark_price": 138
+      },
+      {
+        "product": "Lampe champignon opaline",
+        "offer_id": "ML-LAP-CHA-04",
+        "price": 109,
+        "benchmark_price": 99
+      },
+      {
+        "product": "Ampoule filament E27 ambrée (lot de 3)",
+        "offer_id": "ML-AMP-E27-3",
+        "price": 24.9,
+        "benchmark_price": 22.5
+      }
+    ]
+  },
   "geo": {
     "ai_daily": [
       {
@@ -6594,6 +7906,13 @@
         "category": "geo"
       },
       {
+        "title": "Assainir le flux produits Merchant Center",
+        "description": "45 produits sont refusés ou limités dans Google Shopping : aligner les prix du flux sur les fiches produits, remplacer les images trop petites et ajouter les 24 GTIN manquants.",
+        "priority": "medium",
+        "effort": "low",
+        "category": "technical"
+      },
+      {
         "title": "Recréer la page catégorie scandinave",
         "description": "Une page dédiée permettra de regagner la citation Perplexity perdue et les requêtes associées.",
         "priority": "medium",
@@ -6610,6 +7929,7 @@
     ],
     "section_notes": {
       "geo": "Le trafic IA est détecté à partir des sources GA4 (chatgpt.com, perplexity.ai…). Les tests de citation ont été réalisés manuellement le **25 septembre 2026**, sans être connecté.",
+      "merchant_center": "Les chiffres Merchant Center couvrent les fiches gratuites et les annonces Shopping. Les titres des produits sont ceux du flux produits.",
       "queries": "Les requêtes sont affichées telles que tapées par les internautes.",
       "technical": "La baisse des pages non indexées fait suite au nettoyage des sitemaps du 5 août. Les Core Web Vitals mobiles restent la priorité du T4."
     }

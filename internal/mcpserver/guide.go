@@ -14,9 +14,9 @@ import (
 
 // Instructions are sent to clients at initialization (claude.ai shows them to
 // the model). Keep them short: the full guide is a tool / resource.
-const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
+const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4), its products in Google Shopping (Merchant Center, optional) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
 It NEVER connects to Google, Bing or any other service: all numbers come from the user (exports, screenshots, copy-paste) and you pass them through the tools.
-Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
+Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_merchant_center / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
 Conventions: percentages in percent (3.2 = 3.2 %), dates YYYY-MM-DD, durations in seconds, every metric = {"current": x, "previous": y} where previous is the comparison period (drives the progress visuals).`
 
 // GuideMarkdown returns the full workflow guide, in English, for the model.
@@ -56,6 +56,7 @@ you collect the numbers from the user and pass them in.
    - ` + "`set_search_console`" + ` (or ` + "`import_search_console_csv`" + ` with the raw text of a GSC CSV export: Queries, Pages, Countries, Devices, Dates, Search appearance),
    - ` + "`set_bing`" + ` (or ` + "`import_bing_csv`" + ` with the raw text of a Bing Webmaster Tools CSV export: Search Performance keywords / pages / daily chart, AI Performance grounding queries / pages / daily chart),
    - ` + "`set_analytics`" + ` (or ` + "`import_analytics_csv`" + ` with a GA4 "Download CSV" export: channels, source/medium, landing pages, daily),
+   - ` + "`set_merchant_center`" + ` (or ` + "`import_merchant_center_csv`" + ` with the raw text of a Google Merchant Center CSV export: performance by product / day / marketing method / category / country, products with their status, issues, price competitiveness) when the site sells products,
    - ` + "`set_geo`" + ` for AI visibility (AI referrals, citation checks, share of voice, AI Overviews, AI crawlers).
 4. ` + "`set_narrative`" + `: write the executive summary, highlights, concerns, actions done and
    recommendations **based on the numbers** (be specific, cite figures, plain language for
@@ -108,6 +109,21 @@ Ecosia, Yahoo and Microsoft Copilot):
   cited pages (current + previous), the daily chart, grounding queries (citations, citation share,
   intent, topic) and cited pages. Total citations are computed from the daily chart or the pages
   when omitted.
+
+**Google Merchant Center** (optional, only for sites that sell products: it adds a "Google Shopping"
+section and a Shopping clicks card in the key indicators). In Merchant Center (Merchant Center Next),
+set the date range and the comparison, then download each table as CSV:
+- Performance (Analytics / "Performance" page): totals (clicks, impressions, CTR, conversions and
+  conversion value if tracked, current + previous), the daily chart, the tables by product (title,
+  item / offer ID), by marketing method / program (free listings vs Shopping ads, Images, YouTube),
+  by category, brand and country,
+- Products > All products (download: one row per product with its status) or the overview counts:
+  approved, limited, not approved (disapproved), pending,
+- Products > Needs attention / Diagnostics: issues with the number of products affected, severity
+  (critical = disapproved, warning = limited, info = suggestion) and the programs affected,
+- Price competitiveness (Analytics / Growth > Price competitiveness): your price vs the benchmark price
+  per product.
+Totals are computed from the daily chart, else from the program table, when omitted.
 
 **Google Analytics 4** (Reports > Acquisition > Traffic acquisition, Engagement > Landing page;
 with a comparison date range; "Share this report" > "Download file" > CSV):

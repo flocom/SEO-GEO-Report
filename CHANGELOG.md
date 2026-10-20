@@ -4,9 +4,28 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-10-15
+## [0.2.0] - 2026-10-20
 
 ### Added
+- Google Merchant Center section ("Google Shopping (Merchant Center)"),
+  displayed only when Merchant Center data is provided, between the landing
+  pages and AI visibility: product clicks, impressions, CTR, conversions and
+  conversion value with a daily chart, clicks by program (free listings vs
+  Shopping ads, Images, YouTube), top products and categories, product feed
+  status (approved / limited / disapproved / pending) with the issues to fix
+  sorted by severity, and price competitiveness against the benchmark price.
+  Part 1 gets a "Google Shopping clicks" card (the key indicators then hold
+  seven cards, still on one row on desktop).
+- `merchant_center` in the report format, MCP tools `set_merchant_center` and
+  `import_merchant_center_csv`, CLI command `import-gmc` (performance by
+  product, day, program, category, brand or country; product statuses; feed
+  issues; price competitiveness; French or English headers).
+- Merchant Center clicks feed the KPI tones, the automatic insights (feed
+  health and main issue, prices above the market, free listings growth...)
+  and the progress index with a modest weight; Bing and Merchant Center keep
+  up to three automatic insights each. Glossary entries for the Shopping
+  terms (shown only with Merchant Center data); the demo reports include
+  Merchant Center data.
 - Bing Webmaster Tools section ("Performance dans Bing" / "Bing Search
   performance"), placed after Google's countries and devices: Bing clicks,
   impressions, CTR and position with daily charts, a Google vs Bing comparison,

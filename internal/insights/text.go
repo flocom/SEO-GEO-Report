@@ -110,10 +110,40 @@ func buildInsights(r *model.Report, a *Analysis) []Insight {
 	if ga := r.Analytics; ga != nil {
 		ga4Insights(w, ga)
 	}
+	if mc := r.MerchantCenter; mc != nil {
+		gmcInsights(w, mc)
+	}
 	geoInsights(w, r, a)
 
-	return selectInsights(w.out, maxInsights)
+	// Optional sources (Bing, Merchant Center) are guaranteed up to
+	// maxOptional observations each on top of the balanced selection, so that
+	// adding them neither crowds out the others nor gets crowded out.
+	all := append([]Insight(nil), w.out...)
+	out := selectInsights(w.out, maxInsights)
+	taken := map[string]int{}
+	seen := map[string]bool{}
+	for _, in := range out {
+		taken[in.Section]++
+		seen[in.Section+"\x00"+in.Text] = true
+	}
+	sort.SliceStable(all, func(i, j int) bool { return all[i].Weight > all[j].Weight })
+	added := false
+	for _, in := range all {
+		if optionalSections[in.Section] && taken[in.Section] < maxOptional && !seen[in.Section+"\x00"+in.Text] {
+			out = append(out, in)
+			taken[in.Section]++
+			added = true
+		}
+	}
+	if added {
+		sort.SliceStable(out, func(i, j int) bool { return out[i].Weight > out[j].Weight })
+	}
+	return out
 }
+
+// optionalSections are the sections of optional data sources, whose insights
+// are selected apart from the core ones.
+var optionalSections = map[string]bool{"bing": true, "merchant_center": true}
 
 // selectInsights keeps at most max insights, sorted by weight desc, while
 // keeping the report balanced: the best insight of every section is kept

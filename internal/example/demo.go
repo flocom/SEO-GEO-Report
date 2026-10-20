@@ -25,6 +25,7 @@ const (
 
 	seed1, seed2 = 2026, 0x4c756d656e // "Lumen"
 	seedBing     = 0x42696e67         // "Bing": its own stream keeps the other demo data unchanged
+	seedGMC      = 0x474d43           // "GMC": Merchant Center has its own stream too
 )
 
 func demo(lang string) *model.Report {
@@ -34,11 +35,12 @@ func demo(lang string) *model.Report {
 	sc := searchConsole(rng, lang)
 	ga := analytics(rng, sc)
 	r := &model.Report{
-		Meta:          meta(lang),
-		SearchConsole: sc,
-		Bing:          bing(lang),
-		Analytics:     ga,
-		GEO:           geo(lang, ga),
+		Meta:           meta(lang),
+		SearchConsole:  sc,
+		Bing:           bing(lang),
+		Analytics:      ga,
+		MerchantCenter: merchantCenter(lang),
+		GEO:            geo(lang, ga),
 	}
 	r.Narrative = narrative(lang, r)
 	r.Sections = sections(lang)
@@ -446,6 +448,141 @@ func bing(lang string) *model.Bing {
 				{URL: SiteURL + "/lampadaires", Citations: 112, PrevCitations: f(58)},
 				{URL: SiteURL + "/ampoules/filament", Citations: 96, PrevCitations: f(110)},
 			},
+		},
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Google Merchant Center
+
+type productData struct {
+	title, offerID         string
+	clicks, prevClicks     float64
+	impr, prevImpr         float64
+	conversions, convValue float64
+}
+
+// Product titles come from the (French) product feed: they are the same in
+// both languages, like search queries.
+var demoProducts = []productData{
+	{"Suspension en rotin naturel Ø 60 cm", "ML-SUS-ROT-60", 812, 455, 52400, 41200, 41, 5289},
+	{"Lampe de chevet tactile laiton", "ML-LAP-TAC-01", 648, 330, 47900, 31800, 37, 3293},
+	{"Lampadaire arc marbre noir", "ML-LPD-ARC-02", 521, 498, 39800, 40100, 18, 5382},
+	{"Applique murale orientable noir mat", "ML-APP-ORI-03", 476, 352, 41200, 35600, 22, 1958},
+	{"Suspension verre fumé Ø 30 cm", "ML-SUS-VER-30", 433, 240, 36100, 24900, 19, 2641},
+	{"Lampe champignon opaline", "ML-LAP-CHA-04", 398, 151, 28700, 12600, 21, 2289},
+	{"Ampoule filament E27 ambrée (lot de 3)", "ML-AMP-E27-3", 362, 391, 58300, 56900, 34, 847},
+	{"Plafonnier lin blanc Ø 45 cm", "ML-PLA-LIN-45", 297, 274, 30900, 29800, 11, 1309},
+	{"Lampe de bureau vintage laiton", "ML-LAB-VIN-05", 268, 322, 22600, 24100, 9, 801},
+	{"Guirlande guinguette 10 m", "ML-GUI-10M", 251, 88, 19300, 7400, 16, 1024},
+	{"Suspension cuisine triple métal", "ML-SUS-TRI-06", 236, 159, 24800, 19200, 8, 1432},
+	{"Lampadaire trépied bois", "ML-LPD-TRE-07", 204, 197, 18200, 17900, 6, 894},
+	{"Applique extérieure IP65", "ML-APX-IP65", 187, 102, 21600, 14300, 7, 553},
+	{"Spot LED encastrable orientable", "ML-SPT-LED-08", 142, 166, 26400, 27300, 5, 145},
+	{"Variateur de lumière sans fil", "ML-VAR-SF-09", 98, 109, 15900, 16200, 4, 156},
+}
+
+// gmcRows splits click and impression totals into dimension rows.
+func gmcRows(keys []string, clicks, prevClicks, impr, prevImpr float64, cur, prev, imprShares, prevImprShares []float64) []model.GMCRow {
+	c, pc := split(clicks, cur), split(prevClicks, prev)
+	im, pim := split(impr, imprShares), split(prevImpr, prevImprShares)
+	out := make([]model.GMCRow, len(keys))
+	for i, k := range keys {
+		out[i] = model.GMCRow{Key: k, Clicks: c[i], Impressions: im[i], CTR: round(c[i]/im[i]*100, 2), PrevClicks: f(pc[i]), PrevImpressions: f(pim[i])}
+	}
+	return out
+}
+
+func merchantCenter(lang string) *model.MerchantCenter {
+	rng := rand.New(rand.NewPCG(seed1, seedGMC))
+	series := func(start string, cFrom, cTo, ctrFrom, ctrTo float64) []model.GMCDailyPoint {
+		var out []model.GMCDailyPoint
+		for i, d := range days(start, periodDay) {
+			t := float64(i) / float64(periodDay-1)
+			c := math.Round(lerp(cFrom, cTo, t) * weekly[d.Weekday()] * (1 + noise(rng, 0.08)))
+			im := math.Round(c / (lerp(ctrFrom, ctrTo, t) / 100) * (1 + noise(rng, 0.05)))
+			out = append(out, model.GMCDailyPoint{Date: d.Format("2006-01-02"), Clicks: c, Impressions: im})
+		}
+		return out
+	}
+	daily := series(curStart, 74, 100, 1.18, 1.25)
+	prevDaily := series(prevStart, 62, 72, 1.12, 1.15)
+	var c, im, pc, pim float64
+	for _, p := range daily {
+		c, im = c+p.Clicks, im+p.Impressions
+	}
+	for _, p := range prevDaily {
+		pc, pim = pc+p.Clicks, pim+p.Impressions
+	}
+	conv, pconv := 268.0, 201.0
+	value, pvalue := 36540.0, 27210.0
+
+	programs := gmcRows(
+		[]string{tr(lang, "Fiches gratuites", "Free listings"), tr(lang, "Annonces Shopping", "Shopping ads"), "Google Images", "YouTube"},
+		c, pc, im, pim,
+		[]float64{0.57, 0.39, 0.03, 0.01}, []float64{0.52, 0.45, 0.025, 0.005},
+		[]float64{0.64, 0.30, 0.045, 0.015}, []float64{0.60, 0.36, 0.03, 0.01})
+	for i, sh := range []float64{0.48, 0.50, 0.015, 0.005} {
+		programs[i].Conversions = math.Round(conv * sh)
+		programs[i].ConversionValue = math.Round(value * sh)
+	}
+
+	products := make([]model.GMCRow, len(demoProducts))
+	for i, p := range demoProducts {
+		products[i] = model.GMCRow{
+			Key: p.title, OfferID: p.offerID, Clicks: p.clicks, Impressions: p.impr, CTR: round(p.clicks/p.impr*100, 2),
+			Conversions: p.conversions, ConversionValue: p.convValue, PrevClicks: f(p.prevClicks), PrevImpressions: f(p.prevImpr),
+		}
+	}
+
+	categories := gmcRows(
+		[]string{tr(lang, "Suspensions", "Pendant lights"), tr(lang, "Lampes à poser", "Table lamps"), tr(lang, "Lampadaires", "Floor lamps"),
+			tr(lang, "Appliques murales", "Wall lights"), tr(lang, "Ampoules et accessoires", "Bulbs and accessories"), tr(lang, "Luminaires extérieurs", "Outdoor lighting")},
+		c, pc, im, pim,
+		[]float64{0.34, 0.24, 0.15, 0.12, 0.09, 0.06}, []float64{0.31, 0.21, 0.19, 0.13, 0.12, 0.04},
+		[]float64{0.29, 0.22, 0.14, 0.13, 0.15, 0.07}, []float64{0.28, 0.19, 0.17, 0.14, 0.17, 0.05})
+	countries := gmcRows(
+		[]string{"France", tr(lang, "Belgique", "Belgium"), tr(lang, "Suisse", "Switzerland")},
+		c, pc, im, pim,
+		[]float64{0.86, 0.09, 0.05}, []float64{0.88, 0.08, 0.04},
+		[]float64{0.84, 0.10, 0.06}, []float64{0.87, 0.08, 0.05})
+
+	all, ads := tr(lang, "Toutes les surfaces", "All surfaces"), tr(lang, "Fiches gratuites, annonces Shopping", "Free listings, Shopping ads")
+	return &model.MerchantCenter{
+		Totals: model.GMCTotals{
+			Clicks:          model.M(c, pc),
+			Impressions:     model.M(im, pim),
+			CTR:             &model.Metric{Current: round(c/im*100, 2), Previous: f(round(pc/pim*100, 2))},
+			Conversions:     &model.Metric{Current: conv, Previous: f(pconv)},
+			ConversionValue: &model.Metric{Current: value, Previous: f(pvalue)},
+		},
+		Daily:         daily,
+		PreviousDaily: prevDaily,
+		Programs:      programs,
+		Products:      products,
+		Categories:    categories,
+		Countries:     countries,
+		ProductStatus: &model.GMCProductStatus{
+			Approved:    model.M(418, 371),
+			Limited:     &model.Metric{Current: 31, Previous: f(46)},
+			NotApproved: &model.Metric{Current: 14, Previous: f(22)},
+			Pending:     &model.Metric{Current: 5, Previous: f(8)},
+		},
+		Issues: []model.GMCIssue{
+			{Issue: tr(lang, "Code GTIN manquant", "Missing GTIN"), Products: 24, PrevProducts: f(38), Severity: model.SeverityWarning, Affects: ads},
+			{Issue: tr(lang, "Prix non concordant (page produit / flux)", "Price mismatch (product page vs feed)"), Products: 8, PrevProducts: f(13), Severity: model.SeverityCritical, Affects: all},
+			{Issue: tr(lang, "Image trop petite", "Image too small"), Products: 6, PrevProducts: f(9), Severity: model.SeverityCritical, Affects: all},
+			{Issue: tr(lang, "Superposition promotionnelle sur l'image", "Promotional overlay on image"), Products: 7, PrevProducts: f(4), Severity: model.SeverityWarning, Affects: ads},
+			{Issue: tr(lang, "Poids d'expédition manquant", "Missing shipping weight"), Products: 11, PrevProducts: f(11), Severity: model.SeverityInfo, Affects: tr(lang, "Annonces Shopping", "Shopping ads")},
+		},
+		PriceBenchmarks: []model.GMCPriceBenchmark{
+			{Product: "Suspension en rotin naturel Ø 60 cm", OfferID: "ML-SUS-ROT-60", Price: 129, BenchmarkPrice: 139.9},
+			{Product: "Lampe de chevet tactile laiton", OfferID: "ML-LAP-TAC-01", Price: 89, BenchmarkPrice: 84.5},
+			{Product: "Lampadaire arc marbre noir", OfferID: "ML-LPD-ARC-02", Price: 299, BenchmarkPrice: 259},
+			{Product: "Applique murale orientable noir mat", OfferID: "ML-APP-ORI-03", Price: 89, BenchmarkPrice: 91.2},
+			{Product: "Suspension verre fumé Ø 30 cm", OfferID: "ML-SUS-VER-30", Price: 139, BenchmarkPrice: 138},
+			{Product: "Lampe champignon opaline", OfferID: "ML-LAP-CHA-04", Price: 109, BenchmarkPrice: 99},
+			{Product: "Ampoule filament E27 ambrée (lot de 3)", OfferID: "ML-AMP-E27-3", Price: 24.9, BenchmarkPrice: 22.5},
 		},
 	}
 }

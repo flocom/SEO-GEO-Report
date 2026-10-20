@@ -1,5 +1,5 @@
-// Command seogeo turns Google Search Console, GA4 and GEO data supplied by the
-// user into a bilingual, very visual HTML / PDF report. It is also an MCP
+// Command seogeo turns Google Search Console, Bing, GA4, Merchant Center and
+// GEO data supplied by the user into a bilingual, very visual HTML / PDF report. It is also an MCP
 // server (stdio and Streamable HTTP with OAuth) usable from claude.ai,
 // Claude Desktop and Claude Code.
 package main
@@ -12,7 +12,7 @@ import (
 // version is set at build time with -ldflags "-X main.version=...".
 var version = "dev"
 
-const usage = `seogeo — SEO & GEO visibility reports (Search Console + Bing + GA4 + AI assistants)
+const usage = `seogeo — SEO & GEO visibility reports (Search Console + Bing + GA4 + Merchant Center + AI assistants)
 
 The tool never connects to Google or Bing: you (or Claude) supply the data, it formats it.
 
@@ -32,6 +32,8 @@ Report commands:
              Convert Bing Webmaster Tools exports (Search Performance, AI Performance).
   import-ga4 <file.csv>... [-o ga4.json] [--into data.json]
              Convert GA4 "Download file > CSV" exports.
+  import-gmc <file.csv>... [-o gmc.json] [--into data.json] [--kind products|dates|programs|status|issues|prices...]
+             Convert Google Merchant Center CSV exports (performance, product statuses, issues, prices).
 
 Server commands:
   serve      [--port 8080] [--data ./data]   HTTP server: MCP endpoint /mcp (OAuth),
@@ -77,6 +79,8 @@ func main() {
 		err = cmdImportBing(args)
 	case "import-ga4":
 		err = cmdImportGA4(args)
+	case "import-gmc":
+		err = cmdImportGMC(args)
 	case "serve":
 		err = cmdServe(args)
 	case "mcp":

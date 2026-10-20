@@ -79,9 +79,9 @@ func structured(t *testing.T, res *mcp.CallToolResult) map[string]any {
 }
 
 var wantTools = []string{
-	"get_report_guide", "create_report", "update_meta", "set_search_console", "set_bing", "set_analytics", "set_geo",
+	"get_report_guide", "create_report", "update_meta", "set_search_console", "set_bing", "set_analytics", "set_merchant_center", "set_geo",
 	"set_narrative", "add_text_section", "update_text_section", "remove_text_section", "set_options",
-	"import_search_console_csv", "import_bing_csv", "import_analytics_csv", "validate_report", "render_report",
+	"import_search_console_csv", "import_bing_csv", "import_merchant_center_csv", "import_analytics_csv", "validate_report", "render_report",
 	"generate_report", "get_report", "list_reports", "duplicate_report", "delete_report",
 }
 

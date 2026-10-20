@@ -13,6 +13,7 @@ var (
 	icoSearch    = icon(`<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>`)
 	icoQuery     = icon(`<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/><path d="M20.2 18.2L22 20"/>`)
 	icoPage      = icon(`<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>`)
+	icoBag       = icon(`<path d="M5 8h14l-1.2 12.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/>`)
 	icoCompass   = icon(`<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>`)
 	icoGlobe     = icon(`<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>`)
 	icoChart     = icon(`<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>`)
@@ -60,6 +61,8 @@ func sectionIcon(id string) template.HTML {
 		return icoGlobe
 	case "bing":
 		return icoCompass
+	case "merchant_center":
+		return icoBag
 	case "analytics":
 		return icoChart
 	case "channels":

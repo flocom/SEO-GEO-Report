@@ -2,8 +2,8 @@
 //
 // Every value is supplied by the user (or by Claude through MCP): the tool never
 // connects to Google or Bing. Data typically comes from Google Search Console,
-// Bing Webmaster Tools and Google Analytics 4 exports, plus optional manual
-// GEO checks (AI citations).
+// Bing Webmaster Tools, Google Analytics 4 and Google Merchant Center exports,
+// plus optional manual GEO checks (AI citations).
 //
 // Conventions:
 //   - Dates are "YYYY-MM-DD".
@@ -16,14 +16,15 @@ package model
 
 // Report is the complete input of a report.
 type Report struct {
-	Meta          Meta           `json:"meta" jsonschema:"Report identity: site, period, language, branding"`
-	SearchConsole *SearchConsole `json:"search_console,omitempty" jsonschema:"Data exported from Google Search Console (organic Google search performance)"`
-	Bing          *Bing          `json:"bing,omitempty" jsonschema:"Data exported from Bing Webmaster Tools (organic Bing search performance and AI Performance citations in Microsoft Copilot)"`
-	Analytics     *Analytics     `json:"analytics,omitempty" jsonschema:"Data exported from Google Analytics 4 (traffic, engagement, conversions)"`
-	GEO           *GEO           `json:"geo,omitempty" jsonschema:"Generative Engine Optimization data: traffic from AI assistants, citation checks in AI answers, share of voice"`
-	Narrative     *Narrative     `json:"narrative,omitempty" jsonschema:"Free text written by the analyst: executive summary, highlights, actions, recommendations, per-section notes"`
-	Sections      []TextSection  `json:"sections,omitempty" jsonschema:"Additional free-text sections (Markdown) inserted anywhere in the report"`
-	Options       *Options       `json:"options,omitempty" jsonschema:"Display options"`
+	Meta           Meta            `json:"meta" jsonschema:"Report identity: site, period, language, branding"`
+	SearchConsole  *SearchConsole  `json:"search_console,omitempty" jsonschema:"Data exported from Google Search Console (organic Google search performance)"`
+	Bing           *Bing           `json:"bing,omitempty" jsonschema:"Data exported from Bing Webmaster Tools (organic Bing search performance and AI Performance citations in Microsoft Copilot)"`
+	Analytics      *Analytics      `json:"analytics,omitempty" jsonschema:"Data exported from Google Analytics 4 (traffic, engagement, conversions)"`
+	MerchantCenter *MerchantCenter `json:"merchant_center,omitempty" jsonschema:"Data exported from Google Merchant Center (product listings in Google Shopping: free listings and Shopping ads performance, product feed health, price competitiveness). Only for sites that sell products"`
+	GEO            *GEO            `json:"geo,omitempty" jsonschema:"Generative Engine Optimization data: traffic from AI assistants, citation checks in AI answers, share of voice"`
+	Narrative      *Narrative      `json:"narrative,omitempty" jsonschema:"Free text written by the analyst: executive summary, highlights, actions, recommendations, per-section notes"`
+	Sections       []TextSection   `json:"sections,omitempty" jsonschema:"Additional free-text sections (Markdown) inserted anywhere in the report"`
+	Options        *Options        `json:"options,omitempty" jsonschema:"Display options"`
 }
 
 // Meta identifies the report.
@@ -271,6 +272,82 @@ type LandingPageRow struct {
 }
 
 // ---------------------------------------------------------------------------
+// Google Merchant Center
+
+// MerchantCenter holds Google Merchant Center data: how the products of the
+// feed perform in Google (Shopping tab, free listings, Shopping ads, Images,
+// YouTube...) and the health of the product feed. Every field is optional.
+type MerchantCenter struct {
+	Totals          GMCTotals           `json:"totals,omitempty" jsonschema:"Totals of the Performance report (all products, all programs) over the period. Computed from daily, else from programs, when omitted"`
+	Daily           []GMCDailyPoint     `json:"daily,omitempty" jsonschema:"Daily clicks and impressions for the analysed period (chronological)"`
+	PreviousDaily   []GMCDailyPoint     `json:"previous_daily,omitempty" jsonschema:"Daily clicks and impressions for the comparison period (used as a dashed overlay)"`
+	Programs        []GMCRow            `json:"programs,omitempty" jsonschema:"Performance by program / marketing method / surface (key = 'Free listings' / 'Fiches gratuites', 'Shopping ads' / 'Annonces Shopping', 'Google Images', 'YouTube'...)"`
+	Products        []GMCRow            `json:"products,omitempty" jsonschema:"Top products (key = product title, offer_id = Merchant Center item / offer ID)"`
+	Categories      []GMCRow            `json:"categories,omitempty" jsonschema:"Performance by product category (key = category name)"`
+	Brands          []GMCRow            `json:"brands,omitempty" jsonschema:"Performance by brand (key = brand name)"`
+	Countries       []GMCRow            `json:"countries,omitempty" jsonschema:"Performance by country of sale (key = country name or ISO code)"`
+	ProductStatus   *GMCProductStatus   `json:"product_status,omitempty" jsonschema:"Number of products per status in the feed (Products > All products, or the Overview)"`
+	Issues          []GMCIssue          `json:"issues,omitempty" jsonschema:"Product feed issues (Products > Needs attention / Diagnostics): issue, number of products affected, severity"`
+	PriceBenchmarks []GMCPriceBenchmark `json:"price_benchmarks,omitempty" jsonschema:"Price competitiveness: your price vs the benchmark price (average price other merchants charge for the same product), in meta.currency"`
+}
+
+// GMCTotals are the headline Merchant Center metrics.
+type GMCTotals struct {
+	Clicks          Metric  `json:"clicks" jsonschema:"Total clicks on the products in Google (free listings + ads unless specified)"`
+	Impressions     Metric  `json:"impressions" jsonschema:"Total impressions of the products in Google"`
+	CTR             *Metric `json:"ctr,omitempty" jsonschema:"Click-through rate in percent (1.2 = 1.2%). Computed from clicks/impressions when omitted"`
+	Conversions     *Metric `json:"conversions,omitempty" jsonschema:"Conversions (purchases) attributed to the product listings, when conversion tracking is set up"`
+	ConversionValue *Metric `json:"conversion_value,omitempty" jsonschema:"Conversion value (revenue) attributed to the product listings, in meta.currency"`
+}
+
+// GMCDailyPoint is one day of Merchant Center performance.
+type GMCDailyPoint struct {
+	Date        string  `json:"date" jsonschema:"YYYY-MM-DD"`
+	Clicks      float64 `json:"clicks"`
+	Impressions float64 `json:"impressions"`
+}
+
+// GMCRow is a dimension row of the Performance report (program, product,
+// category, brand, country).
+type GMCRow struct {
+	Key             string   `json:"key" jsonschema:"Dimension value: program name, product title, category, brand or country"`
+	OfferID         string   `json:"offer_id,omitempty" jsonschema:"Products only: Merchant Center item ID / offer ID (SKU)"`
+	Clicks          float64  `json:"clicks"`
+	Impressions     float64  `json:"impressions"`
+	CTR             float64  `json:"ctr,omitempty" jsonschema:"Percent. Computed when omitted"`
+	Conversions     float64  `json:"conversions,omitempty"`
+	ConversionValue float64  `json:"conversion_value,omitempty" jsonschema:"In meta.currency"`
+	PrevClicks      *float64 `json:"prev_clicks,omitempty" jsonschema:"Clicks in the comparison period"`
+	PrevImpressions *float64 `json:"prev_impressions,omitempty" jsonschema:"Impressions in the comparison period"`
+}
+
+// GMCProductStatus counts the products of the feed per status.
+type GMCProductStatus struct {
+	Approved    Metric  `json:"approved" jsonschema:"Approved products: eligible to show in Google"`
+	Limited     *Metric `json:"limited,omitempty" jsonschema:"Products with limited visibility (approved with warnings, e.g. missing GTIN)"`
+	NotApproved *Metric `json:"not_approved,omitempty" jsonschema:"Disapproved / not approved products: not shown in Google"`
+	Pending     *Metric `json:"pending,omitempty" jsonschema:"Products under review"`
+	Total       *Metric `json:"total,omitempty" jsonschema:"Total products in the feed. Computed as the sum of the statuses when omitted"`
+}
+
+// GMCIssue is one product feed issue.
+type GMCIssue struct {
+	Issue        string   `json:"issue" jsonschema:"Issue as shown by Merchant Center, e.g. 'Missing GTIN', 'Image too small', 'Price mismatch'"`
+	Products     float64  `json:"products" jsonschema:"Number of products affected"`
+	PrevProducts *float64 `json:"prev_products,omitempty" jsonschema:"Products affected in the comparison period"`
+	Severity     string   `json:"severity,omitempty" jsonschema:"critical (product disapproved), warning (limited visibility) or info (suggestion). French or English labels are accepted"`
+	Affects      string   `json:"affects,omitempty" jsonschema:"Programs or surfaces affected, e.g. 'Free listings', 'Shopping ads', 'All'"`
+}
+
+// GMCPriceBenchmark compares the price of one product with the benchmark.
+type GMCPriceBenchmark struct {
+	Product        string  `json:"product" jsonschema:"Product title"`
+	OfferID        string  `json:"offer_id,omitempty"`
+	Price          float64 `json:"price" jsonschema:"Your price, in meta.currency"`
+	BenchmarkPrice float64 `json:"benchmark_price" jsonschema:"Benchmark price: average price other merchants charge for the same product, in meta.currency"`
+}
+
+// ---------------------------------------------------------------------------
 // GEO (Generative Engine Optimization)
 
 // GEO holds visibility data in AI assistants and answer engines.
@@ -347,7 +424,7 @@ type Narrative struct {
 	Concerns         []string          `json:"concerns,omitempty" jsonschema:"Points of attention, one sentence each"`
 	Actions          []Action          `json:"actions,omitempty" jsonschema:"Work done or in progress during the period"`
 	Recommendations  []Recommendation  `json:"recommendations,omitempty" jsonschema:"Next steps"`
-	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations"`
+	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations"`
 }
 
 // Action is a task performed for the site.
@@ -374,7 +451,7 @@ type TextSection struct {
 	ID    string `json:"id,omitempty" jsonschema:"Identifier, generated when omitted"`
 	Title string `json:"title" jsonschema:"Section title"`
 	Body  string `json:"body" jsonschema:"Markdown content (lists, tables, links, bold...)"`
-	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
+	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
 	Style string `json:"style,omitempty" jsonschema:"plain, info, success, warning or note. Defaults to plain"`
 }
 
@@ -390,6 +467,6 @@ type Options struct {
 // SectionIDs lists built-in sections in display order.
 var SectionIDs = []string{
 	"summary", "kpis", "search_console", "queries", "pages", "countries_devices", "bing",
-	"analytics", "channels", "landing_pages", "geo", "technical",
+	"analytics", "channels", "landing_pages", "merchant_center", "geo", "technical",
 	"actions", "recommendations", "glossary",
 }

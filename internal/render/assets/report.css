@@ -233,12 +233,16 @@ td .delta-sub { display: block; margin: 1px 0 0; }
 .big .kpi-value { font-size: 32px; }
 /* Many cards on one row: tighter type so long figures never wrap. */
 .big.n-5 .kpi-value, .big.n-6 .kpi-value { font-size: clamp(19px, 1.75vw, 24px); }
-.big.n-5 .kpi, .big.n-6 .kpi { padding: 14px 14px 12px; }
-.big.n-5 .kpi-label, .big.n-6 .kpi-label { font-size: 11px; letter-spacing: .05em; min-height: 2.8em; }
-.big.n-5 .kpi-explain, .big.n-6 .kpi-explain {
+.big.n-7 .kpi-value { font-size: clamp(18px, 1.6vw, 22px); }
+.big.n-5 .kpi, .big.n-6 .kpi, .big.n-7 .kpi { padding: 14px 14px 12px; }
+.big.n-7 .kpi { padding: 14px 12px 12px; }
+.big.n-5 .kpi-label, .big.n-6 .kpi-label, .big.n-7 .kpi-label { font-size: 11px; letter-spacing: .05em; min-height: 2.8em; }
+.big.n-7 .kpi-label { letter-spacing: .04em; }
+.big.n-5 .kpi-explain, .big.n-6 .kpi-explain, .big.n-7 .kpi-explain {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.big.n-5 .kpi-delta .delta-sub, .big.n-6 .kpi-delta .delta-sub { display: none; }
+.big.n-7 .kpi-explain { font-size: 12px; -webkit-line-clamp: 4; }
+.big.n-5 .kpi-delta .delta-sub, .big.n-6 .kpi-delta .delta-sub, .big.n-7 .kpi-delta .delta-sub { display: none; }
 
 /* -------------------------------------------------------------------- hero */
 .hero {
@@ -480,8 +484,9 @@ td .delta-sub { display: block; margin: 1px 0 0; }
 @media screen and (max-width: 1099px) {
   .bal { grid-template-columns: repeat(var(--bt, 1), minmax(0, 1fr)); }
   .bal > * { grid-column: span var(--st, 1); }
-  .big.n-5 .kpi-label, .big.n-6 .kpi-label { min-height: 0; }
-  .big.n-5 .kpi-value, .big.n-6 .kpi-value { font-size: 28px; }
+  .big.n-5 .kpi-label, .big.n-6 .kpi-label, .big.n-7 .kpi-label { min-height: 0; }
+  .big.n-5 .kpi-value, .big.n-6 .kpi-value, .big.n-7 .kpi-value { font-size: 28px; }
+  .big.n-7 .kpi-explain { -webkit-line-clamp: 3; }
   .cover h1 { font-size: 46px; }
 }
 @media screen and (max-width: 860px) {
@@ -510,7 +515,7 @@ td .delta-sub { display: block; margin: 1px 0 0; }
   .hero { padding: 20px 16px; }
   .verdict { font-size: 27px; }
   .kpi { padding: 14px 14px 12px; }
-  .kpi-value, .big .kpi-value, .big.n-5 .kpi-value, .big.n-6 .kpi-value { font-size: 22px; }
+  .kpi-value, .big .kpi-value, .big.n-5 .kpi-value, .big.n-6 .kpi-value, .big.n-7 .kpi-value { font-size: 22px; }
   .compact .kpi-value { font-size: 20px; }
   .glossary { columns: 1; }
   .rec { grid-template-columns: 36px 1fr; gap: 10px; }
@@ -554,9 +559,9 @@ td .delta-sub { display: block; margin: 1px 0 0; }
   .doc { max-width: none; padding: 0 3px; margin: 0; }
   .bal { grid-template-columns: repeat(var(--bp, 1), minmax(0, 1fr)); }
   .bal > * { grid-column: span var(--sp, 1); }
-  .big.n-5 .kpi-value, .big.n-6 .kpi-value { font-size: 28px; }
-  .big.n-5 .kpi-explain, .big.n-6 .kpi-explain { display: block; -webkit-line-clamp: none; }
-  .big.n-5 .kpi-delta .delta-sub, .big.n-6 .kpi-delta .delta-sub { display: inline; }
+  .big.n-5 .kpi-value, .big.n-6 .kpi-value, .big.n-7 .kpi-value { font-size: 28px; }
+  .big.n-5 .kpi-explain, .big.n-6 .kpi-explain, .big.n-7 .kpi-explain { display: block; -webkit-line-clamp: none; }
+  .big.n-5 .kpi-delta .delta-sub, .big.n-6 .kpi-delta .delta-sub, .big.n-7 .kpi-delta .delta-sub { display: inline; }
   .tone-gauge .chart svg { max-width: 220px; }
   .gauge { max-width: 230px; }
   .hero { padding: 22px 26px; }

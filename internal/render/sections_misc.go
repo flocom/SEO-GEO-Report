@@ -256,5 +256,22 @@ func (b *builder) glossary() *section {
 	if !boolPtr(b.opt.ShowGlossary) {
 		return nil
 	}
-	return &section{ID: "glossary", Blocks: []block{{Kind: "glossary", Span: 12, Glossary: i18n.Glossary(b.lang)}}}
+	entries := i18n.Glossary(b.lang)
+	if b.r.MerchantCenter == nil {
+		// Shopping terms only matter to sites that sell through Merchant Center.
+		kept := entries[:0]
+		for _, e := range entries {
+			if !gmcGlossary[e.Key] {
+				kept = append(kept, e)
+			}
+		}
+		entries = kept
+	}
+	return &section{ID: "glossary", Blocks: []block{{Kind: "glossary", Span: 12, Glossary: entries}}}
+}
+
+// gmcGlossary lists the glossary keys about Google Merchant Center.
+var gmcGlossary = map[string]bool{
+	"gmc": true, "free_listings": true, "feed": true, "disapproved": true, "limited": true,
+	"price_competitiveness": true, "offer_id": true,
 }

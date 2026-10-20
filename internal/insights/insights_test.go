@@ -328,6 +328,22 @@ func stripPrevious(r *model.Report) {
 	for i := range ai.Pages {
 		ai.Pages[i].PrevCitations = nil
 	}
+	mc := r.MerchantCenter
+	for _, m := range []*model.Metric{&mc.Totals.Clicks, &mc.Totals.Impressions, mc.Totals.CTR, mc.Totals.Conversions, mc.Totals.ConversionValue,
+		&mc.ProductStatus.Approved, mc.ProductStatus.Limited, mc.ProductStatus.NotApproved, mc.ProductStatus.Pending} {
+		if m != nil {
+			m.Previous = nil
+		}
+	}
+	mc.PreviousDaily = nil
+	for _, rows := range [][]model.GMCRow{mc.Programs, mc.Products, mc.Categories, mc.Brands, mc.Countries} {
+		for i := range rows {
+			rows[i].PrevClicks, rows[i].PrevImpressions = nil, nil
+		}
+	}
+	for i := range mc.Issues {
+		mc.Issues[i].PrevProducts = nil
+	}
 	for _, t := range []*model.GA4Totals{&ga.Totals, ga.OrganicTotals} {
 		for _, m := range []*model.Metric{t.Sessions, t.Users, t.NewUsers, t.EngagedSessions, t.EngagementRate, t.AvgEngagementTime, t.PageViews, t.KeyEvents, t.Revenue} {
 			if m != nil {
@@ -362,7 +378,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		r.Normalize()
 		a := Analyze(r)
 		want := []string{KeyBingAICitations, KeyBingClicks, KeyBingCTR, KeyBingImpressions, KeyBingPosition, KeyGA4EngagementRate, KeyGA4KeyEvents, KeyGA4Organic, KeyGA4Revenue, KeyGA4Sessions, KeyGA4Users,
-			KeyGEOAISessions, KeyGEOCitationRate, KeyGSCClicks, KeyGSCCTR, KeyGSCImpressions, KeyGSCIndexed, KeyGSCPosition}
+			KeyGEOAISessions, KeyGEOCitationRate, KeyGMCApprovedRate, KeyGMCClicks, KeyGMCConversions, KeyGMCCTR, KeyGMCImpressions, KeyGSCClicks, KeyGSCCTR, KeyGSCImpressions, KeyGSCIndexed, KeyGSCPosition}
 		if got := keys(a.KPIs); !slices.Equal(got, want) {
 			t.Errorf("%s: KPIs = %v", lang, got)
 		}
@@ -384,7 +400,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		if len(a.Winners) != 5 || len(a.Losers) == 0 {
 			t.Errorf("%s: winners %d losers %d", lang, len(a.Winners), len(a.Losers))
 		}
-		if len(a.Insights) < 6 || len(a.Insights) > 15 {
+		if len(a.Insights) < 6 || len(a.Insights) > maxInsights+2*maxOptional {
 			t.Errorf("%s: %d insights", lang, len(a.Insights))
 		}
 		checkInsights(t, a, lang)
@@ -392,7 +408,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		for _, in := range a.Insights {
 			sections[in.Section] = true
 		}
-		for _, s := range []string{"search_console", "queries", "analytics", "channels", "geo", "technical"} {
+		for _, s := range []string{"search_console", "queries", "analytics", "channels", "geo", "technical", "bing", "merchant_center"} {
 			if !sections[s] {
 				t.Errorf("%s: no insight for section %s", lang, s)
 			}

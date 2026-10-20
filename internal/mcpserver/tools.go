@@ -58,6 +58,12 @@ type bingInput struct {
 	Mode     string     `json:"mode,omitempty" jsonschema:"merge (default): replace only the top-level keys you send; replace: replace the whole bing section"`
 }
 
+type gmcInput struct {
+	ReportID       string               `json:"report_id" jsonschema:"Report id"`
+	MerchantCenter model.MerchantCenter `json:"merchant_center" jsonschema:"Google Merchant Center data. In merge mode only the keys you send are replaced (e.g. send only issues)"`
+	Mode           string               `json:"mode,omitempty" jsonschema:"merge (default): replace only the top-level keys you send; replace: replace the whole merchant_center section; append: lists are appended to existing ones"`
+}
+
 type gaInput struct {
 	ReportID  string          `json:"report_id" jsonschema:"Report id"`
 	Analytics model.Analytics `json:"analytics" jsonschema:"Google Analytics 4 data. In merge mode only the keys you send are replaced"`
@@ -118,6 +124,13 @@ type importBingInput struct {
 	FileName string `json:"file_name,omitempty" jsonschema:"Original file name (helps guessing the kind)"`
 }
 
+type importGMCInput struct {
+	ReportID string `json:"report_id" jsonschema:"Report id"`
+	CSV      string `json:"csv" jsonschema:"Full raw text of ONE CSV file exported from Google Merchant Center (performance by product / date / program / category / brand / country, products export with statuses, diagnostics issues, or price competitiveness)"`
+	Kind     string `json:"kind,omitempty" jsonschema:"products, dates, programs, categories, brands, countries, status, issues or prices. Guessed from the header or file name when omitted"`
+	FileName string `json:"file_name,omitempty" jsonschema:"Original file name (helps guessing the kind)"`
+}
+
 type importGAInput struct {
 	ReportID string `json:"report_id" jsonschema:"Report id"`
 	CSV      string `json:"csv" jsonschema:"Full raw text of a GA4 'Download file > CSV' export (comment lines starting with # are fine)"`
@@ -143,7 +156,7 @@ type generateInput struct {
 
 type duplicateInput struct {
 	ReportID         string        `json:"report_id" jsonschema:"Report to copy"`
-	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics and geo data (default false: cleared for the next period)"`
+	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics, merchant_center and geo data (default false: cleared for the next period)"`
 	KeepNarrative    bool          `json:"keep_narrative,omitempty" jsonschema:"Keep all narrative texts (default false: only pending actions and recommendations are kept)"`
 	Period           *model.Period `json:"period,omitempty" jsonschema:"New analysed period"`
 	ComparisonPeriod *model.Period `json:"comparison_period,omitempty" jsonschema:"New comparison period"`
@@ -194,14 +207,14 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "get_report_guide",
 		Title:       "Read the report guide",
-		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console and GA4 exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
+		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console, GA4, Bing and Merchant Center exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
 		Annotations: readOnly,
 	}, s.toolGuide)
 
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_report",
 		Title:       "Create a report draft",
-		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
+		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_merchant_center / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
 		Annotations: additive,
 	}, s.toolCreate)
 
@@ -242,6 +255,16 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	}, s.toolSetGA)
 
 	mcp.AddTool(srv, &mcp.Tool{
+		Name:  "set_merchant_center",
+		Title: "Set Google Merchant Center data",
+		Description: "Store Google Merchant Center data supplied by the user (this tool does not fetch anything), for sites that sell products in Google Shopping. Performance: totals {clicks, impressions, ctr (percent), conversions, conversion_value (meta.currency)} as {current, previous} metrics, daily / previous_daily [{date, clicks, impressions}], programs (free listings, Shopping ads, Google Images, YouTube...), products (key = product title, offer_id), categories, brands and countries rows [{key, offer_id, clicks, impressions, ctr, conversions, conversion_value, prev_clicks, prev_impressions}]. " +
+			"Feed health: product_status {approved, limited, not_approved, pending, total} as metrics (product counts), issues [{issue, products, prev_products, severity critical|warning|info, affects}]. Price competitiveness: price_benchmarks [{product, offer_id, price, benchmark_price}]. " +
+			"Totals are computed from daily or programs when omitted. Default mode merge replaces only the top-level keys you send. For raw CSV exports use import_merchant_center_csv instead.",
+		InputSchema: relaxed[gmcInput]("merchant_center"),
+		Annotations: idempotent,
+	}, s.toolSetGMC)
+
+	mcp.AddTool(srv, &mcp.Tool{
 		Name:  "set_geo",
 		Title: "Set GEO (AI visibility) data",
 		Description: "Store Generative Engine Optimization data supplied by the user: ai_referrals [{platform, source, sessions, prev_sessions, ...}] (optional: detected from analytics.sources when omitted), ai_daily, citations [{prompt, engine, cited, mentioned, position, previously_cited, competitors_cited, date, notes}] from manual checks in ChatGPT / Perplexity / Gemini / AI Overviews / Copilot / Claude, share_of_voice [{brand, share (percent), previous, is_self}], ai_overviews [{query, overview_present, cited}], ai_crawlers [{bot, hits, prev_hits}] from server logs. " +
@@ -262,7 +285,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "add_text_section",
 		Title:       "Add a free text section",
-		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, geo, technical, actions, recommendations), start or end. Returns the section id.",
+		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations), start or end. Returns the section id.",
 		Annotations: additive,
 	}, s.toolAddSection)
 
@@ -304,6 +327,14 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	}, s.toolImportBing)
 
 	mcp.AddTool(srv, &mcp.Tool{
+		Name:  "import_merchant_center_csv",
+		Title: "Import a Google Merchant Center CSV",
+		Description: "Parse the raw text of ONE CSV file exported from Google Merchant Center and merge it into report.merchant_center: performance by product, by day (also recomputes the click / impression totals), by program / marketing method, category, brand or country; a products export with a status column (statuses are counted) or a status summary; a diagnostics / issues list; or a price competitiveness table (price and benchmark price). French or English headers; comparison columns fill the previous values. " +
+			"Call once per file. Use this when the user attaches or pastes the CSV files; otherwise use set_merchant_center.",
+		Annotations: idempotent,
+	}, s.toolImportGMC)
+
+	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "import_analytics_csv",
 		Title:       "Import a GA4 CSV",
 		Description: "Parse the raw text of a Google Analytics 4 report CSV ('Share > Download file > CSV'; French or English headers; channel group, source / medium, landing page or date tables) and merge it into report.analytics. Totals are not always present in these files: complete them with set_analytics if needed.",
@@ -329,7 +360,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "generate_report",
 		Title:       "Generate a report in one call",
-		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
+		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, merchant_center, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
 		Annotations: additive,
 		Meta:        viewerMeta,
 	}, s.toolGenerate)
@@ -507,6 +538,7 @@ func (s *Service) toolCreate(_ context.Context, req *mcp.CallToolRequest, in cre
 		"set_search_console (or import_search_console_csv) with the user's Google Search Console numbers",
 		"set_bing (or import_bing_csv) with Bing Webmaster Tools numbers, if the user has them",
 		"set_analytics (or import_analytics_csv) with GA4 numbers",
+		"set_merchant_center (or import_merchant_center_csv) with Google Merchant Center numbers, if the site sells products in Google Shopping",
 		"set_geo with AI visibility data (citation checks, AI referrals, share of voice)",
 		"set_narrative with the executive summary, highlights, actions and recommendations",
 		"validate_report then render_report",
@@ -592,6 +624,30 @@ func (s *Service) toolSetBing(_ context.Context, req *mcp.CallToolRequest, in bi
 		return nil, nil, err
 	}
 	return s.savedText(rec, "Bing Webmaster Tools data"), nil, nil
+}
+
+func (s *Service) toolSetGMC(_ context.Context, req *mcp.CallToolRequest, in gmcInput) (*mcp.CallToolResult, any, error) {
+	mode, err := checkMode(in.Mode, "merge", "replace", "append")
+	if err != nil {
+		return nil, nil, err
+	}
+	raw := rawArg(req, "merchant_center")
+	rec, err := s.update(in.ReportID, func(r *model.Report) error {
+		var existing any
+		if mode != "replace" && r.MerchantCenter != nil {
+			existing = r.MerchantCenter
+		}
+		var mc model.MerchantCenter
+		if err := mergeObject(existing, raw, mode == "append", &mc); err != nil {
+			return fmt.Errorf("merchant_center: %w", err)
+		}
+		r.MerchantCenter = &mc
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return s.savedText(rec, "Google Merchant Center data"), nil, nil
 }
 
 func (s *Service) toolSetGA(_ context.Context, req *mcp.CallToolRequest, in gaInput) (*mcp.CallToolResult, any, error) {
@@ -872,6 +928,48 @@ func (s *Service) toolImportBing(_ context.Context, _ *mcp.CallToolRequest, in i
 	sc := res.StructuredContent.(map[string]any)
 	sc["kind"], sc["rows"], sc["days"] = t.Kind, n, days
 	return res, nil, nil
+}
+
+func (s *Service) toolImportGMC(_ context.Context, _ *mcp.CallToolRequest, in importGMCInput) (*mcp.CallToolResult, any, error) {
+	if strings.TrimSpace(in.CSV) == "" {
+		return nil, nil, errors.New("csv is empty: pass the full text content of the CSV file")
+	}
+	kind := importer.GMCKind(strings.TrimSpace(in.Kind))
+	if kind == "" && in.FileName != "" {
+		kind = importer.GuessGMCKind(filepath.Base(in.FileName))
+	}
+	var res *importer.GMCResult
+	var noTotals bool
+	rec, err := s.update(in.ReportID, func(r *model.Report) error {
+		mc, got, err := importer.ParseGMCCSV([]byte(in.CSV), kind, r.MerchantCenter)
+		if err != nil && kind != "" && in.Kind == "" {
+			// The file name was only a hint: retry with the header alone.
+			mc, got, err = importer.ParseGMCCSV([]byte(in.CSV), "", r.MerchantCenter)
+		}
+		if err != nil {
+			return fmt.Errorf("cannot parse the Merchant Center CSV: %w", err)
+		}
+		r.MerchantCenter, res = mc, got
+		c := *mc
+		c.ComputeTotals()
+		noTotals = !c.HasPerformance() && (len(mc.Products) > 0 || len(mc.Categories) > 0 || len(mc.Brands) > 0 || len(mc.Countries) > 0)
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	what := fmt.Sprintf("Merchant Center %s table (%d rows", res.Kind, res.Rows)
+	if res.PreviousDays > 0 {
+		what += fmt.Sprintf(", %d comparison days", res.PreviousDays)
+	}
+	what += ")"
+	out := s.savedText(rec, what)
+	if noTotals {
+		out.Content[0].(*mcp.TextContent).Text += "\nMerchant Center totals are still empty: import the daily chart or the program (marketing method) table, or send merchant_center.totals (clicks, impressions with previous values) with set_merchant_center."
+	}
+	sc := out.StructuredContent.(map[string]any)
+	sc["kind"], sc["rows"] = res.Kind, res.Rows
+	return out, nil, nil
 }
 
 func (s *Service) toolImportGA(_ context.Context, _ *mcp.CallToolRequest, in importGAInput) (*mcp.CallToolResult, any, error) {

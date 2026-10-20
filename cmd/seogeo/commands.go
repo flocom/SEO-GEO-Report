@@ -243,6 +243,8 @@ func mergeInto(into, key string, v any) ([]byte, error) {
 		r.Bing = v.(*model.Bing)
 	case "analytics":
 		r.Analytics = v.(*model.Analytics)
+	case "merchant_center":
+		r.MerchantCenter = v.(*model.MerchantCenter)
 	}
 	return json.MarshalIndent(r, "", "  ")
 }
@@ -335,6 +337,57 @@ func cmdImportGA4(args []string) error {
 		return errors.New("no GA4 data found")
 	}
 	b, err := mergeInto(*into, "analytics", a)
+	if err != nil {
+		return err
+	}
+	return writeOutput(*out, append(b, '\n'))
+}
+
+func cmdImportGMC(args []string) error {
+	fs := newFlagSet("import-gmc", "<file.csv>... [-o gmc.json] [--into data.json]")
+	out := fs.String("o", "", "output file (default stdout)")
+	into := fs.String("into", "", "report JSON to merge the data into (merchant_center is updated); the result goes to -o")
+	kind := fs.String("kind", "", "table kind for every file: products, dates, programs, categories, brands, countries, status, issues or prices (default: guessed)")
+	pos, err := parseInterspersed(fs, args)
+	if err != nil {
+		return err
+	}
+	if len(pos) == 0 {
+		fs.Usage()
+		return errSilent
+	}
+	var mc *model.MerchantCenter
+	if *into != "" {
+		data, err := os.ReadFile(*into)
+		if err != nil {
+			return err
+		}
+		r, err := decodeReport(data)
+		if err != nil {
+			return err
+		}
+		mc = r.MerchantCenter
+	}
+	for _, p := range pos {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		k := importer.GMCKind(*kind)
+		if k == "" {
+			k = importer.GuessGMCKind(filepath.Base(p))
+		}
+		next, res, err := importer.ParseGMCCSV(data, k, mc)
+		if err != nil && *kind == "" && k != "" {
+			next, res, err = importer.ParseGMCCSV(data, "", mc) // the file name was only a hint
+		}
+		if err != nil {
+			return fmt.Errorf("%s: %w", p, err)
+		}
+		mc = next
+		fmt.Fprintf(os.Stderr, "%s: %s table, %d rows\n", filepath.Base(p), res.Kind, res.Rows)
+	}
+	b, err := mergeInto(*into, "merchant_center", mc)
 	if err != nil {
 		return err
 	}

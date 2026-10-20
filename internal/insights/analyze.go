@@ -12,7 +12,8 @@ import (
 const (
 	neutralPct      = 2.0 // |relative change| below 2 % is neutral
 	neutralPosition = 0.3 // |position change| below 0.3 is neutral
-	maxInsights     = 15
+	maxInsights     = 15  // core insights (Search Console, GA4, GEO)
+	maxOptional     = 3   // extra insights per optional source (Bing, Merchant Center)
 	topMovers       = 5
 )
 
@@ -36,6 +37,11 @@ const (
 	KeyGA4Organic        = "ga4.organic_sessions"
 	KeyGEOAISessions     = "geo.ai_sessions"
 	KeyGEOCitationRate   = "geo.citation_rate"
+	KeyGMCClicks         = "gmc.clicks"
+	KeyGMCImpressions    = "gmc.impressions"
+	KeyGMCCTR            = "gmc.ctr"
+	KeyGMCConversions    = "gmc.conversions"
+	KeyGMCApprovedRate   = "gmc.approved_rate"
 )
 
 func analyze(r *model.Report) Analysis {
@@ -87,6 +93,11 @@ func analyze(r *model.Report) Analysis {
 		if org := organicSessions(ga); org != nil {
 			a.KPIs[KeyGA4Organic] = kpiStatus(KeyGA4Organic, *org, false)
 		}
+	}
+
+	// --- Google Merchant Center KPIs
+	if r.MerchantCenter != nil {
+		gmcKPIs(&a, r.MerchantCenter)
 	}
 
 	// --- GEO
@@ -453,7 +464,7 @@ func movers(rows []model.GSCRow) (winners, losers []model.GSCRow) {
 // Each available component i yields a relative change d_i in percent:
 //
 //	clicks, impressions, organic sessions, AI sessions, key events,
-//	citation rate, Bing clicks, Bing AI citations:
+//	citation rate, Bing clicks, Bing AI citations, Merchant Center clicks:
 //	                (current - previous) / previous × 100
 //	                (+100 when previous is 0 and current > 0)
 //	average position: (previous - current) / previous × 100 (lower is better)
@@ -462,8 +473,8 @@ func movers(rows []model.GSCRow) (winners, losers []model.GSCRow) {
 // outliers (e.g. +900 % AI sessions) saturate at ±1 instead of dominating.
 // With the weights w below (clicks 0.25, impressions 0.10, position 0.15,
 // organic sessions 0.15, AI sessions 0.10, citation rate 0.10, key events
-// 0.15, Bing clicks 0.10, Bing AI citations 0.05), renormalised over the
-// available components:
+// 0.15, Bing clicks 0.10, Bing AI citations 0.05, Merchant Center clicks
+// 0.05), renormalised over the available components:
 //
 //	progress = 50 + 50 × Σ(w_i × s_i) / Σ(w_i)
 //
@@ -497,6 +508,11 @@ func progressIndex(r *model.Report, a *Analysis) *float64 {
 		if ai := bg.AIPerformance; ai != nil && active(ai.Citations) {
 			comps = append(comps, comp{0.05, &ai.Citations, false})
 		}
+	}
+	// Merchant Center clicks (Google Shopping) weigh little: most sites
+	// grow through organic search, and Shopping is partly paid.
+	if mc := r.MerchantCenter; mc != nil && active(mc.Totals.Clicks) {
+		comps = append(comps, comp{0.05, &mc.Totals.Clicks, false})
 	}
 
 	var sumW, sum float64

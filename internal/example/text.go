@@ -87,13 +87,15 @@ On the business side, conversions are up %s and organic revenue follows the same
 				{Title: "Rewrite titles and meta descriptions of the 20 most viewed pages", Description: "Impressions grow faster than clicks: highlight prices, free delivery and the French design in snippets.", Priority: "high", Effort: "low", Category: "seo"},
 				{Title: "Fix Core Web Vitals on mobile product pages", Description: "Target LCP < 2.5 s: compress gallery images, preload the main image, defer third-party scripts.", Priority: "high", Effort: "medium", Category: "technical"},
 				{Title: "Create comparison content for AI answers", Description: "Pages such as *Rattan vs wicker pendant* or *Which floor lamp for a cosy living room?* answer the prompts where competitors are cited.", Priority: "medium", Effort: "medium", Category: "geo"},
+				{Title: "Clean up the Merchant Center product feed", Description: "45 products are disapproved or limited in Google Shopping: align feed prices with the product pages, replace the images that are too small and add the 24 missing GTINs.", Priority: "medium", Effort: "low", Category: "technical"},
 				{Title: "Restore the Scandinavian category page", Description: "Re-create a dedicated landing page to win back the lost Perplexity citation and the associated queries.", Priority: "medium", Effort: "low", Category: "content"},
 				{Title: "Track AI assistants as a dedicated GA4 channel", Description: "Create a custom channel group so AI traffic is reported separately from Referral.", Priority: "low", Effort: "low", Category: "tracking"},
 			},
 			SectionNotes: map[string]string{
-				"geo":       "AI traffic is detected from GA4 sources (chatgpt.com, perplexity.ai…). Citation checks were run manually on **25 September 2026** with logged-out accounts.",
-				"technical": "The drop in non-indexed pages follows the sitemap clean-up of August 5. Mobile Core Web Vitals remain the priority for Q4.",
-				"queries":   "Queries are shown as typed by users, in French.",
+				"geo":             "AI traffic is detected from GA4 sources (chatgpt.com, perplexity.ai…). Citation checks were run manually on **25 September 2026** with logged-out accounts.",
+				"technical":       "The drop in non-indexed pages follows the sitemap clean-up of August 5. Mobile Core Web Vitals remain the priority for Q4.",
+				"queries":         "Queries are shown as typed by users, in French.",
+				"merchant_center": "Merchant Center figures cover free listings and Shopping ads. Product titles are shown as they appear in the (French) product feed.",
 			},
 		}
 	}
@@ -131,13 +133,15 @@ Côté business, les conversions progressent de %s et le chiffre d'affaires de %
 			{Title: "Réécrire les titres et meta descriptions des 20 pages les plus vues", Description: "Les impressions progressent plus vite que les clics : mettez en avant prix, livraison offerte et design français dans les extraits.", Priority: "high", Effort: "low", Category: "seo"},
 			{Title: "Corriger les Core Web Vitals des fiches produits sur mobile", Description: "Objectif LCP < 2,5 s : compresser les galeries, précharger l'image principale, différer les scripts tiers.", Priority: "high", Effort: "medium", Category: "technical"},
 			{Title: "Créer des contenus comparatifs pour les réponses IA", Description: "Des pages comme *Suspension rotin ou osier ?* ou *Quel lampadaire pour un salon cosy ?* répondent aux prompts où les concurrents sont cités.", Priority: "medium", Effort: "medium", Category: "geo"},
+			{Title: "Assainir le flux produits Merchant Center", Description: "45 produits sont refusés ou limités dans Google Shopping : aligner les prix du flux sur les fiches produits, remplacer les images trop petites et ajouter les 24 GTIN manquants.", Priority: "medium", Effort: "low", Category: "technical"},
 			{Title: "Recréer la page catégorie scandinave", Description: "Une page dédiée permettra de regagner la citation Perplexity perdue et les requêtes associées.", Priority: "medium", Effort: "low", Category: "content"},
 			{Title: "Suivre les assistants IA comme un canal GA4 dédié", Description: "Créer un groupe de canaux personnalisé pour distinguer le trafic IA du trafic Referral.", Priority: "low", Effort: "low", Category: "tracking"},
 		},
 		SectionNotes: map[string]string{
-			"geo":       "Le trafic IA est détecté à partir des sources GA4 (chatgpt.com, perplexity.ai…). Les tests de citation ont été réalisés manuellement le **25 septembre 2026**, sans être connecté.",
-			"technical": "La baisse des pages non indexées fait suite au nettoyage des sitemaps du 5 août. Les Core Web Vitals mobiles restent la priorité du T4.",
-			"queries":   "Les requêtes sont affichées telles que tapées par les internautes.",
+			"geo":             "Le trafic IA est détecté à partir des sources GA4 (chatgpt.com, perplexity.ai…). Les tests de citation ont été réalisés manuellement le **25 septembre 2026**, sans être connecté.",
+			"technical":       "La baisse des pages non indexées fait suite au nettoyage des sitemaps du 5 août. Les Core Web Vitals mobiles restent la priorité du T4.",
+			"queries":         "Les requêtes sont affichées telles que tapées par les internautes.",
+			"merchant_center": "Les chiffres Merchant Center couvrent les fiches gratuites et les annonces Shopping. Les titres des produits sont ceux du flux produits.",
 		},
 	}
 }

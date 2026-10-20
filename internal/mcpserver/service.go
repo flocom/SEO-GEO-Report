@@ -199,6 +199,15 @@ func Summarize(rep model.Report) Summary {
 			add("ga4.organic_sessions", "Organic search sessions", an.OrganicTotals.Sessions)
 		}
 	}
+	if mc := r.MerchantCenter; mc != nil {
+		if mc.HasPerformance() {
+			add("gmc.clicks", "Google Shopping clicks (Merchant Center)", &mc.Totals.Clicks)
+			add("gmc.impressions", "Google Shopping product impressions", &mc.Totals.Impressions)
+		}
+		add("gmc.conversions", "Google Shopping conversions", mc.Totals.Conversions)
+		add("gmc.conversion_value", "Google Shopping conversion value", mc.Totals.ConversionValue)
+		add("gmc.approved_rate", "Approved products in Merchant Center (%)", mc.ProductStatus.ApprovedRate())
+	}
 	add("geo.ai_sessions", "Sessions from AI assistants", a.AISessions)
 	add("geo.citation_rate", "AI citation rate (%)", a.CitationRate)
 
@@ -267,6 +276,9 @@ func CheckCompleteness(r *model.Report) Completeness {
 	bg := r.Bing
 	check(bg != nil && bg.Totals.Impressions.Current > 0, "bing.totals")
 	check(bg != nil && bg.AIPerformance != nil, "bing.ai_performance")
+	mc := r.MerchantCenter
+	check(mc != nil && mc.HasPerformance(), "merchant_center.totals (or daily)")
+	check(mc != nil && (mc.ProductStatus != nil || len(mc.Issues) > 0), "merchant_center.product_status/issues")
 	an := r.Analytics
 	check(an != nil && an.Totals.Sessions != nil, "analytics.totals")
 	check(an != nil && an.OrganicTotals != nil, "analytics.organic_totals")
@@ -293,6 +305,11 @@ func CheckCompleteness(r *model.Report) Completeness {
 	}
 	if bg == nil {
 		c.Suggestions = append(c.Suggestions, "If the site is verified in Bing Webmaster Tools, its Search Performance and AI Performance (Copilot citations) exports add a Bing section: set_bing or import_bing_csv.")
+	}
+	if mc == nil {
+		c.Suggestions = append(c.Suggestions, "If the site sells products in Google Shopping, Google Merchant Center exports (Performance by product / day / marketing method, Products with their status, Needs attention issues, Price competitiveness) add a Google Shopping section: set_merchant_center or import_merchant_center_csv.")
+	} else if mc.HasPerformance() && !mc.Totals.Clicks.HasPrevious() && len(mc.PreviousDaily) == 0 {
+		c.Suggestions = append(c.Suggestions, "Add previous values to merchant_center.totals (or previous_daily) so Google Shopping progress can be shown.")
 	}
 	if an != nil && an.Totals.Sessions != nil && !an.Totals.Sessions.HasPrevious() {
 		c.Suggestions = append(c.Suggestions, "Add previous values to analytics.totals.")

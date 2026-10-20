@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/github/license/flocom/SEO-GEO-Report)](LICENSE)
 [![Go version](https://img.shields.io/github/go-mod/go-version/flocom/SEO-GEO-Report)](go.mod)
 
-**Beautiful, bilingual (French / English) visibility reports for websites — SEO (Google Search Console, Bing Webmaster Tools), traffic (Google Analytics 4) and GEO (visibility in AI assistants: ChatGPT, Perplexity, Gemini, Google AI Overviews…) — built with Claude.**
+**Beautiful, bilingual (French / English) visibility reports for websites — SEO (Google Search Console, Bing Webmaster Tools), traffic (Google Analytics 4), Google Shopping (Google Merchant Center) and GEO (visibility in AI assistants: ChatGPT, Perplexity, Gemini, Google AI Overviews…) — built with Claude.**
 
 You export your data (or paste a table, or attach a screenshot), Claude reads it, fills the report and writes the analysis. The server turns it into a polished report: a hosted web page with a shareable link, a standalone HTML file and an A4 PDF.
 
@@ -18,8 +18,9 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 
 - 📊 **Two reports in one**
   - **Part 1 – at a glance**: a visual, beginner-friendly summary for clients and managers: progress gauge, KPI cards with trends, plain-language takeaways, "how to read this chart" hints, glossary.
-  - **Part 2 – detailed analysis**: the technical part for SEO specialists: Google performance, queries, pages, countries and devices, Bing performance (with Copilot citations), traffic channels, landing pages, AI visibility, Core Web Vitals, indexing, actions and recommendations.
+  - **Part 2 – detailed analysis**: the technical part for SEO specialists: Google performance, queries, pages, countries and devices, Bing performance (with Copilot citations), traffic channels, landing pages, Google Shopping (Merchant Center), AI visibility, Core Web Vitals, indexing, actions and recommendations.
 - 🤖 **GEO, built in**: traffic from AI assistants is detected automatically in your GA4 sources (chatgpt.com, perplexity.ai, gemini.google.com…), and the report also covers AI citation checks, share of voice, AI Overviews, AI crawler hits and the Bing Webmaster Tools AI Performance report (how often Microsoft Copilot cites your pages, and for which grounding queries).
+- 🛍️ **Google Shopping, when you sell products**: with Google Merchant Center data, a dedicated section shows product clicks and impressions (free listings vs Shopping ads), top products, product feed health (approved / limited / disapproved products and the issues to fix first) and price competitiveness against the market; Part 1 gets a "Google Shopping clicks" card. Nothing is shown without Merchant Center data.
 - 🌍 **French and English**: one data file, rendered in either language (`?lang=en`).
 - 📄 **HTML and PDF export**: hosted page, self-contained HTML file (inline CSS and SVG charts, works offline) and print-ready PDF (Chromium is included in the Docker image).
 - 🧠 **Automatic insights**: trends, wins, alerts and a progress index computed from the numbers, on top of the narrative Claude writes.
@@ -28,7 +29,7 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 - 🔄 **Automatic updates**: Watchtower pulls new releases from GHCR, and the home page tells you when a new version is out.
 - 🧭 **URL auto-detection**: no base URL to configure. The public URL comes from `X-Forwarded-*` / `Forwarded` / `Host` headers, so it works behind Cloudflare Tunnel, Caddy, Traefik or nginx.
 - 🖼️ **Favicon**: the site's icon is fetched once and embedded in the report, with SSRF protection.
-- 🧰 **CLI**: render, validate and import Search Console / Bing Webmaster Tools / GA4 CSV exports from the command line.
+- 🧰 **CLI**: render, validate and import Search Console / Bing Webmaster Tools / GA4 / Merchant Center CSV exports from the command line.
 
 ## Screenshots
 
@@ -148,13 +149,13 @@ or fully local over stdio:
 
 > **You:** Build the SEO & GEO report of maison-lumen.fr for July–September, compared with the previous quarter, in English.
 >
-> **Claude:** *(reads the guide)* I need: 1) your Search Console export (Performance → Search results → Compare dates → Export); 2) your GA4 export (Traffic acquisition by channel and by source / medium, landing pages); 3) if you have them, a few checks in ChatGPT / Perplexity / Gemini: is your site cited?
+> **Claude:** *(reads the guide)* I need: 1) your Search Console export (Performance → Search results → Compare dates → Export); 2) your GA4 export (Traffic acquisition by channel and by source / medium, landing pages); 3) if you sell products, your Google Merchant Center exports (performance by product and by day, products with their status, issues, price competitiveness); 4) if you have them, a few checks in ChatGPT / Perplexity / Gemini: is your site cited?
 >
 > **You:** *(attaches the Search Console zip, two GA4 CSV files and pastes a table of AI checks)*
 >
 > **Claude:** *(create_report → import_search_console_csv → import_analytics_csv → set_geo → set_narrative → validate_report → render_report)* Here is your report: online view, HTML and PDF. Key takeaways: Google clicks +36 %, AI-assistant traffic ×2.6 (led by ChatGPT), click-through rate slipping on your most viewed pages…
 
-**Tools:** `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report`.
+**Tools:** `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report`.
 
 **Prompt:** `create_seo_geo_report`.
 
@@ -182,6 +183,7 @@ seogeo render -i data.json -o report.html --lang fr --no-favicon
 seogeo import-gsc gsc-export.zip --into data.json -o data.json
 seogeo import-bing bing-exports/ --into data.json -o data.json   # zip, folder or one CSV
 seogeo import-ga4 channels.csv sources.csv --into data.json -o data.json
+seogeo import-gmc products.csv daily.csv statuses.csv issues.csv --into data.json -o data.json
 seogeo serve                                # HTTP server (MCP /mcp, OAuth, hosted reports)
 seogeo mcp                                  # MCP over stdio
 seogeo version                              # version + update check
@@ -199,6 +201,7 @@ A report is a JSON document. Run `seogeo schema` for the full schema; [`examples
 | `search_console` | totals, daily series, queries, pages, countries, devices, search appearance, brand split, indexing, Core Web Vitals |
 | `bing` | Bing Webmaster Tools: totals, daily series, keywords and pages (same shape as `search_console`), `ai_performance` (Copilot citations, cited pages, grounding queries, daily citations) |
 | `analytics` | totals (all channels and organic), daily series, channels, source / medium, landing pages |
+| `merchant_center` | Google Merchant Center (optional): totals (clicks, impressions, CTR, conversions, conversion value), daily series, programs (free listings, Shopping ads…), products, categories, brands, countries, `product_status` (approved / limited / not approved / pending), `issues`, `price_benchmarks` |
 | `geo` | AI-assistant traffic, citation checks, share of voice, AI Overviews, AI crawlers |
 | `narrative` | executive summary, highlights, concerns, actions, recommendations, per-section notes (Markdown) |
 | `sections`, `options` | free Markdown sections; display options |
@@ -258,6 +261,7 @@ To use it from claude.ai, yes: any machine running Docker with an HTTPS URL. A C
 - Search Console: Performance → Search results, with "Compare" dates, then Export.
 - Bing Webmaster Tools (optional): Search Performance (keywords, pages, daily chart) and AI Performance (grounding queries, cited pages, daily citations).
 - GA4: Traffic acquisition (channel group and source / medium), Landing pages, with a comparison range.
+- Google Merchant Center (optional, if you sell products), with a comparison range: Performance by product, by day and by marketing method (free listings / Shopping ads), optionally by category or country; Products → All products (download, with the status of each product); Products → Needs attention (issues and number of products affected); Price competitiveness (your price vs the benchmark price). The CSV files are imported as they are (French or English).
 - Optionally, a few AI citation checks.
 
 Claude asks for what's missing.

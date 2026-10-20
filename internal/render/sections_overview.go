@@ -194,11 +194,12 @@ func (b *builder) geoKPIs() []kpiCard {
 	return cards
 }
 
-// allKPIs returns every KPI card: Google, website traffic, AI, then Bing
-// (last, so that it only fills free slots of the key indicators).
+// allKPIs returns every KPI card: Google, website traffic, AI, then Bing and
+// Merchant Center (last, so that they only fill free slots of the key
+// indicators; the Google Shopping clicks card is added on purpose).
 func (b *builder) allKPIs() []kpiCard {
 	var all []kpiCard
-	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs()} {
+	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs(), b.gmcKPIs()} {
 		all = append(all, cards...)
 	}
 	return all
@@ -233,7 +234,7 @@ func (b *builder) summary() *section {
 	}
 	// The headline numbers duplicate the KPI cards that follow; they are only
 	// shown when the KPI section is hidden.
-	for _, k := range []string{"gsc.clicks", "gsc.position", "ga4.sessions", "ga4.organic_sessions", "ga4.key_events", "geo.ai_sessions", "geo.citation_rate", "gsc.impressions"} {
+	for _, k := range []string{"gsc.clicks", "gsc.position", "ga4.sessions", "ga4.organic_sessions", "ga4.key_events", "geo.ai_sessions", "geo.citation_rate", "gsc.impressions", "gmc.clicks"} {
 		if c, ok := all[k]; ok && len(h.Stats) < 4 && b.r.SectionHidden("kpis") {
 			c.Spark, c.Explain, c.Prev = "", "", ""
 			h.Stats = append(h.Stats, c)
@@ -282,7 +283,7 @@ func (b *builder) summary() *section {
 		s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Title: b.t("insights.title"), Sub: b.t("insights.auto"), Callouts: cs})
 	}
 	if len(s.Blocks) == 0 {
-		if b.r.SearchConsole == nil && b.r.Bing == nil && b.r.Analytics == nil && b.r.GEO == nil {
+		if b.r.SearchConsole == nil && b.r.Bing == nil && b.r.Analytics == nil && b.r.MerchantCenter == nil && b.r.GEO == nil {
 			s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Callouts: []callout{{Tone: "info", Icon: icoInfo, Title: b.t("empty.title"), Text: b.t("empty.text")}}})
 			return s
 		}
@@ -354,15 +355,21 @@ func (b *builder) kpis() *section {
 		order = append(order, c.Key)
 	}
 	// The beginner view keeps a handful of cards: the preferred ones first,
-	// then whatever else exists, up to six.
+	// then whatever else exists, up to six. Google Shopping clicks, when the
+	// site sells through Merchant Center, are a seventh card.
 	preferred := []string{"gsc.clicks", "gsc.impressions", "ga4.organic_sessions", "geo.ai_sessions", "ga4.key_events", "gsc.position"}
 	if _, ok := all["ga4.organic_sessions"]; !ok {
 		preferred[2] = "ga4.sessions"
 	}
+	limit := 6
+	if _, ok := all["gmc.clicks"]; ok {
+		preferred = append(preferred, "gmc.clicks")
+		limit = 7
+	}
 	var cards []kpiCard
 	used := map[string]bool{}
 	for _, k := range append(preferred, order...) {
-		if c, ok := all[k]; ok && !used[k] && len(cards) < 6 {
+		if c, ok := all[k]; ok && !used[k] && len(cards) < limit {
 			cards = append(cards, c)
 			used[k] = true
 		}

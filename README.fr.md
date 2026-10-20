@@ -2,12 +2,13 @@
 
 🇬🇧 [English version](README.md)
 
-Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools), **trafic** (Google Analytics 4) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
+Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools), **trafic** (Google Analytics 4), **Google Shopping** (Google Merchant Center, si vous vendez des produits) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
 
 - Vous exportez vos données (ou vous les collez / faites une capture), Claude les comprend, remplit le rapport et rédige l'analyse.
 - Le serveur produit un **rapport HTML hébergé** (lien partageable), un **fichier HTML autonome** à télécharger et un **PDF** A4.
 - **L'outil ne se connecte jamais à Google** : il ne fait que mettre en forme les données fournies.
 - Fonctionne comme **serveur MCP** : connecteur personnalisé claude.ai (connexion OAuth automatique), Claude Desktop, Claude Code, ou en ligne de commande.
+- Pour les sites marchands, les données **Google Merchant Center** ajoutent une section « Google Shopping » : clics et impressions des produits (fiches gratuites et annonces Shopping), meilleurs produits, santé du flux produits (produits approuvés, limités, refusés et problèmes à corriger en priorité) et compétitivité prix ; la partie 1 reçoit une carte « Clics Google Shopping ». Sans données Merchant Center, rien ne s'affiche.
 - Le favicon du site est récupéré automatiquement et intégré au rapport ; l'image Docker se met à jour toute seule (Watchtower).
 
 ![Aperçu du rapport](docs/screenshot-overview.png)
@@ -128,13 +129,13 @@ ou entièrement en local (stdio, via Docker ou le binaire) :
 
 > **Vous** : Fais-moi le rapport SEO & GEO de maison-lumen.fr pour juillet–septembre, comparé au trimestre précédent, en français.
 >
-> **Claude** : *(lit le guide)* Pour cela j'ai besoin de : 1) l'export Search Console (Performances → Résultats de recherche → dates « Comparer » → Exporter) ; 2) l'export GA4 (Acquisition de trafic par groupe de canaux et par source/support, pages de destination) ; 3) si vous en avez, quelques tests dans ChatGPT / Perplexity / Gemini : votre site est-il cité ?
+> **Claude** : *(lit le guide)* Pour cela j'ai besoin de : 1) l'export Search Console (Performances → Résultats de recherche → dates « Comparer » → Exporter) ; 2) l'export GA4 (Acquisition de trafic par groupe de canaux et par source/support, pages de destination) ; 3) si vous vendez des produits, vos exports Google Merchant Center (performances par produit et par jour, produits avec leur état, problèmes, compétitivité prix) ; 4) si vous en avez, quelques tests dans ChatGPT / Perplexity / Gemini : votre site est-il cité ?
 >
 > **Vous** : *(joint le zip Search Console, deux CSV GA4 et colle un tableau de tests)*
 >
 > **Claude** : *(create_report → import_search_console_csv × 6 → import_analytics_csv × 2 → set_geo → set_narrative → validate_report → render_report)* Voici votre rapport : lien en ligne, HTML et PDF. Points clés : clics Google +36 %, trafic depuis les IA ×2,6 (ChatGPT en tête), CTR en baisse sur les pages les plus vues…
 
-Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
+Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
 
 **MCP Apps** : sur les hôtes compatibles, `render_report` / `generate_report` affichent le rapport directement dans la conversation (ressource `ui://seogeo/report-viewer.html`). Désactivable avec `MCP_APPS=false` ; les autres hôtes reçoivent simplement les liens.
 
@@ -161,6 +162,7 @@ seogeo import-gsc export-gsc.zip -o gsc.json            # zip ou dossier de CSV 
 seogeo import-gsc export-gsc.zip --into data.json -o data.json
 seogeo import-bing exports-bing/ --into data.json -o data.json   # zip, dossier ou un seul CSV Bing Webmaster Tools
 seogeo import-ga4 canaux.csv sources.csv --into data.json -o data.json
+seogeo import-gmc produits.csv jours.csv statuts.csv problemes.csv --into data.json -o data.json   # exports Merchant Center
 seogeo serve            # serveur HTTP (MCP /mcp, OAuth, hébergement des rapports)
 seogeo mcp              # serveur MCP stdio
 seogeo version
@@ -176,9 +178,12 @@ Un rapport est un document JSON (`seogeo schema` pour le schéma complet, `examp
 - `search_console` : totaux (clics, impressions, CTR, position), séries quotidiennes, requêtes, pages, pays, appareils, apparence, marque/hors marque, indexation, Core Web Vitals ;
 - `bing` : données Bing Webmaster Tools : totaux, séries quotidiennes, mots-clés et pages (même structure que `search_console`), `ai_performance` (citations dans Copilot, pages citées, requêtes d'ancrage, citations par jour) ;
 - `analytics` : totaux (tous canaux et recherche organique), séries quotidiennes, canaux, sources/supports (les assistants IA y sont détectés automatiquement), pages de destination ;
+- `merchant_center` (facultatif) : données Google Merchant Center : totaux (clics, impressions, CTR, conversions, valeur), séries quotidiennes, programmes (fiches gratuites, annonces Shopping…), produits, catégories, marques, pays, `product_status` (approuvés / limités / refusés / en attente), `issues` (problèmes du flux), `price_benchmarks` (prix vs prix de référence) ;
 - `geo` : trafic venant des IA, tests de citations, part de voix, AI Overviews, robots IA ;
 - `narrative` : synthèse, points forts, points d'attention, actions, recommandations, commentaires par section ;
 - `sections` : sections Markdown libres ; `options` : affichage.
+
+Exports Google Merchant Center à fournir (facultatif, avec une période de comparaison) : performances par produit, par jour et par méthode marketing (fiches gratuites / annonces Shopping), éventuellement par catégorie ou pays ; Produits → Tous les produits (téléchargement avec l'état de chaque produit) ; Produits → À traiter (problèmes et nombre de produits concernés) ; Compétitivité prix (votre prix comparé au prix de référence). Les CSV s'importent tels quels, en français ou en anglais.
 
 Conventions : **pourcentages en pourcent** (3,2 % → `3.2`), dates `AAAA-MM-JJ`, durées en secondes, chaque indicateur sous la forme `{"current": …, "previous": …}` (la valeur précédente alimente les visuels de progression).
 
