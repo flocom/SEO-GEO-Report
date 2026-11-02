@@ -93,7 +93,7 @@
 }
 .next-kicker { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .next-title { margin-top: 8px; font-family: var(--serif); font-weight: 500; font-size: 28px; letter-spacing: -.01em; }
-.next-text { margin-top: 10px; max-width: 66ch; font-size: 16px; color: var(--ink-2); }
+.next-text { margin-top: 10px; font-size: 16px; color: var(--ink-2); }
 .next-count { margin-top: 18px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .next-list {
   list-style: none; margin: 8px 0 0; padding: 0;
@@ -131,13 +131,6 @@
   #view-essential:checked ~ .doc .toc-part ol, .next-list { columns: 1; }
   .next-step { margin-top: 52px; padding: 20px 16px 22px; }
   .next-title { font-size: 23px; }
-}
-@media screen and (prefers-color-scheme: dark) {
-  #view-essential:checked ~ .doc .vs-ess,
-  #view-advanced:checked ~ .doc .vs-adv { box-shadow: none; }
-  #view-essential:checked ~ .doc .btn-pdf-ess,
-  #view-advanced:checked ~ .doc .btn-pdf-adv,
-  .next-btn { background: var(--ink); color: var(--bg); }
 }
 @media print {
   .print-only { display: block; }

@@ -38,8 +38,8 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 | Part 1 – at a glance | Part 2 – detailed analysis |
 |---|---|
 | ![Overview](docs/screenshot-overview.png) | ![Detailed analysis](docs/screenshot-details.png) |
-| **AI visibility (GEO)** | **Cover & contents** |
-| ![GEO](docs/screenshot-geo.png) | ![Cover](docs/screenshot-cover.png) |
+| **Google Business Profile** | **Cover & contents** |
+| ![Google Business Profile](docs/screenshot-geo.png) | ![Cover](docs/screenshot-cover.png) |
 
 ## Quick start
 

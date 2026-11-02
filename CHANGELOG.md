@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+- Light theme only: the report, the home, login and /admin pages no longer
+  switch to a dark theme, and declare `color-scheme: only light` so browsers
+  do not darken them automatically.
+- Text blocks (executive summary, analyst notes, section and part intros,
+  custom sections, recommendations) now use the full width of their card
+  instead of a narrow reading column.
+- README screenshots updated to the current design.
+
 ## [0.3.0] - 2026-11-02
 
 ### Added
@@ -65,7 +74,7 @@ All notable changes to this project are documented here. The format follows [Kee
   dense tables) and the Advanced version (the full report, as before). Pure
   CSS (hidden radio buttons and sibling selectors): it works without
   JavaScript, in the downloaded HTML file, with the keyboard (focus ring,
-  arrow keys, labelled radios), in dark mode, and printing prints the version
+  arrow keys, labelled radios), and printing prints the version
   on screen; the table of contents and the section numbering adapt, and
   links to a part of the advanced version still land on it. A small optional
   script syncs `?view=` / `#essentiel` / `#avance` and remembers the reader's

@@ -289,8 +289,7 @@ var homeTmpl = template.Must(template.New("home").Parse(`<!doctype html>
 <meta name="robots" content="noindex"><title>SEO &amp; GEO Report — MCP</title>
 <link rel="icon" href="/favicon.ico" type="image/svg+xml">
 <style>
-:root{--bg:#f8fafc;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb;--warn:#b45309;--code:#f1f5f9}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111827;--fg:#e5e7eb;--muted:#94a3b8;--line:#1f2937;--code:#0f172a;--warn:#f59e0b}}
+:root{color-scheme:only light;--bg:#f8fafc;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb;--warn:#b45309;--code:#f1f5f9}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
 .top{display:flex;align-items:center;gap:12px}.top h1{margin:0;font-size:24px}

@@ -28,9 +28,6 @@
   .big.n-8 .kpi-value { font-size: 22px; }
   .gbp-rating-value { font-size: 52px; }
 }
-@media screen and (prefers-color-scheme: dark) {
-  .gbp-stars svg { filter: none; }
-}
 @media print {
   .big.n-8 .kpi-label { min-height: 0; font-size: 11px; letter-spacing: .05em; }
   .big.n-8 .kpi-value { font-size: 28px; }
