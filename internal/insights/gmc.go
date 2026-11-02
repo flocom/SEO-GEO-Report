@@ -76,9 +76,9 @@ func gmcInsights(w *writer, mc *model.MerchantCenter) {
 		switch toneOf(c, false) {
 		case Positive:
 			w.add(Positive, sec, 52+bump(pct)/2,
-				"Les clics sur vos produits dans Google Shopping progressent de %s : %s contre %s sur la période de comparaison.",
-				"Clicks on your products in Google Shopping grew by %s: %s vs %s in the comparison period.",
-				w.p(pct), w.n(c.Current), w.n(*c.Previous))
+				"Les clics sur vos produits dans Google Shopping progressent %s : %s contre %s sur la période de comparaison.",
+				"Clicks on your products in Google Shopping grew %s: %s vs %s in the comparison period.",
+				w.by(pct, c.Current, *c.Previous), w.n(c.Current), w.n(*c.Previous))
 		case Negative:
 			w.add(Negative, sec, 52+bump(pct)/2,
 				"Les clics sur vos produits dans Google Shopping reculent de %s : %s contre %s sur la période de comparaison.",

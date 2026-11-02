@@ -14,9 +14,11 @@ import (
 
 // Instructions are sent to clients at initialization (claude.ai shows them to
 // the model). Keep them short: the full guide is a tool / resource.
-const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4), its products in Google Shopping (Merchant Center, optional) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
+const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4), its products in Google Shopping (Merchant Center, optional), its local visibility (Google Business Profile, optional) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
 It NEVER connects to Google, Bing or any other service: all numbers come from the user (exports, screenshots, copy-paste) and you pass them through the tools.
-Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_merchant_center / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
+Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_merchant_center / set_business_profile / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned links. generate_report does everything in one call when you already have all the data.
+Every report has two versions on the same page (selector at the top): Essential (key results in plain words, short PDF, opens by default) and Advanced (the full analysis). Always give the user both: view_essential_url and view_advanced_url, pdf_essential_url and pdf_advanced_url, and html_download_url (one file with both versions).
+Data with a native section goes to its tool, never to a free-text section (add_text_section): Google Business Profile -> set_business_profile, Bing Webmaster Tools -> set_bing, Google Merchant Center -> set_merchant_center.
 Conventions: percentages in percent (3.2 = 3.2 %), dates YYYY-MM-DD, durations in seconds, every metric = {"current": x, "previous": y} where previous is the comparison period (drives the progress visuals).`
 
 // GuideMarkdown returns the full workflow guide, in English, for the model.
@@ -57,14 +59,29 @@ you collect the numbers from the user and pass them in.
    - ` + "`set_bing`" + ` (or ` + "`import_bing_csv`" + ` with the raw text of a Bing Webmaster Tools CSV export: Search Performance keywords / pages / daily chart, AI Performance grounding queries / pages / daily chart),
    - ` + "`set_analytics`" + ` (or ` + "`import_analytics_csv`" + ` with a GA4 "Download CSV" export: channels, source/medium, landing pages, daily),
    - ` + "`set_merchant_center`" + ` (or ` + "`import_merchant_center_csv`" + ` with the raw text of a Google Merchant Center CSV export: performance by product / day / marketing method / category / country, products with their status, issues, price competitiveness) when the site sells products,
+   - ` + "`set_business_profile`" + ` (or ` + "`import_business_profile_csv`" + ` with the raw text of a Google Business Profile CSV export: Performance / bulk insights per location, daily metrics, search keywords, reviews) when the business has a local Google profile (ex Google My Business),
    - ` + "`set_geo`" + ` for AI visibility (AI referrals, citation checks, share of voice, AI Overviews, AI crawlers).
 4. ` + "`set_narrative`" + `: write the executive summary, highlights, concerns, actions done and
    recommendations **based on the numbers** (be specific, cite figures, plain language for
-   non-experts). Add free Markdown sections with ` + "`add_text_section`" + ` if useful.
+   non-experts). Add free Markdown sections with ` + "`add_text_section`" + ` if useful, but **never for
+   data that has a native section**: Google Business Profile figures go to ` + "`set_business_profile`" + `,
+   Bing Webmaster Tools figures to ` + "`set_bing`" + `, Merchant Center figures to ` + "`set_merchant_center`" + `
+   (the native sections draw charts, compute progress and insights; a text section does not).
 5. ` + "`validate_report`" + ` → fix errors, consider warnings (missing previous values, ratios instead of percents...).
-6. ` + "`render_report`" + ` → returns the public URL of the HTML report and of the PDF, plus a summary of
-   KPIs and automatic insights. Give the links to the user and comment the key takeaways.
+6. ` + "`render_report`" + ` → returns the public links of the report, plus a summary of KPIs and
+   automatic insights. Give the links to the user and comment the key takeaways.
    Rendering again after a change updates the same URLs.
+   **Two versions, one page**: every report holds an **Essential** version (cover and key
+   results in plain words: verdict, channel scorecard, wins, key indicators, AI visibility,
+   what was done / what is next, a short glossary; a PDF of a few pages) and an **Advanced**
+   version (the full report with the detailed analysis, tables and glossary). Readers switch
+   with the selector at the top of the page. The links: ` + "`view_essential_url`" + `,
+   ` + "`view_advanced_url`" + `, ` + "`pdf_essential_url`" + ` (short), ` + "`pdf_advanced_url`" + ` (full),
+   ` + "`html_download_url`" + ` (one interactive file with both versions); ` + "`html_url`" + ` / ` + "`pdf_url`" + `
+   open on the default version. Give the user both versions: Essential for the business
+   owner, Advanced for the team or the agency. ` + "`view`" + ` (render_report / generate_report)
+   picks the version html_url, pdf_url and a PDF generated now open on;
+   ` + "`options.default_view`" + ` (essential by default, or advanced) sets the report's default.
 7. Next month: ` + "`duplicate_report`" + ` (keeps meta, branding, pending actions and recommendations; clears data) then fill the new data.
 
 One-shot alternative: ` + "`generate_report`" + ` with the complete report JSON (same structure as
@@ -109,6 +126,7 @@ Ecosia, Yahoo and Microsoft Copilot):
   cited pages (current + previous), the daily chart, grounding queries (citations, citation share,
   intent, topic) and cited pages. Total citations are computed from the daily chart or the pages
   when omitted.
+Put these numbers in ` + "`bing`" + ` (set_bing or import_bing_csv), not in a free-text section.
 
 **Google Merchant Center** (optional, only for sites that sell products: it adds a "Google Shopping"
 section and a Shopping clicks card in the key indicators). In Merchant Center (Merchant Center Next),
@@ -124,6 +142,27 @@ set the date range and the comparison, then download each table as CSV:
 - Price competitiveness (Analytics / Growth > Price competitiveness): your price vs the benchmark price
   per product.
 Totals are computed from the daily chart, else from the program table, when omitted.
+Put these numbers in ` + "`merchant_center`" + ` (set_merchant_center), not in a free-text section.
+
+**Google Business Profile** (optional, for businesses with a local Google profile, ex Google My
+Business: it adds a "Google Business Profile" section and a profile actions card in the key
+indicators). In the profile (business.google.com or "Edit profile" in Google Search), open
+**Performance**, set the period (and compare with the previous period when available), then note
+or download:
+- views ("people who viewed your Business Profile") split by platform and device: Google Search
+  mobile, Google Search desktop, Google Maps mobile, Google Maps desktop,
+- interactions and each action: calls, chat messages, bookings, directions, website clicks (and
+  food orders / menu clicks for restaurants), current + previous,
+- the daily chart if available, and "Searches breakdown": the search terms used to find the
+  business with their number of searches (GBP shows "<15" for small values: send 15 with
+  below_threshold true),
+- reviews: average rating and number of reviews (now and at the start of the period), new reviews,
+  the star distribution, the reply rate and a few recent reviews (text as written, date, replied or not),
+- the profile checklist (hours, special hours, categories, description, photos, products, services,
+  website, phone, attributes...) and posts / photos published.
+Several locations: the bulk "Insights" export (one row per store code) or Business Profile Manager
+gives one row per location → ` + "`locations`" + ` (totals are summed). All of it goes to
+` + "`business_profile`" + ` (set_business_profile or import_business_profile_csv), never to a free-text section.
 
 **Google Analytics 4** (Reports > Acquisition > Traffic acquisition, Engagement > Landing page;
 with a comparison date range; "Share this report" > "Download file" > CSV):
@@ -157,7 +196,9 @@ access) performed:
 ## Options
 
 ` + "`set_options`" + `: ` + "`hide_sections`" + ` (section ids), ` + "`max_table_rows`" + ` (default 15), ` + "`show_glossary`" + `,
-` + "`beginner_hints`" + ` ("how to read this chart" explanations), ` + "`auto_insights`" + ` (automatic observations).
+` + "`beginner_hints`" + ` ("how to read this chart" explanations), ` + "`auto_insights`" + ` (automatic observations),
+` + "`default_view`" + ` (` + "`essential`" + `, the default, or ` + "`advanced`" + `: the version of the report shown first;
+hosted pages also accept ` + "`?view=essential|advanced`" + `, combined with ` + "`?lang=`" + `).
 Branding: ` + "`meta.brand_color`" + ` (hex), ` + "`meta.logo_url`" + ` (https URL or data: URI), ` + "`meta.prepared_by`" + `, ` + "`meta.prepared_for`" + `.
 `
 

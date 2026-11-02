@@ -40,9 +40,15 @@ func (b *builder) bing() *section {
 	clicks := func(p model.GSCDailyPoint) float64 { return p.Clicks }
 	impr := func(p model.GSCDailyPoint) float64 { return p.Impressions }
 	pos := func(p model.GSCDailyPoint) float64 { return p.Position }
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.bing_clicks_daily"), dates, gscSeries(bg.Daily, clicks), gscSeries(bg.PreviousDaily, clicks), b.fmtCompact(), false, true), 12, b.hint("bing_clicks_daily"))
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.impressions_daily"), dates, gscSeries(bg.Daily, impr), gscSeries(bg.PreviousDaily, impr), b.fmtCompact(), false, true), 6, b.hint("bing_impressions_daily"))
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.position_daily"), dates, gscSeries(bg.Daily, pos), gscSeries(bg.PreviousDaily, pos), b.fmtPos(), true, false), 6, b.hint("bing_position_daily"))
+	// Tiny volumes (a few clicks a day) read better week by week.
+	wk := wantWeekly(gscSeries(bg.Daily, clicks), false)
+	clicksHint, imprHint := b.hint("bing_clicks_daily"), b.hint("bing_impressions_daily")
+	if wk {
+		clicksHint, imprHint = b.hint("weekly"), b.hint("weekly")
+	}
+	s.Blocks = add(s.Blocks, b.trendAuto("bing_clicks", dates, gscSeries(bg.Daily, clicks), gscSeries(bg.PreviousDaily, clicks), b.fmtCompact(), aggSum, false, true, wk), 12, clicksHint)
+	s.Blocks = add(s.Blocks, b.trendAuto("impressions", dates, gscSeries(bg.Daily, impr), gscSeries(bg.PreviousDaily, impr), b.fmtCompact(), aggSum, false, true, wk), 6, imprHint)
+	s.Blocks = add(s.Blocks, b.trendAuto("position", dates, gscSeries(bg.Daily, pos), gscSeries(bg.PreviousDaily, pos), b.fmtPos(), aggMean, true, false, wk), 6, b.hint("bing_position_daily"))
 	s.Blocks = add(s.Blocks, b.enginesBlock(), 6, b.hint("engines"))
 	s.Blocks = add(s.Blocks, b.gscBars(bg.Queries, 10, b.t("chart.bing_top_queries"), nil), 6, b.hint("bing_top_queries"))
 	balance(s.Blocks)

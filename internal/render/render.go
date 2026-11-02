@@ -24,6 +24,18 @@ var templateFS embed.FS
 //go:embed assets/report.css
 var reportCSS string
 
+// gbpCSS styles the Google Business Profile section (kept apart from the
+// main stylesheet).
+//
+//go:embed assets/gbp.css
+var gbpCSS string
+
+// viewsCSS switches between the essential and the advanced versions (pure
+// CSS: hidden radio buttons at the top of the body).
+//
+//go:embed assets/views.css
+var viewsCSS string
+
 // baseTemplates is parsed once; each render clones it to bind the language.
 var baseTemplates = template.Must(template.New("report").Funcs(templateFuncs("fr")).ParseFS(templateFS, "templates/*.gohtml"))
 
@@ -31,6 +43,7 @@ func templateFuncs(lang string) template.FuncMap {
 	return template.FuncMap{
 		"t":         func(key string) string { return i18n.T(lang, key) },
 		"span":      func(n int) string { return fmt.Sprintf("span-%d", n) },
+		"only":      onlyClass,
 		"icon":      namedIcon,
 		"bal":       balFor,
 		"add":       func(a, b int) int { return a + b },
@@ -44,6 +57,20 @@ func templateFuncs(lang string) template.FuncMap {
 			}
 			return "kpi"
 		},
+		// afterColon drops a "Normal : " / "Expected: " lead-in (the pill
+		// already says it) from a text read by screen readers.
+		"afterColon": func(s string) string {
+			if i := strings.Index(s, ":"); i >= 0 && i < 24 {
+				return strings.TrimSpace(s[i+1:])
+			}
+			return s
+		},
+		"tilesPreset": func(tone string) string {
+			if tone == "stack" {
+				return "tiles-stack"
+			}
+			return "tiles"
+		},
 		"statsPreset": func(span int) string {
 			if span > 0 && span <= 6 {
 				return "stats-half"
@@ -55,7 +82,7 @@ func templateFuncs(lang string) template.FuncMap {
 
 // majorSections start on a new printed page (in part 2).
 var majorSections = map[string]bool{
-	"summary": true, "search_console": true, "bing": true, "analytics": true, "merchant_center": true, "geo": true,
+	"summary": true, "search_console": true, "bing": true, "analytics": true, "merchant_center": true, "business_profile": true, "geo": true,
 	"technical": true, "actions": true, "glossary": true,
 }
 
@@ -94,11 +121,16 @@ func render(src *model.Report, opts Options) (out []byte, err error) {
 		b.an.KPIs = map[string]insights.KPIStatus{}
 	}
 
+	view := model.NormView(opts.View)
+	if view == "" {
+		view = opt.DefaultView
+	}
 	p := &page{
 		Lang:     lang,
-		CSS:      template.CSS(reportCSS), //nolint:gosec // embedded asset
+		CSS:      template.CSS(reportCSS + "\n" + gbpCSS + "\n" + viewsCSS), //nolint:gosec // embedded assets
 		ThemeCSS: themeCSS(b.accent),
 		Cover:    b.cover(opts),
+		View:     view,
 	}
 	p.Title = p.Cover.Title
 	if r.Meta.SiteName != "" {
@@ -108,14 +140,15 @@ func render(src *model.Report, opts Options) (out []byte, err error) {
 	p.Sections = b.sections()
 	for _, s := range p.Sections {
 		if s.IsPart {
-			p.TOC = append(p.TOC, tocPart{Num: s.PartNum, Title: s.Title})
+			p.TOC = append(p.TOC, tocPart{Num: s.PartNum, Title: s.Title, Only: s.Only})
 			continue
 		}
 		if len(p.TOC) > 0 {
 			last := &p.TOC[len(p.TOC)-1]
-			last.Items = append(last.Items, tocItem{Anchor: s.Anchor, Num: s.Num, Title: s.Title})
+			last.Items = append(last.Items, tocItem{Anchor: s.Anchor, Num: s.Num, Title: s.Title, Only: s.Only})
 		}
 	}
+	p.Next = b.nextStep(p.Sections, p.Cover.PDFAdv)
 	p.Favicon = p.Cover.Favicon
 
 	tpl, err := baseTemplates.Clone()
@@ -165,8 +198,13 @@ func (b *builder) cover(opts Options) cover {
 		PreparedBy:  strings.TrimSpace(m.PreparedBy),
 		PreparedFor: strings.TrimSpace(m.PreparedFor),
 		PDF:         pdfURL(opts.PDFURL),
+		PDFEss:      pdfURL(opts.PDFEssentialURL),
+		PDFAdv:      pdfURL(opts.PDFAdvancedURL),
 		HTMLDL:      pdfURL(opts.HTMLDownloadURL),
 		Favicon:     faviconURL(m.FaviconURL),
+	}
+	if c.PDFEss == "" || c.PDFAdv == "" {
+		c.PDFEss, c.PDFAdv = "", "" // one PDF link (PDFURL) or none
 	}
 	if c.Title == "" {
 		c.Title = b.t("report.title_default")
@@ -196,6 +234,9 @@ func (b *builder) cover(opts Options) cover {
 	if b.r.MerchantCenter != nil {
 		c.Sources = append(c.Sources, b.t("src.gmc"))
 	}
+	if !b.r.BusinessProfile.IsEmpty() {
+		c.Sources = append(c.Sources, b.t("src.gbp"))
+	}
 	if b.r.GEO != nil {
 		c.Sources = append(c.Sources, b.t("src.geo"))
 	}
@@ -224,8 +265,8 @@ var anchorClean = regexp.MustCompile(`[^a-z0-9-]+`)
 // placement of custom sections.
 var (
 	part1IDs = []string{"summary", "kpis", idAIGlance, idPlanGlance}
-	part2IDs = []string{"search_console", "queries", "pages", "countries_devices", "bing", "analytics",
-		"channels", "landing_pages", "merchant_center", "geo", "technical", "actions", "recommendations", "glossary"}
+	part2IDs = []string{idReview, "search_console", "queries", "pages", "countries_devices", "bing", "analytics",
+		"channels", "landing_pages", "merchant_center", "business_profile", "geo", "technical", "actions", "recommendations", "glossary"}
 )
 
 // sections builds both parts: a banner followed by the built-in sections in
@@ -233,10 +274,10 @@ var (
 // ("start", "summary" and "kpis" land in part 1, "end" before the glossary).
 func (b *builder) sections() []*section {
 	builders := map[string]func() *section{
-		"summary": b.summary, "kpis": b.kpis, idAIGlance: b.aiGlance, idPlanGlance: b.planGlance,
+		"summary": b.summary, "kpis": b.kpis, idAIGlance: b.aiGlance, idPlanGlance: b.planGlance, idReview: b.review,
 		"search_console": b.searchConsole, "queries": b.queries, "pages": b.pages,
 		"countries_devices": b.countriesDevices, "bing": b.bing, "analytics": b.analytics, "channels": b.channels,
-		"landing_pages": b.landingPages, "merchant_center": b.merchantCenter, "geo": b.geo, "technical": b.technical, "actions": b.actions,
+		"landing_pages": b.landingPages, "merchant_center": b.merchantCenter, "business_profile": b.businessProfile, "geo": b.geo, "technical": b.technical, "actions": b.actions,
 		"recommendations": b.recommendations, "glossary": b.glossary,
 	}
 	known := map[string]bool{"start": true, "end": true}
@@ -279,6 +320,9 @@ func (b *builder) sections() []*section {
 		s.Anchor = "sec-" + id
 		s.Title = b.t("sec." + id + ".title")
 		s.Intro = b.t("sec." + id + ".intro")
+		if k := "sec." + id + ".intro_ess"; i18n.Has(k) {
+			s.IntroEss = b.t(k)
+		}
 		s.Icon = sectionIcon(id)
 		s.Major = majorSections[id]
 		s.Note = Markdown(b.r.Note(id))
@@ -305,6 +349,16 @@ func (b *builder) sections() []*section {
 		part2 = append(part2, customs[id]...)
 	}
 
+	// Part 2 only exists in the advanced version; the essential version
+	// closes part 1 with a short glossary of the terms it uses.
+	for _, s := range part2 {
+		s.Only = model.ViewAdvanced
+	}
+	ess := b.glossaryEssential()
+	if ess != nil && len(part1) > 0 {
+		part1 = append(part1, ess)
+	}
+
 	var out []*section
 	n := 0
 	for pi, list := range [][]*section{part1, part2} {
@@ -319,10 +373,19 @@ func (b *builder) sections() []*section {
 			Intro:  b.t(fmt.Sprintf("part.%d.intro", num)),
 			Major:  num == 2,
 		}
+		if num == 2 {
+			banner.Only = model.ViewAdvanced
+		}
 		out = append(out, banner)
 		for i, s := range list {
-			n++
-			s.Num = twoDigits(n)
+			if s == ess {
+				// Numbered after part 1 without shifting part 2: each
+				// version reads 01, 02, 03... without a gap.
+				s.Num = twoDigits(n + 1)
+			} else {
+				n++
+				s.Num = twoDigits(n)
+			}
 			s.Part = num
 			if num == 1 {
 				s.Major = false // part 1 flows on as few pages as possible

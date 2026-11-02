@@ -266,7 +266,7 @@ func TestAnalyzeOnlyGA4(t *testing.T) {
 		t.Error("progress should exist (organic sessions, key events, AI sessions)")
 	}
 	texts := joinTexts(a)
-	for _, want := range []string{"référencement naturel progresse de 33\u202f%", "portées par ChatGPT", "Le premier canal d'acquisition est «\u00a0Direct\u00a0»"} {
+	for _, want := range []string{"référencement naturel progresse de 33\u202f%", "portées par ChatGPT", "Le premier canal d'acquisition est «\u00a0Accès direct\u00a0»"} {
 		if !strings.Contains(texts, want) {
 			t.Errorf("missing %q in:\n%s", want, texts)
 		}
@@ -344,6 +344,7 @@ func stripPrevious(r *model.Report) {
 	for i := range mc.Issues {
 		mc.Issues[i].PrevProducts = nil
 	}
+	stripGBPPrevious(r.BusinessProfile)
 	for _, t := range []*model.GA4Totals{&ga.Totals, ga.OrganicTotals} {
 		for _, m := range []*model.Metric{t.Sessions, t.Users, t.NewUsers, t.EngagedSessions, t.EngagementRate, t.AvgEngagementTime, t.PageViews, t.KeyEvents, t.Revenue} {
 			if m != nil {
@@ -378,6 +379,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		r.Normalize()
 		a := Analyze(r)
 		want := []string{KeyBingAICitations, KeyBingClicks, KeyBingCTR, KeyBingImpressions, KeyBingPosition, KeyGA4EngagementRate, KeyGA4KeyEvents, KeyGA4Organic, KeyGA4Revenue, KeyGA4Sessions, KeyGA4Users,
+			KeyGBPCalls, KeyGBPDirections, KeyGBPInteractions, KeyGBPRating, KeyGBPReviews, KeyGBPViews, KeyGBPWebsiteClicks,
 			KeyGEOAISessions, KeyGEOCitationRate, KeyGMCApprovedRate, KeyGMCClicks, KeyGMCConversions, KeyGMCCTR, KeyGMCImpressions, KeyGSCClicks, KeyGSCCTR, KeyGSCImpressions, KeyGSCIndexed, KeyGSCPosition}
 		if got := keys(a.KPIs); !slices.Equal(got, want) {
 			t.Errorf("%s: KPIs = %v", lang, got)
@@ -400,7 +402,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		if len(a.Winners) != 5 || len(a.Losers) == 0 {
 			t.Errorf("%s: winners %d losers %d", lang, len(a.Winners), len(a.Losers))
 		}
-		if len(a.Insights) < 6 || len(a.Insights) > maxInsights+2*maxOptional {
+		if len(a.Insights) < 6 || len(a.Insights) > maxInsights+3*maxOptional {
 			t.Errorf("%s: %d insights", lang, len(a.Insights))
 		}
 		checkInsights(t, a, lang)
@@ -408,7 +410,7 @@ func TestAnalyzeDemo(t *testing.T) {
 		for _, in := range a.Insights {
 			sections[in.Section] = true
 		}
-		for _, s := range []string{"search_console", "queries", "analytics", "channels", "geo", "technical", "bing", "merchant_center"} {
+		for _, s := range []string{"search_console", "queries", "analytics", "channels", "geo", "technical", "bing", "merchant_center", "business_profile"} {
 			if !sections[s] {
 				t.Errorf("%s: no insight for section %s", lang, s)
 			}

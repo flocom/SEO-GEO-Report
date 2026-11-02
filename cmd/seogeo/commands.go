@@ -86,14 +86,18 @@ func writeOutput(path string, data []byte) error {
 }
 
 func cmdRender(args []string) error {
-	fs := newFlagSet("render", "-i data.json -o report.html|report.pdf [--lang fr|en] [--pdf]")
+	fs := newFlagSet("render", "-i data.json -o report.html|report.pdf [--lang fr|en] [--view essential|advanced] [--pdf]")
 	in := fs.String("i", "", "input report JSON (\"-\" = stdin)")
 	out := fs.String("o", "", "output file; .pdf renders a PDF (default: stdout, HTML)")
 	lang := fs.String("lang", "", "override the report language: fr or en")
+	view := fs.String("view", "", "report version: essential (key results, short PDF) or advanced (full report); the HTML holds both and opens on this one (default: options.default_view)")
 	asPDF := fs.Bool("pdf", false, "render a PDF regardless of the output extension (needs Chromium / Chrome)")
 	noFavicon := fs.Bool("no-favicon", false, "do not fetch the site favicon from meta.site_url")
 	if _, err := parseInterspersed(fs, args); err != nil {
 		return err
+	}
+	if *view != "" && model.NormView(*view) == "" {
+		return fmt.Errorf("--view %q: use essential or advanced", *view)
 	}
 	data, err := readInput(*in)
 	if err != nil {
@@ -125,7 +129,7 @@ func cmdRender(args []string) error {
 		cancel()
 	}
 	wantPDF := *asPDF || strings.EqualFold(filepath.Ext(*out), ".pdf")
-	html, err := render.HTML(r, render.Options{Lang: *lang})
+	html, err := render.HTML(r, render.Options{Lang: *lang, View: *view})
 	if err != nil {
 		return fmt.Errorf("rendering failed: %w", err)
 	}
@@ -245,6 +249,8 @@ func mergeInto(into, key string, v any) ([]byte, error) {
 		r.Analytics = v.(*model.Analytics)
 	case "merchant_center":
 		r.MerchantCenter = v.(*model.MerchantCenter)
+	case "business_profile":
+		r.BusinessProfile = v.(*model.BusinessProfile)
 	}
 	return json.MarshalIndent(r, "", "  ")
 }
@@ -388,6 +394,57 @@ func cmdImportGMC(args []string) error {
 		fmt.Fprintf(os.Stderr, "%s: %s table, %d rows\n", filepath.Base(p), res.Kind, res.Rows)
 	}
 	b, err := mergeInto(*into, "merchant_center", mc)
+	if err != nil {
+		return err
+	}
+	return writeOutput(*out, append(b, '\n'))
+}
+
+func cmdImportGBP(args []string) error {
+	fs := newFlagSet("import-gbp", "<file.csv>... [-o gbp.json] [--into data.json]")
+	out := fs.String("o", "", "output file (default stdout)")
+	into := fs.String("into", "", "report JSON to merge the data into (business_profile is updated); the result goes to -o")
+	kind := fs.String("kind", "", "table kind for every file: performance, daily, keywords or reviews (default: guessed)")
+	pos, err := parseInterspersed(fs, args)
+	if err != nil {
+		return err
+	}
+	if len(pos) == 0 {
+		fs.Usage()
+		return errSilent
+	}
+	var bp *model.BusinessProfile
+	if *into != "" {
+		data, err := os.ReadFile(*into)
+		if err != nil {
+			return err
+		}
+		r, err := decodeReport(data)
+		if err != nil {
+			return err
+		}
+		bp = r.BusinessProfile
+	}
+	for _, p := range pos {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		k := importer.GBPKind(*kind)
+		if k == "" {
+			k = importer.GuessGBPKind(filepath.Base(p))
+		}
+		next, res, err := importer.ParseGBPCSV(data, k, bp)
+		if err != nil && *kind == "" && k != "" {
+			next, res, err = importer.ParseGBPCSV(data, "", bp) // the file name was only a hint
+		}
+		if err != nil {
+			return fmt.Errorf("%s: %w", p, err)
+		}
+		bp = next
+		fmt.Fprintf(os.Stderr, "%s: %s table, %d rows\n", filepath.Base(p), res.Kind, res.Rows)
+	}
+	b, err := mergeInto(*into, "business_profile", bp)
 	if err != nil {
 		return err
 	}

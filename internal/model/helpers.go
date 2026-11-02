@@ -61,7 +61,22 @@ func (r *Report) Opt() Options {
 	if o.MaxTableRows <= 0 {
 		o.MaxTableRows = 15
 	}
+	if o.DefaultView = NormView(o.DefaultView); o.DefaultView == "" {
+		o.DefaultView = ViewEssential
+	}
 	return o
+}
+
+// NormView returns ViewEssential or ViewAdvanced for a view name (French
+// and English spellings accepted), or "" when s is empty or unknown.
+func NormView(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "essential", "essentiel", "essentielle", "simple", "basic":
+		return ViewEssential
+	case "advanced", "avance", "avancé", "avancee", "avancée", "full", "complet", "complete", "detailed":
+		return ViewAdvanced
+	}
+	return ""
 }
 
 // SectionHidden reports whether a built-in section is hidden.
@@ -103,6 +118,9 @@ func (r *Report) Normalize() {
 	}
 	if mc := r.MerchantCenter; mc != nil {
 		mc.Normalize()
+	}
+	if bp := r.BusinessProfile; bp != nil {
+		bp.Normalize()
 	}
 	for i := range r.Sections {
 		s := &r.Sections[i]
@@ -211,8 +229,11 @@ func (r *Report) Validate() (errs []string, warnings []string) {
 	if l := strings.ToLower(r.Meta.Language); l != "" && !strings.HasPrefix(l, "fr") && !strings.HasPrefix(l, "en") {
 		warnings = append(warnings, fmt.Sprintf("meta.language %q is not supported, French is used", r.Meta.Language))
 	}
-	if r.SearchConsole == nil && r.Bing == nil && r.Analytics == nil && r.MerchantCenter == nil && r.GEO == nil {
-		warnings = append(warnings, "no data provided: add search_console, bing, analytics, merchant_center and/or geo")
+	if o := r.Options; o != nil && strings.TrimSpace(o.DefaultView) != "" && NormView(o.DefaultView) == "" {
+		warnings = append(warnings, fmt.Sprintf("options.default_view %q is not supported (essential or advanced), essential is used", o.DefaultView))
+	}
+	if r.SearchConsole == nil && r.Bing == nil && r.Analytics == nil && r.MerchantCenter == nil && r.BusinessProfile == nil && r.GEO == nil {
+		warnings = append(warnings, "no data provided: add search_console, bing, analytics, merchant_center, business_profile and/or geo")
 	}
 	if sc := r.SearchConsole; sc != nil {
 		warnings = append(warnings, searchWarnings("search_console", sc.Totals)...)
@@ -237,6 +258,9 @@ func (r *Report) Validate() (errs []string, warnings []string) {
 	}
 	if mc := r.MerchantCenter; mc != nil {
 		warnings = append(warnings, mc.warnings()...)
+	}
+	if bp := r.BusinessProfile; bp != nil {
+		warnings = append(warnings, bp.warnings()...)
 	}
 	if a := r.Analytics; a != nil && a.Totals.EngagementRate != nil && a.Totals.EngagementRate.Current > 0 && a.Totals.EngagementRate.Current <= 1 {
 		warnings = append(warnings, "analytics.totals.engagement_rate looks like a ratio: it must be in percent (62.5 = 62.5%)")

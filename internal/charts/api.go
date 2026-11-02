@@ -61,6 +61,11 @@ type BarsOpts struct {
 	// PreviousLabel names the previous-period value in hover tooltips
 	// (e.g. "Période précédente"). Empty = "vs".
 	PreviousLabel string
+	// ChangeFormat, when set, writes the delta badge from the raw values
+	// instead of the relative change, e.g. "+5" or "×3.8" for small or
+	// multiplied figures where a percentage is unreadable ("+500 %").
+	// The badge color still follows the direction of the change.
+	ChangeFormat func(cur, prev float64) string
 }
 
 // ColumnsOpts configures vertical grouped columns comparing two periods.
@@ -157,7 +162,7 @@ type SparkOpts struct {
 }
 
 // DeltaArrow returns a small inline SVG arrow (up, down or flat) colored by
-// tone: "positive", "negative" or "neutral".
+// tone: "positive", "negative", "warning" (an expected change) or "neutral".
 func DeltaArrow(direction, tone string) template.HTML { return deltaArrow(direction, tone) }
 
 // Line renders a multi-series line/area chart with axes, gridlines and legend.

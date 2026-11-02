@@ -124,12 +124,14 @@ func (g balGrid) At(i int) template.CSS {
 
 // Grid presets: maximum columns per breakpoint for each kind of grid.
 var gridPresets = map[string][4]int{
-	"kpi-hero":    {7, 4, 2, 4}, // Part 1 key indicators: one row on desktop (up to 7 cards)
+	"kpi-hero":    {8, 4, 2, 4}, // Part 1 key indicators: one row on desktop (up to 8 cards)
 	"kpi":         {5, 3, 2, 4}, // section KPI tiles
 	"kpi-compact": {6, 3, 2, 4}, // small metric tiles
 	"stats":       {6, 4, 2, 5}, // mini statistics in a full-width card
 	"stats-half":  {4, 3, 2, 4}, // mini statistics in a half-width card
 	"hero-stats":  {4, 4, 2, 4},
+	"tiles":       {5, 3, 2, 5}, // part 1 big-number tiles (wins, to watch, AI)
+	"tiles-stack": {1, 1, 1, 1}, // the same, stacked beside a taller card
 	"meta":        {4, 3, 1, 3}, // cover facts
 }
 

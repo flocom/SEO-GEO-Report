@@ -1,0 +1,152 @@
+/* ======================================================= report versions
+   Essential / Advanced, both in the same page. Two visually hidden radio
+   buttons sit at the top of <body>, before .doc: their labels form the
+   segmented control of the cover, and the sibling combinator hides the part
+   of the page that does not belong to the checked version. No JavaScript,
+   no :has(): works in every browser, in the downloaded file and in print
+   (printing prints the version on screen). */
+
+.view-radio {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; opacity: 0;
+}
+#view-essential:checked ~ .doc .adv-only,
+#view-advanced:checked ~ .doc .ess-only { display: none !important; }
+/* A link to a section of the advanced version still lands on it in the
+   essential one (the small script, when it runs, switches versions). */
+#view-essential:checked ~ .doc section.adv-only:target { display: block !important; }
+.print-only { display: none; }
+
+/* ------------------------------------------------------ segmented control */
+.view-switch {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px;
+  margin-top: 22px;
+}
+.vs-label {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+}
+.vs-seg {
+  flex: 0 1 620px; min-width: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px;
+  padding: 4px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper-2);
+}
+.vs-opt {
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+  padding: 9px 14px 10px; border: 1px solid transparent; border-radius: 6px;
+  color: var(--muted); cursor: pointer; user-select: none;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.vs-opt:hover { color: var(--ink-2); }
+.vs-name { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--ink-2); }
+.vs-name::before {
+  content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%;
+  border: 1.5px solid var(--faint); box-sizing: border-box;
+}
+.vs-sub { padding-left: 17px; font-size: 12.5px; line-height: 1.35; }
+#view-essential:checked ~ .doc .vs-ess,
+#view-advanced:checked ~ .doc .vs-adv {
+  background: var(--paper); border-color: var(--line); color: var(--ink-2);
+  box-shadow: 0 1px 2px rgba(21, 24, 29, .06);
+}
+#view-essential:checked ~ .doc .vs-ess .vs-name,
+#view-advanced:checked ~ .doc .vs-adv .vs-name { color: var(--ink); }
+#view-essential:checked ~ .doc .vs-ess .vs-name::before,
+#view-advanced:checked ~ .doc .vs-adv .vs-name::before {
+  border-color: var(--accent-ink); background: var(--accent-ink);
+  box-shadow: inset 0 0 0 1.5px var(--paper);
+}
+/* Keyboard: Tab reaches the checked radio, arrows switch; the focus ring is
+   drawn on its label. */
+#view-essential:focus-visible ~ .doc .vs-ess,
+#view-advanced:focus-visible ~ .doc .vs-adv { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+
+/* --------------------------------------------- essential version details */
+/* One part only: no "Part 1" label, and its contents on two columns. */
+#view-essential:checked ~ .doc .part-1 .part-num,
+#view-essential:checked ~ .doc .toc-part-title span { display: none; }
+#view-essential:checked ~ .doc .toc-parts { grid-template-columns: minmax(0, 1fr); }
+#view-essential:checked ~ .doc .toc-part ol { columns: 2; column-gap: 48px; }
+
+/* Short glossary: smaller type, so that it closes the essential version
+   without taking a page of its own. */
+.glossary-compact .g-item { padding-bottom: 12px; }
+.glossary-compact .g-item dt { font-size: 14px; }
+.glossary-compact .g-item dd { font-size: 13px; }
+
+/* Download buttons: the PDF of the version on screen is the primary one. */
+.btn-pdf.btn-view { background: var(--paper); border-color: var(--line); color: var(--ink); }
+.btn-pdf.btn-view:hover { background: var(--paper); border-color: var(--ink-2); }
+#view-essential:checked ~ .doc .btn-pdf-ess,
+#view-advanced:checked ~ .doc .btn-pdf-adv { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+#view-essential:checked ~ .doc .btn-pdf-ess:hover,
+#view-advanced:checked ~ .doc .btn-pdf-adv:hover { background: var(--ink-2); border-color: var(--ink-2); }
+
+/* "Switch to the advanced version" link of the part 1 lists. */
+.link-switch { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.link-switch:hover { color: var(--accent-ink); }
+
+/* --------------------------------------------------------- go further */
+.next-step {
+  margin-top: 72px; padding: 26px 30px 28px;
+  border: 1px solid var(--line); border-top: 2px solid var(--rule);
+  border-radius: 0 0 var(--radius) var(--radius); background: var(--paper-2);
+}
+.next-kicker { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.next-title { margin-top: 8px; font-family: var(--serif); font-weight: 500; font-size: 28px; letter-spacing: -.01em; }
+.next-text { margin-top: 10px; max-width: 66ch; font-size: 16px; color: var(--ink-2); }
+.next-count { margin-top: 18px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.next-list {
+  list-style: none; margin: 8px 0 0; padding: 0;
+  columns: 3; column-gap: 32px;
+}
+.next-list li {
+  break-inside: avoid; padding: 5px 0; border-bottom: 1px solid var(--line-2);
+  font-size: 13.5px; color: var(--ink-2);
+}
+.next-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 22px; }
+.next-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  background: var(--ink); color: var(--paper); font-weight: 600; font-size: 14px; cursor: pointer;
+}
+.next-btn::after { content: "→"; }
+.next-btn:hover { background: var(--ink-2); }
+.next-pdf { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 550; color: var(--ink-2); }
+.next-pdf .ico { width: 15px; height: 15px; }
+
+/* -------------------------------------------------------------- responsive */
+@media screen and (max-width: 860px) {
+  .next-list { columns: 2; }
+}
+@media screen and (max-width: 640px) {
+  .cover-bar { flex-wrap: wrap; }
+  .cover-actions { justify-content: flex-start; }
+  .btn-pdf.btn-view span { display: inline; }
+  .btn-pdf.btn-view { padding: 7px 11px; }
+  .view-switch { margin-top: 16px; gap: 8px; }
+  .vs-seg { flex: 1 1 100%; }
+  .vs-opt { padding: 8px 10px 9px; }
+  .vs-sub { padding-left: 0; font-size: 12px; }
+  .vs-name { font-size: 13.5px; }
+  #view-essential:checked ~ .doc .toc-part ol, .next-list { columns: 1; }
+  .next-step { margin-top: 52px; padding: 20px 16px 22px; }
+  .next-title { font-size: 23px; }
+}
+@media screen and (prefers-color-scheme: dark) {
+  #view-essential:checked ~ .doc .vs-ess,
+  #view-advanced:checked ~ .doc .vs-adv { box-shadow: none; }
+  #view-essential:checked ~ .doc .btn-pdf-ess,
+  #view-advanced:checked ~ .doc .btn-pdf-adv,
+  .next-btn { background: var(--ink); color: var(--bg); }
+}
+@media print {
+  .print-only { display: block; }
+  /* On paper the note shrinks to one line: the essential PDF stays short. */
+  .next-step { margin-top: 20px; padding: 10px 16px; border-top-width: 1px; break-inside: avoid; page-break-inside: avoid; }
+  .next-kicker, .next-title, .next-text, .next-count, .next-list { display: none; }
+  .next-print { font-size: 13px; color: var(--ink-2); }
+  #view-essential:checked ~ .doc .foot { margin-top: 18px; padding-top: 10px; }
+  .glossary-compact .g-item { padding-bottom: 8px; }
+  .glossary-compact .g-item dt { font-size: 13.5px; }
+  .glossary-compact .g-item dd { margin-top: 1px; font-size: 12.5px; line-height: 1.42; }
+}

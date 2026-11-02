@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/flocom/SEO-GEO-Report/internal/i18n"
 	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
 
@@ -113,9 +114,12 @@ func buildInsights(r *model.Report, a *Analysis) []Insight {
 	if mc := r.MerchantCenter; mc != nil {
 		gmcInsights(w, mc)
 	}
+	if bp := r.BusinessProfile; bp != nil {
+		gbpInsights(w, bp)
+	}
 	geoInsights(w, r, a)
 
-	// Optional sources (Bing, Merchant Center) are guaranteed up to
+	// Optional sources (Bing, Merchant Center, Business Profile) are guaranteed up to
 	// maxOptional observations each on top of the balanced selection, so that
 	// adding them neither crowds out the others nor gets crowded out.
 	all := append([]Insight(nil), w.out...)
@@ -143,7 +147,7 @@ func buildInsights(r *model.Report, a *Analysis) []Insight {
 
 // optionalSections are the sections of optional data sources, whose insights
 // are selected apart from the core ones.
-var optionalSections = map[string]bool{"bing": true, "merchant_center": true}
+var optionalSections = map[string]bool{"bing": true, "merchant_center": true, "business_profile": true}
 
 // selectInsights keeps at most max insights, sorted by weight desc, while
 // keeping the report balanced: the best insight of every section is kept
@@ -196,9 +200,9 @@ func gscInsights(w *writer, sc *model.SearchConsole, a *Analysis) {
 		switch toneOf(c, false) {
 		case Positive:
 			w.add(Positive, sec, 80+bump(pct),
-				"Les clics depuis Google progressent de %s : %s contre %s sur la période de comparaison.",
-				"Clicks from Google grew by %s: %s vs %s in the comparison period.",
-				w.p(pct), w.n(c.Current), w.n(*c.Previous))
+				"Les clics depuis Google progressent %s : %s contre %s sur la période de comparaison.",
+				"Clicks from Google grew %s: %s vs %s in the comparison period.",
+				w.by(pct, c.Current, *c.Previous), w.n(c.Current), w.n(*c.Previous))
 		case Negative:
 			w.add(Negative, sec, 80+bump(pct),
 				"Les clics depuis Google reculent de %s : %s contre %s sur la période de comparaison.",
@@ -226,7 +230,7 @@ func gscInsights(w *writer, sc *model.SearchConsole, a *Analysis) {
 			w.add(Positive, sec, 60+bump(impPct),
 				"La visibilité dans Google augmente : %s impressions (%s).",
 				"Visibility in Google is growing: %s impressions (%s).",
-				w.n(imp.Current), w.sp(impPct))
+				w.n(imp.Current), w.spc(impPct, imp.Current, *imp.Previous))
 		case Negative:
 			w.add(Negative, sec, 60+bump(impPct),
 				"Les impressions dans Google baissent de %s (%s).",
@@ -236,7 +240,12 @@ func gscInsights(w *writer, sc *model.SearchConsole, a *Analysis) {
 	}
 
 	// CTR.
-	if ctr := gscCTR(sc); ctr != nil && ctr.Previous != nil {
+	if a.Expected(KeyGSCCTR) || a.Expected(KeyGSCPosition) {
+		w.add(Neutral, sec, 62,
+			"Les impressions bondissent : le site apparaît sur beaucoup de nouvelles recherches, souvent plus bas au début. La baisse de la position moyenne et du taux de clic qui en découle est normale à ce stade.",
+			"Impressions jumped: the site now appears on many new searches, often lower down at first. The resulting drop in average position and click-through rate is normal at this stage.")
+	}
+	if ctr := gscCTR(sc); ctr != nil && ctr.Previous != nil && !a.Expected(KeyGSCCTR) {
 		ctrPct, ok := ctr.DeltaPct()
 		switch {
 		case ok && impOK && impPct > 5 && ctrPct < -5:
@@ -258,7 +267,7 @@ func gscInsights(w *writer, sc *model.SearchConsole, a *Analysis) {
 	}
 
 	// Average position.
-	if p := t.Position; p != nil && p.Previous != nil && p.Current > 0 && *p.Previous > 0 {
+	if p := t.Position; p != nil && p.Previous != nil && p.Current > 0 && *p.Previous > 0 && !a.Expected(KeyGSCPosition) {
 		d := p.Current - *p.Previous
 		switch toneOf(*p, true) {
 		case Positive:
@@ -287,7 +296,7 @@ func queryInsights(w *writer, sc *model.SearchConsole, a *Analysis) {
 		d := q.Clicks - *q.PrevClicks
 		var change string
 		if *q.PrevClicks > 0 {
-			change = w.sp(d / *q.PrevClicks * 100)
+			change = w.spc(d / *q.PrevClicks * 100, q.Clicks, *q.PrevClicks)
 		} else if w.lang == "en" {
 			change = "new"
 		} else {
@@ -560,7 +569,7 @@ func ga4Insights(w *writer, ga *model.Analytics) {
 				w.add(Positive, "analytics", 58+bump(pct),
 					"Le site a reçu %s sessions toutes sources confondues (%s).",
 					"The site received %s sessions across all channels (%s).",
-					w.n(s.Current), w.sp(pct))
+					w.n(s.Current), w.spc(pct, s.Current, *s.Previous))
 			case Negative:
 				w.add(Negative, "analytics", 58+bump(pct),
 					"Le trafic global recule de %s (%s sessions).",
@@ -581,9 +590,9 @@ func ga4Insights(w *writer, ga *model.Analytics) {
 			switch toneOf(*org, false) {
 			case Positive:
 				w.add(Positive, "channels", 66+bump(pct),
-					"Le trafic issu du référencement naturel progresse de %s (%s sessions).",
-					"Organic search traffic grew by %s (%s sessions).",
-					w.p(pct), w.n(org.Current))
+					"Le trafic issu du référencement naturel progresse %s (%s sessions).",
+					"Organic search traffic grew %s (%s sessions).",
+					w.by(pct, org.Current, *org.Previous), w.n(org.Current))
 			case Negative:
 				w.add(Negative, "channels", 66+bump(pct),
 					"Le trafic issu du référencement naturel recule de %s (%s sessions).",
@@ -624,7 +633,7 @@ func ga4Insights(w *writer, ga *model.Analytics) {
 			w.add(Neutral, "channels", 30,
 				"Le premier canal d'acquisition est %s (%s des sessions).",
 				"The top acquisition channel is %s (%s of sessions).",
-				w.q(top.Channel), w.p(top.Sessions/total*100))
+				w.q(i18n.ChannelName(w.lang, top.Channel)), w.p(top.Sessions/total*100))
 		}
 	}
 
@@ -633,9 +642,9 @@ func ga4Insights(w *writer, ga *model.Analytics) {
 			switch toneOf(*k, false) {
 			case Positive:
 				w.add(Positive, "analytics", 70+bump(pct),
-					"Les conversions (événements clés) progressent de %s : %s contre %s.",
-					"Conversions (key events) grew by %s: %s vs %s.",
-					w.p(pct), w.n(k.Current), w.n(*k.Previous))
+					"Les conversions (événements clés) progressent %s : %s contre %s.",
+					"Conversions (key events) grew %s: %s vs %s.",
+					w.by(pct, k.Current, *k.Previous), w.n(k.Current), w.n(*k.Previous))
 			case Negative:
 				w.add(Negative, "analytics", 70+bump(pct),
 					"Les conversions (événements clés) reculent de %s : %s contre %s.",
@@ -710,14 +719,14 @@ func geoInsights(w *writer, r *model.Report, a *Analysis) {
 				w.n(ai.Current))
 		case ok && toneOf(*ai, false) == Positive && leader.Platform != "":
 			w.add(Positive, sec, 72+bump(pct),
-				"Les visites venant des assistants IA progressent de %s (%s sessions), portées par %s (%s du trafic IA).",
-				"Visits from AI assistants grew by %s (%s sessions), led by %s (%s of AI traffic).",
-				w.p(pct), w.n(ai.Current), leader.Platform, w.p(leaderShare))
+				"Les visites venant des assistants IA progressent %s (%s sessions), portées par %s (%s du trafic IA).",
+				"Visits from AI assistants grew %s (%s sessions), led by %s (%s of AI traffic).",
+				w.by(pct, ai.Current, *ai.Previous), w.n(ai.Current), leader.Platform, w.p(leaderShare))
 		case ok && toneOf(*ai, false) == Positive:
 			w.add(Positive, sec, 72+bump(pct),
-				"Les visites venant des assistants IA progressent de %s (%s sessions).",
-				"Visits from AI assistants grew by %s (%s sessions).",
-				w.p(pct), w.n(ai.Current))
+				"Les visites venant des assistants IA progressent %s (%s sessions).",
+				"Visits from AI assistants grew %s (%s sessions).",
+				w.by(pct, ai.Current, *ai.Previous), w.n(ai.Current))
 		case ok && toneOf(*ai, false) == Negative:
 			w.add(Negative, sec, 65+bump(pct),
 				"Les visites venant des assistants IA reculent de %s (%s sessions).",

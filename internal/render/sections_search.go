@@ -14,6 +14,12 @@ func (b *builder) dateRange(p model.Period) string { return i18n.DateRange(b.lan
 
 // trend renders a daily line chart with an optional dashed comparison series.
 func (b *builder) trend(title string, dates []string, cur, prev []float64, f charts.Formatter, invert, area bool) block {
+	return b.trendLine(title, dates, cur, prev, f, invert, area, b.fmtDateTip)
+}
+
+// trendLine renders a line chart over date labels; tip formats the labels in
+// tooltips (a day, or a week range for weekly points).
+func (b *builder) trendLine(title string, labels []string, cur, prev []float64, f charts.Formatter, invert, area bool, tip func(string) string) block {
 	if len(cur) < 2 || !nonZero(cur) {
 		return block{}
 	}
@@ -22,9 +28,39 @@ func (b *builder) trend(title string, dates []string, cur, prev []float64, f cha
 		series = append(series, charts.Series{Name: b.t("label.previous"), Values: p, Color: charts.ColorPrevious, Dashed: true})
 	}
 	svg := func(w, h float64) template.HTML {
-		return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: dates, XFormat: b.fmtDateTick, TooltipXFormat: b.fmtDateTip, Series: series, YFormat: f, InvertY: invert, Title: title})
+		return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: labels, XFormat: b.fmtDateTick, TooltipXFormat: tip, Series: series, YFormat: f, InvertY: invert, Title: title})
 	}
 	return block{Kind: "chart", Title: title, mk: svg}
+}
+
+// trendAuto renders a daily series, or its weekly aggregation when weekly is
+// set: the title then uses chart.<key>_weekly instead of chart.<key>_daily
+// (key is e.g. "clicks").
+func (b *builder) trendAuto(key string, dates []string, cur, prev []float64, f charts.Formatter, mode aggMode, invert, area, weekly bool) block {
+	if !weekly {
+		return b.trend(b.t("chart."+key+"_daily"), dates, cur, prev, f, invert, area)
+	}
+	w := b.toWeekly(dates, cur, prev, mode)
+	bl := b.trendLine(b.t("chart."+key+"_weekly"), w.labels, w.cur, w.prev, f, invert, area, w.tip(b.fmtDateTip))
+	if bl.Kind != "" {
+		bl.Sub = b.t("chart.weekly_sub")
+	}
+	return bl
+}
+
+// weeklyCTR aggregates daily clicks and impressions per week and returns the
+// weekly click-through rate (percent).
+func (b *builder) weeklyCTR(dates []string, clicks, impr []float64) []float64 {
+	bk := weekBuckets(len(clicks))
+	c, i := aggregateWeekly(clicks, bk, aggSum), aggregateWeekly(alignPrev(len(clicks), impr), bk, aggSum)
+	out := make([]float64, len(c))
+	for k := range c {
+		out[k] = math.NaN()
+		if k < len(i) && i[k] > 0 && !math.IsNaN(c[k]) {
+			out[k] = c[k] / i[k] * 100
+		}
+	}
+	return out
 }
 
 func add(blocks []block, bl block, span int, hint string) []block {
@@ -80,10 +116,32 @@ func (b *builder) searchConsole() *section {
 	ctr := func(p model.GSCDailyPoint) float64 { return p.CTR }
 	pos := func(p model.GSCDailyPoint) float64 { return p.Position }
 
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.clicks_daily"), dates, get(sc.Daily, clicks), get(sc.PreviousDaily, clicks), b.fmtCompact(), false, true), 12, b.hint("clicks_daily"))
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.impressions_daily"), dates, get(sc.Daily, impr), get(sc.PreviousDaily, impr), b.fmtCompact(), false, true), 6, b.hint("impressions_daily"))
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.position_daily"), dates, get(sc.Daily, pos), get(sc.PreviousDaily, pos), b.fmtPos(), true, false), 6, b.hint("position_daily"))
-	s.Blocks = add(s.Blocks, b.trend(b.t("chart.ctr_daily"), dates, get(sc.Daily, ctr), get(sc.PreviousDaily, ctr), b.fmtPct(), false, false), 6, b.hint("ctr_daily"))
+	// Tiny volumes (a few clicks a day) read better week by week.
+	wk := wantWeekly(get(sc.Daily, clicks), false)
+	hk := func(k string) string {
+		if wk && (k == "clicks" || k == "impressions") {
+			return b.hint("weekly")
+		}
+		return b.hint(k + "_daily")
+	}
+	s.Blocks = add(s.Blocks, b.trendAuto("clicks", dates, get(sc.Daily, clicks), get(sc.PreviousDaily, clicks), b.fmtCompact(), aggSum, false, true, wk), 12, hk("clicks"))
+	s.Blocks = add(s.Blocks, b.trendAuto("impressions", dates, get(sc.Daily, impr), get(sc.PreviousDaily, impr), b.fmtCompact(), aggSum, false, true, wk), 6, hk("impressions"))
+	s.Blocks = add(s.Blocks, b.trendAuto("position", dates, get(sc.Daily, pos), get(sc.PreviousDaily, pos), b.fmtPos(), aggMean, true, false, wk), 6, hk("position"))
+	if wk {
+		cur := b.weeklyCTR(dates, get(sc.Daily, clicks), get(sc.Daily, impr))
+		var prev []float64
+		if len(sc.PreviousDaily) > 0 {
+			prev = b.weeklyCTR(dates, alignPrev(len(sc.Daily), get(sc.PreviousDaily, clicks)), alignPrev(len(sc.Daily), get(sc.PreviousDaily, impr)))
+		}
+		w := b.toWeekly(dates, get(sc.Daily, clicks), nil, aggSum)
+		bl := b.trendLine(b.t("chart.ctr_weekly"), w.labels, cur, prev, b.fmtPct(), false, false, w.tip(b.fmtDateTip))
+		if bl.Kind != "" {
+			bl.Sub = b.t("chart.weekly_sub")
+		}
+		s.Blocks = add(s.Blocks, bl, 6, hk("ctr"))
+	} else {
+		s.Blocks = add(s.Blocks, b.trend(b.t("chart.ctr_daily"), dates, get(sc.Daily, ctr), get(sc.PreviousDaily, ctr), b.fmtPct(), false, false), 6, hk("ctr"))
+	}
 
 	// Position distribution.
 	if pd := b.positions(); pd != nil && posDistTotal(pd) > 0 {
@@ -269,7 +327,7 @@ func (b *builder) gscTable(rows []model.GSCRow, keyLabel string, keyFmt func(str
 
 func posBadge(p float64) []badge {
 	if p > 0 && p < 3.5 {
-		return []badge{{Text: "Top 3", Tone: "pos"}}
+		return []badge{{Text: "Top 3", Tone: "pos"}} // same in French and English
 	}
 	return nil
 }

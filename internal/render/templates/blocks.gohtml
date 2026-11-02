@@ -12,6 +12,9 @@
 {{- else if eq .Kind "recs"}}{{template "recs" .}}
 {{- else if eq .Kind "glossary"}}{{template "glossary" .}}
 {{- else if eq .Kind "plan"}}{{template "plan" .}}
+{{- else if eq .Kind "legend"}}{{template "legend" .}}
+{{- else if eq .Kind "scorecard"}}{{template "scorecard" .}}
+{{- else if eq .Kind "tiles"}}{{template "tiles" .}}
 {{- end}}
 </div>
 {{- end}}
@@ -22,7 +25,7 @@
 {{- end}}
 {{- end}}
 
-{{define "delta"}}<span class="delta d-{{.Tone}}">{{.Arrow}}<span>{{.Text}}</span></span>{{if .Sub}}<span class="delta-sub">{{.Sub}}</span>{{end}}{{end}}
+{{define "delta"}}<span class="delta d-{{.Tone}}"{{with .Title}} title="{{.}}"{{end}}>{{.Arrow}}<span>{{.Text}}</span></span>{{if .Sub}}<span class="delta-sub">{{.Sub}}</span>{{end}}{{end}}
 
 {{define "badge"}}<span class="badge b-{{.Tone}}">{{if .Icon}}{{.Icon}}{{end}}{{.Text}}</span>{{end}}
 
@@ -64,10 +67,10 @@
 
 {{define "kpi"}}
 <div class="kpi{{if .Tone}} tone-{{.Tone}}{{end}}"{{with .Style}} style="{{.}}"{{end}}>
-  <div class="kpi-label">{{.Label}}</div>
-  <div class="kpi-main"><span class="kpi-value">{{.Value}}</span></div>
+  <div class="kpi-head">{{if .Icon}}<span class="kpi-ico">{{.Icon}}</span>{{end}}<div class="kpi-titles"><div class="kpi-label">{{.Label}}</div>{{if .Term}}<div class="kpi-term">{{.Term}}</div>{{end}}</div></div>
+  <div class="kpi-main"><span class="kpi-value">{{.Value}}</span>{{if .Note}}<span class="kpi-pill" title="{{.Note}}"><span aria-hidden="true">●</span> {{t "kpi.expected_pill"}}<span class="sr-only"> — {{afterColon .Note}}</span></span>{{end}}</div>
   <div class="kpi-delta">{{with .Delta}}{{template "delta" .}}{{end}}{{if .Prev}}<span class="kpi-prev">{{.Prev}}</span>{{end}}</div>
-  {{- if .Spark}}<div class="kpi-spark">{{.Spark}}</div>{{end}}
+  <div class="kpi-vis">{{if .Spark}}<div class="kpi-spark">{{.Spark}}</div>{{else if .Mini}}{{.Mini}}{{end}}</div>
   {{- if .Explain}}<p class="kpi-explain">{{.Explain}}</p>{{end}}
 </div>
 {{end}}
@@ -78,6 +81,7 @@
 <div class="kpi-grid bal n-{{len .KPIs}}{{if eq .Tone "compact"}} compact{{end}}{{if eq .Tone "hero"}} big{{end}}" style="{{$g.Style}}">
   {{- range $i, $k := .KPIs}}{{template "kpi" (withStyle $k ($g.At $i))}}{{end}}
 </div>
+{{- with .Foot}}<p class="kpi-foot"><span class="sign" aria-hidden="true">●</span> {{.}}</p>{{end}}
 {{end}}
 
 {{define "cardhead"}}
@@ -156,7 +160,7 @@
 {{end}}
 
 {{define "mdcard"}}
-<div class="card md-card">
+<div class="card md-card{{if .Tone}} tone-{{.Tone}}{{end}}">
   {{template "cardhead" .}}
   <div class="md">{{.HTML}}</div>
 </div>
@@ -164,7 +168,9 @@
 
 {{define "list"}}
 <div class="card list-card tone-{{.Tone}}">
-  <div class="card-head"><h3>{{.Title}}</h3></div>
+  <div class="card-head"><h3>{{.Title}}</h3>{{if .Sub}}<p class="card-sub list-more">
+    {{- if and .Href .SubEss}}<a class="adv-only" href="{{.Href}}">{{.Sub}}</a><label class="ess-only link-switch" for="view-advanced" data-goto="{{slice .Href 1}}">{{.SubEss}}</label>
+    {{- else if .Href}}<a href="{{.Href}}">{{.Sub}}</a>{{else}}{{.Sub}}{{end}}</p>{{end}}</div>
   <ul class="checklist">
     {{- range .Items}}
     <li><span class="li-mark" aria-hidden="true"></span><span class="li-text">{{.HTML}}{{.Text}}</span></li>
@@ -220,7 +226,7 @@
 {{end}}
 
 {{define "glossary"}}
-<dl class="glossary">
+<dl class="glossary{{if .Tone}} glossary-{{.Tone}}{{end}}">
   {{- range .Glossary}}
   <div class="g-item"><dt>{{.Term}}</dt><dd>{{.Definition}}</dd></div>
   {{- end}}
@@ -241,5 +247,47 @@
     </li>
     {{- end}}
   </ul>
+</div>
+{{end}}
+
+
+{{define "legend"}}
+<div class="legend-bar" role="note">
+  <span class="legend-title">{{.Title}}</span>
+  {{- range .Legend}}<span class="lg lg-{{.Tone}}"><span class="sign" aria-hidden="true">{{.Sign}}</span>{{.Label}}</span>{{end}}
+</div>
+{{end}}
+
+{{define "scorecard"}}
+<div class="card score-card">
+  {{template "cardhead" .}}
+  <ul class="scorecard">
+    {{- range .Score}}
+    <li class="sc-row sc-{{.Tone}}">
+      <span class="sc-ico" aria-hidden="true">{{.Icon}}</span>
+      <span class="sc-name">{{.Name}}</span>
+      <span class="sc-fig"><strong>{{.Value}}</strong> <span class="sc-unit">{{.Unit}}</span></span>
+      <span class="sc-light"{{with .Title}} title="{{.}}"{{end}}><span class="sign" aria-hidden="true">{{.Sign}}</span>{{if .Change}}<span class="sc-change">{{.Change}}</span>{{end}}</span>
+      <span class="sc-status">{{.Status}}</span>
+    </li>
+    {{- end}}
+  </ul>
+</div>
+{{end}}
+
+{{define "tiles"}}
+<div class="tiles-block">
+{{- if .Title}}<h3 class="grp-title">{{.Title}}</h3>{{end}}
+{{- $g := bal (tilesPreset .Tone) (len .Tiles)}}
+<div class="tiles bal{{if eq .Tone "stack"}} stack{{end}}" style="{{$g.Style}}">
+  {{- range $i, $t := .Tiles}}
+  <div class="tile t-{{$t.Tone}}" style="{{$g.At $i}}"{{with $t.Title}} title="{{.}}"{{end}}>
+    {{- if $t.Kicker}}<p class="tile-kicker"><span class="sign" aria-hidden="true">{{$t.Sign}}</span>{{$t.Kicker}}</p>{{end}}
+    <div class="tile-main"><span class="tile-ico" aria-hidden="true">{{$t.Icon}}</span><span class="tile-big">{{$t.Big}}</span>{{if and $t.Sign (not $t.Kicker)}}<span class="tile-sign sign" aria-hidden="true">{{$t.Sign}}</span>{{end}}</div>
+    <p class="tile-label">{{$t.Label}}</p>
+    {{- if $t.Text}}<p class="tile-text">{{$t.Text}}</p>{{end}}
+  </div>
+  {{- end}}
+</div>
 </div>
 {{end}}

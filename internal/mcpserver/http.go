@@ -13,6 +13,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/flocom/SEO-GEO-Report/internal/model"
 	"github.com/flocom/SEO-GEO-Report/internal/oauth"
 	"github.com/flocom/SEO-GEO-Report/internal/pdf"
 	"github.com/flocom/SEO-GEO-Report/internal/store"
@@ -25,10 +26,12 @@ const MaxRequestBytes = 32 << 20
 //
 //	/mcp                     Streamable HTTP MCP endpoint (bearer auth)
 //	/.well-known/...         OAuth metadata, /register, /authorize, /token
-//	/r/<token>               hosted report (HTML, ?lang=fr|en)
-//	/r/<token>/download      standalone HTML file (attachment)
-//	/r/<token>.pdf           PDF (also /r/<token>/pdf), ?download=1 for attachment
+//	/r/<token>               hosted report (HTML, ?lang=fr|en, ?view=essential|advanced)
+//	/r/<token>/download      standalone HTML file (attachment, both versions)
+//	/r/<token>.pdf           PDF (also /r/<token>/pdf), ?download=1 for attachment,
+//	                         ?view=essential (short) or advanced (full report)
 //	/healthz                 health check
+//	/admin                   update page (when Config.Admin is set)
 //	/                        home page with connection instructions
 func NewHTTPHandler(svc *Service, auth *oauth.Server, logger *slog.Logger) http.Handler {
 	if logger == nil {
@@ -67,6 +70,10 @@ func NewHTTPHandler(svc *Service, auth *oauth.Server, logger *slog.Logger) http.
 	mux.HandleFunc("GET /r/{token}/download", h.download)
 	mux.HandleFunc("GET /r/{token}/pdf", h.pdf)
 	mux.HandleFunc("GET /{$}", h.home)
+	if svc.cfg.Admin != nil {
+		mux.Handle("/admin", svc.cfg.Admin)
+		mux.Handle("/admin/", svc.cfg.Admin)
+	}
 	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
@@ -118,15 +125,22 @@ func (h *httpApp) logRequests(next http.Handler) http.Handler {
 	})
 }
 
+// processStart identifies the running process in /healthz ("started"), so
+// that the /admin page can tell when the container has been restarted.
+var processStart = time.Now().UTC().Format(time.RFC3339)
+
 func (h *httpApp) health(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(map[string]any{"status": "ok", "version": h.svc.cfg.Version})
+	w.Header().Set("Cache-Control", "no-store")
+	_ = json.NewEncoder(w).Encode(map[string]any{"status": "ok", "version": h.svc.cfg.Version, "started": processStart})
 }
 
 // ---------------------------------------------------------------------------
 // Report hosting
 
-func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record, string, bool) {
+// record looks up the report of the request and its language and version
+// (?lang= and ?view=, the report's defaults otherwise).
+func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record, string, string, bool) {
 	tok := strings.TrimSuffix(r.PathValue("token"), ".html")
 	rec, err := h.svc.store.ByShareToken(tok)
 	if err != nil {
@@ -134,14 +148,15 @@ func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record,
 			h.log.Error("report lookup", "err", err)
 		}
 		http.Error(w, "Rapport introuvable / Report not found", http.StatusNotFound)
-		return nil, "", false
+		return nil, "", "", false
 	}
 	rec = h.svc.EnsureFavicon(r.Context(), rec)
 	lang := rec.Report.Lang()
 	if l := r.URL.Query().Get("lang"); l != "" {
 		lang = normLang(l)
 	}
-	return rec, lang, true
+	view := normView(r.URL.Query().Get("view"), defaultView(rec))
+	return rec, lang, view, true
 }
 
 func reportHeaders(w http.ResponseWriter) {
@@ -160,12 +175,12 @@ func (h *httpApp) report(w http.ResponseWriter, r *http.Request) {
 		h.pdf(w, r)
 		return
 	}
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
-	links := LinksFor(h.auth.BaseURL(r), rec, lang)
-	html, err := h.svc.RenderHTML(rec, lang, links)
+	links := LinksFor(h.auth.BaseURL(r), rec, lang, view)
+	html, err := h.svc.RenderHTML(rec, lang, view, links)
 	if err != nil {
 		h.log.Error("render", "id", rec.ID, "err", err)
 		http.Error(w, "Rendering failed: "+err.Error(), http.StatusInternalServerError)
@@ -177,33 +192,34 @@ func (h *httpApp) report(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *httpApp) download(w http.ResponseWriter, r *http.Request) {
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
-	// The downloaded file keeps absolute links to the PDF.
-	links := LinksFor(h.auth.BaseURL(r), rec, lang)
+	// The downloaded file holds both versions (opening on the requested one)
+	// and keeps absolute links to the PDFs.
+	links := LinksFor(h.auth.BaseURL(r), rec, lang, view)
 	links.HTMLDownload = ""
-	html, err := h.svc.RenderHTML(rec, lang, links)
+	html, err := h.svc.RenderHTML(rec, lang, view, links)
 	if err != nil {
 		http.Error(w, "Rendering failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	reportHeaders(w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, DownloadName(rec, lang, "html")))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, DownloadName(rec, lang, "", "html")))
 	_, _ = w.Write(html)
 }
 
 func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 	r.SetPathValue("token", strings.TrimSuffix(r.PathValue("token"), ".pdf"))
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), pdf.DefaultTimeout)
 	defer cancel()
-	b, _, err := h.svc.RenderPDF(ctx, rec, lang)
+	b, _, err := h.svc.RenderPDF(ctx, rec, lang, view)
 	if err != nil {
 		h.log.Error("pdf", "id", rec.ID, "err", err)
 		status := http.StatusInternalServerError
@@ -213,7 +229,7 @@ func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(status)
 		fmt.Fprintf(w, "Le PDF n'a pas pu être généré / The PDF could not be generated.\n\n%v\n\nL'export HTML reste disponible / The HTML export is still available: %s\n",
-			err, LinksFor(h.auth.BaseURL(r), rec, lang).HTMLDownload)
+			err, LinksFor(h.auth.BaseURL(r), rec, lang, view).HTMLDownload)
 		return
 	}
 	disp := "inline"
@@ -223,13 +239,14 @@ func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Robots-Tag", "noindex, nofollow")
 	w.Header().Set("Cache-Control", "private, no-cache")
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`%s; filename="%s"`, disp, DownloadName(rec, lang, "pdf")))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`%s; filename="%s"`, disp, DownloadName(rec, lang, view, "pdf")))
 	_, _ = w.Write(b)
 }
 
 // DownloadName returns a friendly file name, e.g.
-// rapport-seo-geo-acme-2026-01-01_2026-03-31.html.
-func DownloadName(rec *store.Record, lang, ext string) string {
+// rapport-seo-geo-acme-2026-01-01_2026-03-31.html; a PDF of the essential
+// version ends with -essentiel / -essential (view "" = no suffix).
+func DownloadName(rec *store.Record, lang, view, ext string) string {
 	prefix := "rapport-seo-geo"
 	if lang == "en" {
 		prefix = "seo-geo-report"
@@ -241,6 +258,13 @@ func DownloadName(rec *store.Record, lang, ext string) string {
 	p := rec.Report.Meta.Period
 	if safeDate(p.Start) && safeDate(p.End) {
 		name += "-" + p.Start + "_" + p.End
+	}
+	if model.NormView(view) == model.ViewEssential {
+		if lang == "en" {
+			name += "-essential"
+		} else {
+			name += "-essentiel"
+		}
 	}
 	return name + "." + ext
 }
@@ -287,8 +311,8 @@ ol{padding-left:20px;margin:8px 0}li{margin:4px 0}
 <p class="lead">Serveur MCP qui transforme vos exports Google Search Console, GA4 et vos relevés de visibilité dans les IA en un rapport visuel (HTML + PDF), avec Claude.<br>
 <span class="muted">MCP server turning your Search Console, GA4 and AI-visibility data into a visual report (HTML + PDF), with Claude. The tool never connects to Google.</span></p>
 {{with .Update}}<div class="card" style="border-color:var(--accent)"><b>Nouvelle version {{.Tag}} disponible / New version {{.Tag}} available</b> — <a href="{{.URL}}">notes</a><br>
-<span class="muted">Avec le docker-compose.yml fourni, Watchtower l'installe automatiquement dans l'heure. Sinon / Otherwise: <code>docker compose pull &amp;&amp; docker compose up -d</code></span></div>{{end}}
-<p><span class="pill">v{{.Version}}</span><span class="pill">{{if .AuthDisabled}}auth: off{{else}}auth: OAuth + password{{end}}</span><span class="pill">PDF: {{if .PDF}}ready{{else}}unavailable (no Chromium){{end}}</span></p>
+<span class="muted">Avec le docker-compose.yml fourni, Watchtower l'installe automatiquement dans l'heure. Sinon / Otherwise: <code>docker compose pull &amp;&amp; docker compose up -d</code></span>{{if $.Admin}}<br><a href="/admin">Mettre à jour maintenant / Update now →</a>{{end}}</div>{{end}}
+<p><span class="pill">v{{.Version}}</span><span class="pill">{{if .AuthDisabled}}auth: off{{else}}auth: OAuth + password{{end}}</span><span class="pill">PDF: {{if .PDF}}ready{{else}}unavailable (no Chromium){{end}}</span>{{if .Admin}}<a class="pill" href="/admin">Mises à jour / Updates</a>{{end}}</p>
 
 <div class="card"><h2>URL du serveur MCP / MCP server URL</h2>
 <div class="url"><code class="big" id="u">{{.MCPURL}}</code><button onclick="navigator.clipboard.writeText(document.getElementById('u').textContent)">Copier / Copy</button></div>
@@ -344,5 +368,6 @@ func (h *httpApp) home(w http.ResponseWriter, r *http.Request) {
 		"PDF":          pdf.Available(),
 		"Local":        local,
 		"Update":       h.svc.cfg.Updates.Available(),
+		"Admin":        h.svc.cfg.Admin != nil,
 	})
 }

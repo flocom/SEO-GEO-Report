@@ -20,6 +20,19 @@ type page struct {
 	Sections    []*section
 	Generated   string
 	PrintHeader string
+
+	// View is the version selected when the page opens: "essential" or
+	// "advanced" (both are in the page, see views.css).
+	View string
+	// Next closes the essential version (pointer to the advanced one).
+	Next *nextStep
+}
+
+// nextStep is the "go further" note at the end of the essential version.
+type nextStep struct {
+	Count string   // "12 more detailed sections:"
+	Items []string // titles of the advanced-only sections
+	PDF   template.URL
 }
 
 type cover struct {
@@ -36,6 +49,8 @@ type cover struct {
 	PreparedFor string
 	Sources     []string
 	PDF         template.URL
+	PDFEss      template.URL // essential version PDF
+	PDFAdv      template.URL // full report PDF
 	HTMLDL      template.URL
 	Favicon     template.URL
 }
@@ -44,12 +59,14 @@ type tocPart struct {
 	Num   string
 	Title string
 	Items []tocItem
+	Only  string // "", "essential" or "advanced": version showing it
 }
 
 type tocItem struct {
 	Anchor string
 	Num    string
 	Title  string
+	Only   string
 }
 
 type section struct {
@@ -58,10 +75,16 @@ type section struct {
 	Num    string
 	Title  string
 	Intro  string
-	Icon   template.HTML
-	Note   template.HTML
-	Blocks []block
-	Major  bool // starts a new printed page
+	// IntroEss replaces Intro in the essential version (e.g. when Intro
+	// refers to part 2).
+	IntroEss string
+	Icon     template.HTML
+	Note     template.HTML
+	Blocks   []block
+	Major    bool // starts a new printed page
+	// Only restricts the section to one version: "essential", "advanced"
+	// or "" (both).
+	Only string
 
 	// Part banners ("At a glance" / "Detailed analysis").
 	IsPart  bool
@@ -84,7 +107,7 @@ func (s *section) RestBlocks() []block { return s.Blocks[s.leadLen():] }
 
 func (s *section) leadLen() int {
 	i := 0
-	for i < len(s.Blocks) && s.Blocks[i].Kind == "callouts" {
+	for i < len(s.Blocks) && (s.Blocks[i].Kind == "callouts" || s.Blocks[i].Kind == "legend") {
 		i++
 	}
 	span := 0
@@ -137,6 +160,11 @@ type block struct {
 	Glossary []i18n.GlossaryEntry
 	Legend   []legendItem
 	Plan     []planItem
+	Score    []scoreRow // part 1 scorecard
+	Tiles    []tile     // part 1 big-number tiles
+	Href     string     // link of the "more in part 2" note (Sub)
+	SubEss   string     // Sub in the essential version (Href is then a switch to the advanced one)
+	Foot     string     // one line under a KPI grid (expected changes explained)
 }
 
 // planItem is one line of the "what we did / what's next" summary.
@@ -151,6 +179,8 @@ type planItem struct {
 type legendItem struct {
 	Label string
 	Color template.CSS
+	Tone  string // color-code legend: pos, neg, exp, neu
+	Sign  string
 }
 
 type hero struct {
@@ -168,19 +198,23 @@ type hero struct {
 type deltaView struct {
 	Text  string // main text, e.g. "+12,3 %"
 	Sub   string // secondary text, e.g. "+134"
-	Tone  string // pos, neg, neu
+	Tone  string // pos, neg, neu, exp (expected change, see insights.KPIStatus)
 	Dir   string // up, down, flat
 	Arrow template.HTML
+	Title string // hover detail, e.g. "+500 % · 1 → 6"
 }
 
 type kpiCard struct {
 	Key     string
-	Label   string
+	Label   string // plain-language label ("Visites depuis Google")
+	Term    string // technical term, secondary ("Clics (Search Console)")
 	Value   string
 	Prev    string
 	Explain string
 	Delta   *deltaView
 	Spark   template.HTML
+	Mini    template.HTML // before / after bars when there is no sparkline
+	Note    string        // why a change is expected (amber tone)
 	Tone    string
 	Icon    template.HTML
 	Style   template.CSS // grid placement, set by the template

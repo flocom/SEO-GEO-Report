@@ -671,3 +671,18 @@ func TestTooltipInsideViewBox(t *testing.T) {
 		t.Fatalf("tooltip not flipped/clamped: %v,%v", x, y)
 	}
 }
+
+func TestBarsChangeFormat(t *testing.T) {
+	prev := 1.0
+	svg := string(Bars(BarsOpts{Items: []BarItem{{Label: "ChatGPT", Value: 6, Previous: &prev}}, ShowDelta: true,
+		ChangeFormat: func(cur, prev float64) string { return "+5" }}))
+	if !strings.Contains(svg, "+5<") || strings.Count(svg, "+500%") != 1 {
+		t.Errorf("ChangeFormat should replace the percentage badge")
+	}
+	if !strings.Contains(svg, "+5 (+500%)") {
+		t.Errorf("the tooltip keeps the percentage next to the change")
+	}
+	if a := string(DeltaArrow("down", "warning")); !strings.Contains(a, ColorWarning) {
+		t.Errorf("warning arrow: %s", a)
+	}
+}

@@ -42,6 +42,7 @@ func demo(lang string) *model.Report {
 		MerchantCenter: merchantCenter(lang),
 		GEO:            geo(lang, ga),
 	}
+	r.BusinessProfile = businessProfile(lang)
 	r.Narrative = narrative(lang, r)
 	r.Sections = sections(lang)
 	return r

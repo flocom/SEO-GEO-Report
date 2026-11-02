@@ -2,7 +2,9 @@
 #
 #   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 #
-# The locally built container is excluded from Watchtower updates.
+# The locally built container is excluded from Watchtower updates: its /admin
+# page still checks GitHub for new releases, but instead of the "Update now"
+# button it explains how to rebuild (git pull, then the command above).
 services:
   seogeo:
     build:

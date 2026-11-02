@@ -138,6 +138,8 @@ func deltaArrow(direction, tone string) template.HTML {
 		col = ColorPositive
 	case "negative", "bad", "down":
 		col = ColorNegative
+	case "warning", "expected":
+		col = ColorWarning
 	}
 	var shape, label string
 	switch strings.ToLower(strings.TrimSpace(direction)) {

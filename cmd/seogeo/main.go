@@ -1,5 +1,6 @@
-// Command seogeo turns Google Search Console, Bing, GA4, Merchant Center and
-// GEO data supplied by the user into a bilingual, very visual HTML / PDF report. It is also an MCP
+// Command seogeo turns Google Search Console, Bing, GA4, Merchant Center,
+// Google Business Profile and GEO data supplied by the user into a bilingual,
+// very visual HTML / PDF report. It is also an MCP
 // server (stdio and Streamable HTTP with OAuth) usable from claude.ai,
 // Claude Desktop and Claude Code.
 package main
@@ -12,7 +13,7 @@ import (
 // version is set at build time with -ldflags "-X main.version=...".
 var version = "dev"
 
-const usage = `seogeo — SEO & GEO visibility reports (Search Console + Bing + GA4 + Merchant Center + AI assistants)
+const usage = `seogeo — SEO & GEO visibility reports (Search Console + Bing + GA4 + Merchant Center + Business Profile + AI assistants)
 
 The tool never connects to Google or Bing: you (or Claude) supply the data, it formats it.
 
@@ -20,7 +21,7 @@ Usage:
   seogeo <command> [options]
 
 Report commands:
-  render     -i data.json -o report.html|report.pdf [--lang en] [--pdf] [--no-favicon]
+  render     -i data.json -o report.html|report.pdf [--lang en] [--view essential|advanced] [--pdf] [--no-favicon]
              Render a report. Input "-" = stdin. The format follows the output
              extension (.pdf needs Chromium / Google Chrome); default output: stdout (HTML).
   validate   -i data.json          Check a report file (errors, warnings, completeness).
@@ -34,6 +35,8 @@ Report commands:
              Convert GA4 "Download file > CSV" exports.
   import-gmc <file.csv>... [-o gmc.json] [--into data.json] [--kind products|dates|programs|status|issues|prices...]
              Convert Google Merchant Center CSV exports (performance, product statuses, issues, prices).
+  import-gbp <file.csv>... [-o gbp.json] [--into data.json] [--kind performance|daily|keywords|reviews]
+             Convert Google Business Profile CSV exports (performance per location, daily, search keywords, reviews).
 
 Server commands:
   serve      [--port 8080] [--data ./data]   HTTP server: MCP endpoint /mcp (OAuth),
@@ -51,6 +54,8 @@ Environment (all optional):
   MCP_APPS          false = disable the inline report viewer for MCP Apps hosts
   CHROME_PATH       Chromium / Chrome executable for PDF export (auto-detected)
   UPDATE_CHECK      false = do not check GitHub for new releases (every 6 h)
+  WATCHTOWER_URL    Watchtower HTTP API used by /admin "Update now" (default http://watchtower:8080)
+  WATCHTOWER_HTTP_API_TOKEN  its token, or the path of a file containing it
   FAVICON_ALLOW_PRIVATE  true = allow fetching favicons from private / local addresses
   OAUTH_REDIRECT_ALLOWLIST  extra allowed OAuth redirect URI prefixes (comma separated)
 
@@ -81,6 +86,8 @@ func main() {
 		err = cmdImportGA4(args)
 	case "import-gmc":
 		err = cmdImportGMC(args)
+	case "import-gbp":
+		err = cmdImportGBP(args)
 	case "serve":
 		err = cmdServe(args)
 	case "mcp":

@@ -224,7 +224,7 @@ func (s *Store) Delete(id string) error {
 
 // DuplicateOptions configure Duplicate.
 type DuplicateOptions struct {
-	// KeepData keeps search_console, bing, analytics, merchant_center and geo data. When false (the
+	// KeepData keeps search_console, bing, analytics, merchant_center, business_profile and geo data. When false (the
 	// default) data is cleared so the copy can be filled for the next period.
 	KeepData bool
 	// KeepNarrative keeps the narrative texts as they are. When false, the
@@ -255,7 +255,7 @@ func (s *Store) Duplicate(id string, opts DuplicateOptions) (*Record, error) {
 		return nil, err
 	}
 	if !opts.KeepData {
-		r.SearchConsole, r.Bing, r.Analytics, r.MerchantCenter, r.GEO = nil, nil, nil, nil, nil
+		r.SearchConsole, r.Bing, r.Analytics, r.MerchantCenter, r.BusinessProfile, r.GEO = nil, nil, nil, nil, nil, nil
 	}
 	if !opts.KeepNarrative && r.Narrative != nil {
 		n := r.Narrative
@@ -352,26 +352,28 @@ func (s *Store) CachedHTML(rec *Record, lang string) ([]byte, bool) {
 	return b, true
 }
 
-// PDFPath returns the path of the generated PDF for a language.
-func (s *Store) PDFPath(id, lang string) string {
-	return filepath.Join(s.dir, id+"."+cleanLang(lang)+".pdf")
+// PDFPath returns the path of the generated PDF for a language and a report
+// version ("essential" or "advanced"): each pair is cached separately.
+func (s *Store) PDFPath(id, lang, view string) string {
+	return filepath.Join(s.dir, id+"."+cleanLang(lang)+"."+cleanView(view)+".pdf")
 }
 
 // SavePDF writes the generated PDF atomically and returns its path.
-func (s *Store) SavePDF(id, lang string, pdf []byte) (string, error) {
+func (s *Store) SavePDF(id, lang, view string, pdf []byte) (string, error) {
 	if !validID(id) {
 		return "", ErrNotFound
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	p := s.PDFPath(id, lang)
+	p := s.PDFPath(id, lang, view)
 	return p, writeFileAtomic(p, pdf, 0o644)
 }
 
-// CachedPDF returns the generated PDF if it is at least as recent as the
-// report itself (saving the report invalidates it).
-func (s *Store) CachedPDF(rec *Record, lang string) ([]byte, bool) {
-	p := s.PDFPath(rec.ID, lang)
+// CachedPDF returns the generated PDF of a language and version if it is at
+// least as recent as the report itself (saving the report invalidates every
+// cached PDF of the report, whatever the version).
+func (s *Store) CachedPDF(rec *Record, lang, view string) ([]byte, bool) {
+	p := s.PDFPath(rec.ID, lang, view)
 	fi, err := os.Stat(p)
 	if err != nil || stale(fi.ModTime(), rec) {
 		return nil, false
@@ -543,6 +545,15 @@ func validID(id string) bool {
 		}
 	}
 	return true
+}
+
+// cleanView maps a report version to a file name part: "essential" or
+// "advanced" (anything else).
+func cleanView(v string) string {
+	if strings.EqualFold(strings.TrimSpace(v), "essential") {
+		return "essential"
+	}
+	return "advanced"
 }
 
 func cleanLang(l string) string {

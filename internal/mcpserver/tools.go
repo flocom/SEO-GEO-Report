@@ -141,6 +141,7 @@ type renderInput struct {
 	ReportID    string `json:"report_id" jsonschema:"Report id"`
 	Language    string `json:"language,omitempty" jsonschema:"Override the report language: fr or en"`
 	Format      string `json:"format,omitempty" jsonschema:"html (default), pdf, or both. HTML is always saved; pdf/both also generate the PDF now (needs Chromium, available in the Docker image)"`
+	View        string `json:"view,omitempty" jsonschema:"Report version that html_url, pdf_url and the generated PDF open on: essential (cover and key results in plain words, a few PDF pages) or advanced (the full report). Default: options.default_view (essential unless changed). Both versions are always in the same page and the links of both are returned"`
 	IncludeHTML bool   `json:"include_html,omitempty" jsonschema:"Also return the full HTML document as an embedded text/html resource (to display it as an artifact). Large: only when the user asks"`
 	IncludePDF  bool   `json:"include_pdf,omitempty" jsonschema:"Also return the PDF as an embedded application/pdf resource (when smaller than 5 MB)"`
 }
@@ -150,13 +151,14 @@ type generateInput struct {
 	ReportID    string       `json:"report_id,omitempty" jsonschema:"Optional: overwrite this existing report instead of creating a new one"`
 	Language    string       `json:"language,omitempty" jsonschema:"Override the report language: fr or en"`
 	Format      string       `json:"format,omitempty" jsonschema:"html (default), pdf or both"`
+	View        string       `json:"view,omitempty" jsonschema:"Report version that html_url, pdf_url and the generated PDF open on: essential (cover and key results in plain words, a few PDF pages) or advanced (the full report). Default: options.default_view (essential unless changed). Both versions are always in the same page and the links of both are returned"`
 	IncludeHTML bool         `json:"include_html,omitempty" jsonschema:"Also return the full HTML as an embedded text/html resource"`
 	IncludePDF  bool         `json:"include_pdf,omitempty" jsonschema:"Also return the PDF as an embedded resource (when smaller than 5 MB)"`
 }
 
 type duplicateInput struct {
 	ReportID         string        `json:"report_id" jsonschema:"Report to copy"`
-	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics, merchant_center and geo data (default false: cleared for the next period)"`
+	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics, merchant_center, business_profile and geo data (default false: cleared for the next period)"`
 	KeepNarrative    bool          `json:"keep_narrative,omitempty" jsonschema:"Keep all narrative texts (default false: only pending actions and recommendations are kept)"`
 	Period           *model.Period `json:"period,omitempty" jsonschema:"New analysed period"`
 	ComparisonPeriod *model.Period `json:"comparison_period,omitempty" jsonschema:"New comparison period"`
@@ -207,14 +209,14 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "get_report_guide",
 		Title:       "Read the report guide",
-		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console, GA4, Bing and Merchant Center exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
+		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console, GA4, Bing, Merchant Center and Google Business Profile exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
 		Annotations: readOnly,
 	}, s.toolGuide)
 
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_report",
 		Title:       "Create a report draft",
-		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_merchant_center / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
+		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_merchant_center / set_business_profile / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
 		Annotations: additive,
 	}, s.toolCreate)
 
@@ -264,6 +266,8 @@ func (s *Service) registerTools(srv *mcp.Server) {
 		Annotations: idempotent,
 	}, s.toolSetGMC)
 
+	s.registerGBPTools(srv)
+
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:  "set_geo",
 		Title: "Set GEO (AI visibility) data",
@@ -285,7 +289,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "add_text_section",
 		Title:       "Add a free text section",
-		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations), start or end. Returns the section id.",
+		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, business_profile, geo, technical, actions, recommendations), start or end. Returns the section id. Never use it for data that has a native section: Google Business Profile, Bing Webmaster Tools and Merchant Center figures go to set_business_profile, set_bing and set_merchant_center.",
 		Annotations: additive,
 	}, s.toolAddSection)
 
@@ -306,7 +310,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "set_options",
 		Title:       "Set display options",
-		Description: "Display options (merged with existing ones): hide_sections (built-in section ids), max_table_rows (default 15), show_glossary, beginner_hints ('how to read this' explanations for non-experts), auto_insights (automatic observations computed from the numbers).",
+		Description: "Display options (merged with existing ones): hide_sections (built-in section ids), max_table_rows (default 15), show_glossary, beginner_hints ('how to read this' explanations for non-experts), auto_insights (automatic observations computed from the numbers), default_view (essential (default) or advanced: the version of the report shown first; both versions are always in the page).",
 		Annotations: idempotent,
 	}, s.toolSetOptions)
 
@@ -351,8 +355,8 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:  "render_report",
 		Title: "Render the report",
-		Description: "Render the report and return its links: the online HTML view URL, the standalone HTML download URL and the PDF URL (hosted by this server, shareable, unguessable), or the local file paths when running locally without a public URL. Also returns key KPIs and automatic insights so you can comment on the results for the user. " +
-			"format: html (default), pdf or both (pdf generates the PDF immediately; otherwise it is generated on first download). include_html / include_pdf embed the document in the response. Rendering again after changes updates the same links.",
+		Description: "Render the report and return its links (hosted by this server, shareable, unguessable), or the local file paths when running locally without a public URL. The report has two versions on the same page, switched with a selector at the top: Essential (cover and key results in plain words, a short PDF) and Advanced (the full detailed analysis). Links returned: view_essential_url, view_advanced_url, pdf_essential_url, pdf_advanced_url, html_download_url (one interactive file with both versions), plus html_url / pdf_url opening on the chosen version (view parameter, default options.default_view). Give the user both versions. Also returns key KPIs and automatic insights so you can comment on the results for the user. " +
+			"format: html (default), pdf or both (pdf generates the PDF of the chosen version immediately; otherwise PDFs are generated on first download). include_html / include_pdf embed the document in the response. Rendering again after changes updates the same links.",
 		Annotations: idempotent,
 		Meta:        viewerMeta,
 	}, s.toolRender)
@@ -360,7 +364,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "generate_report",
 		Title:       "Generate a report in one call",
-		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, merchant_center, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
+		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, merchant_center, business_profile, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the links of both report versions (Essential and Advanced, online and PDF), the HTML download and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
 		Annotations: additive,
 		Meta:        viewerMeta,
 	}, s.toolGenerate)
@@ -533,12 +537,13 @@ func (s *Service) toolCreate(_ context.Context, req *mcp.CallToolRequest, in cre
 		return nil, nil, err
 	}
 	errs, warns := rec.Report.Validate()
-	links := LinksFor(s.baseURL(req), rec, "")
+	links := LinksFor(s.baseURL(req), rec, "", "")
 	next := []string{
 		"set_search_console (or import_search_console_csv) with the user's Google Search Console numbers",
 		"set_bing (or import_bing_csv) with Bing Webmaster Tools numbers, if the user has them",
 		"set_analytics (or import_analytics_csv) with GA4 numbers",
 		"set_merchant_center (or import_merchant_center_csv) with Google Merchant Center numbers, if the site sells products in Google Shopping",
+		"set_business_profile (or import_business_profile_csv) with Google Business Profile numbers (views, calls, directions, reviews), if the business has a local Google profile",
 		"set_geo with AI visibility data (citation checks, AI referrals, share of voice)",
 		"set_narrative with the executive summary, highlights, actions and recommendations",
 		"validate_report then render_report",
@@ -1024,6 +1029,7 @@ func (s *Service) toolValidate(_ context.Context, _ *mcp.CallToolRequest, in rep
 type RenderResult struct {
 	ReportID string   `json:"report_id"`
 	Language string   `json:"language"`
+	View     string   `json:"view"` // version html_url / pdf_url open on
 	SiteName string   `json:"site_name"`
 	Period   string   `json:"period"`
 	Links    Links    `json:"links"`
@@ -1039,7 +1045,7 @@ func (s *Service) toolRender(ctx context.Context, req *mcp.CallToolRequest, in r
 	if err != nil {
 		return nil, nil, err
 	}
-	return s.renderRecord(ctx, req, rec, in.Language, in.Format, in.IncludeHTML, in.IncludePDF)
+	return s.renderRecord(ctx, req, rec, in.Language, in.View, in.Format, in.IncludeHTML, in.IncludePDF)
 }
 
 func (s *Service) toolGenerate(ctx context.Context, req *mcp.CallToolRequest, in generateInput) (*mcp.CallToolResult, any, error) {
@@ -1056,10 +1062,10 @@ func (s *Service) toolGenerate(ctx context.Context, req *mcp.CallToolRequest, in
 	if err != nil {
 		return nil, nil, err
 	}
-	return s.renderRecord(ctx, req, rec, in.Language, in.Format, in.IncludeHTML, in.IncludePDF)
+	return s.renderRecord(ctx, req, rec, in.Language, in.View, in.Format, in.IncludeHTML, in.IncludePDF)
 }
 
-func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, rec *store.Record, lang, format string, includeHTML, includePDF bool) (*mcp.CallToolResult, any, error) {
+func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, rec *store.Record, lang, view, format string, includeHTML, includePDF bool) (*mcp.CallToolResult, any, error) {
 	format, err := checkMode(format, "html", "pdf", "both")
 	if err != nil {
 		return nil, nil, fmt.Errorf("format: %w", err)
@@ -1073,10 +1079,14 @@ func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, re
 		lang = rec.Report.Lang()
 	}
 	lang = normLang(lang)
+	if v := strings.TrimSpace(view); v != "" && model.NormView(v) == "" {
+		return nil, nil, fmt.Errorf("view: %q is not supported, use essential or advanced", view)
+	}
+	view = normView(view, defaultView(rec))
 	base := s.baseURL(req)
-	links := LinksFor(base, rec, lang)
+	links := LinksFor(base, rec, lang, view)
 
-	html, err := s.RenderHTML(rec, lang, links)
+	html, err := s.RenderHTML(rec, lang, view, links)
 	if err != nil {
 		return nil, nil, fmt.Errorf("rendering failed: %w", err)
 	}
@@ -1089,6 +1099,7 @@ func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, re
 	out := RenderResult{
 		ReportID: rec.ID,
 		Language: lang,
+		View:     view,
 		SiteName: rec.Report.Meta.SiteName,
 		Period:   rec.Report.Meta.Period.Start + " → " + rec.Report.Meta.Period.End,
 		Links:    links,
@@ -1100,7 +1111,7 @@ func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, re
 	}
 	var pdfBytes []byte
 	if format != "html" || includePDF {
-		b, p, err := s.RenderPDF(ctx, rec, lang)
+		b, p, err := s.RenderPDF(ctx, rec, lang, view)
 		if err != nil {
 			out.PDFError = err.Error()
 		} else {
@@ -1114,8 +1125,11 @@ func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, re
 	var t strings.Builder
 	fmt.Fprintf(&t, "Report rendered: %s (%s, %s).\n", out.SiteName, out.Period, lang)
 	if links.HTML != "" {
-		fmt.Fprintf(&t, "View online: %s\nDownload HTML: %s\nDownload PDF: %s\n", links.HTML, links.HTMLDownload, links.PDF)
-		t.WriteString("These links are public but unguessable: share them with the user.\n")
+		fmt.Fprintf(&t, "The report has two versions on the same page, with a selector at the top: Essential (key results in plain words, for business owners) and Advanced (the full detailed analysis). It opens on the %s version.\n", view)
+		fmt.Fprintf(&t, "View online, essential version: %s\nView online, advanced version: %s\n", links.HTMLEssential, links.HTMLAdvanced)
+		fmt.Fprintf(&t, "PDF, essential version (short): %s\nPDF, full report: %s\n", links.PDFEssential, links.PDFAdvanced)
+		fmt.Fprintf(&t, "Download HTML (one interactive file with both versions): %s\n", links.HTMLDownload)
+		t.WriteString("These links are public but unguessable: share them with the user, giving both versions (essential for the business owner, advanced for the team or agency).\n")
 	} else {
 		fmt.Fprintf(&t, "HTML file: %s\n", htmlPath)
 		if out.PDFFile != "" {
@@ -1123,7 +1137,11 @@ func (s *Service) renderRecord(ctx context.Context, req *mcp.CallToolRequest, re
 		} else if format == "html" {
 			t.WriteString("PDF: call render_report with format=pdf to generate it (needs Chromium / Google Chrome).\n")
 		}
-		t.WriteString("(No public URL is known in local mode: set PUBLIC_URL or use the HTTP server for shareable links.)\n")
+		fmt.Fprintf(&t, "The HTML file holds both versions (Essential and Advanced, selector at the top); it opens on the %s version.", view)
+		if out.PDFFile != "" {
+			fmt.Fprintf(&t, " The PDF is the %s version (render again with view=%s for the other one).", view, otherView(view))
+		}
+		t.WriteString("\n(No public URL is known in local mode: set PUBLIC_URL or use the HTTP server for shareable links.)\n")
 	}
 	if out.PDFError != "" {
 		fmt.Fprintf(&t, "PDF could not be generated (the HTML export works): %s\n", out.PDFError)
@@ -1176,7 +1194,7 @@ func (s *Service) toolGet(_ context.Context, req *mcp.CallToolRequest, in report
 		"created_at":  rec.CreatedAt,
 		"updated_at":  rec.UpdatedAt,
 		"rendered_at": rec.RenderedAt,
-		"links":       LinksFor(s.baseURL(req), rec, ""),
+		"links":       LinksFor(s.baseURL(req), rec, "", ""),
 		"report":      rec.Report,
 	}
 	b, _ := json.MarshalIndent(out, "", "  ")
@@ -1216,7 +1234,7 @@ func (s *Service) toolDuplicate(_ context.Context, req *mcp.CallToolRequest, in 
 	if !in.KeepData {
 		text += " Data was cleared: fill it with set_search_console / set_analytics / set_geo."
 	}
-	return textResult(text, map[string]any{"report_id": rec.ID, "links": LinksFor(s.baseURL(req), rec, "")}), nil, nil
+	return textResult(text, map[string]any{"report_id": rec.ID, "links": LinksFor(s.baseURL(req), rec, "", "")}), nil, nil
 }
 
 func (s *Service) toolDelete(_ context.Context, _ *mcp.CallToolRequest, in deleteInput) (*mcp.CallToolResult, any, error) {
@@ -1230,4 +1248,12 @@ func (s *Service) toolDelete(_ context.Context, _ *mcp.CallToolRequest, in delet
 		return nil, nil, err
 	}
 	return textResult("Report "+in.ReportID+" deleted.", map[string]any{"report_id": in.ReportID, "deleted": true}), nil, nil
+}
+
+// otherView returns the version that is not v.
+func otherView(v string) string {
+	if v == model.ViewAdvanced {
+		return model.ViewEssential
+	}
+	return model.ViewAdvanced
 }

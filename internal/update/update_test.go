@@ -2,6 +2,7 @@ package update
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -46,5 +47,36 @@ func TestCheck(t *testing.T) {
 	var nilChecker *Checker
 	if nilChecker.Latest() != nil {
 		t.Error("nil checker")
+	}
+}
+
+func TestForceCheck(t *testing.T) {
+	hits := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		_, _ = w.Write([]byte(`{"tag_name":"v9.9.9","html_url":"https://github.com/x","body":"notes","published_at":"2026-11-02T08:00:00Z"}`))
+	}))
+	defer ts.Close()
+	c := &Checker{Current: "0.1.0", APIURL: ts.URL}
+	if _, err := c.ForceCheck(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if r := c.Latest(); r == nil || r.Body != "notes" || r.PublishedAt.IsZero() {
+		t.Fatalf("Latest = %+v", r)
+	}
+	if last, err := c.LastCheck(); last.IsZero() || err != nil {
+		t.Fatalf("LastCheck = %v, %v", last, err)
+	}
+	wait, err := c.ForceCheck(context.Background())
+	if !errors.Is(err, ErrTooSoon) || wait <= 0 || hits != 1 {
+		t.Fatalf("second ForceCheck: %v %v hits=%d", wait, err, hits)
+	}
+	// Errors are recorded.
+	bad := &Checker{Current: "0.1.0", APIURL: "http://127.0.0.1:1/nope"}
+	if _, err := bad.ForceCheck(context.Background()); err == nil {
+		t.Fatal("expected an error")
+	}
+	if _, err := bad.LastCheck(); err == nil {
+		t.Error("LastCheck lost the error")
 	}
 }

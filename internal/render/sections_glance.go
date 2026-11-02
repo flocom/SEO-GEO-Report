@@ -3,8 +3,10 @@ package render
 import (
 	"html/template"
 	"sort"
+	"strings"
 
 	"github.com/flocom/SEO-GEO-Report/internal/charts"
+	"github.com/flocom/SEO-GEO-Report/internal/insights"
 	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
 
@@ -22,7 +24,17 @@ func (b *builder) aiGlance() *section {
 		return nil
 	}
 	s := &section{ID: idAIGlance}
-	if refs := b.aiReferrals(); len(refs) > 0 {
+	refs := b.aiReferrals()
+	gauge := b.citationRate() != nil && b.r.GEO != nil
+	// One or two assistants: a lonely full-width bar looks empty, big numbers
+	// tell more.
+	if tl := b.aiTiles(refs, gauge); len(refs) <= 2 && tl.Kind != "" {
+		span := 12
+		if gauge {
+			span, tl.Tone = 6, "stack"
+		}
+		s.Blocks = add(s.Blocks, tl, span, "")
+	} else if len(refs) > 0 {
 		var items []charts.BarItem
 		for i, r := range topN(refs, 6) {
 			items = append(items, charts.BarItem{Label: r.Platform, Value: r.Sessions, Previous: r.PrevSessions, Color: b.seriesColor(i)})
@@ -41,7 +53,7 @@ func (b *builder) aiGlance() *section {
 		}
 		s.Blocks = add(s.Blocks, block{Kind: "chart", Title: b.t("chart.ai_platforms_delta"), Sub: sub, mk: mk}, 6, b.hint("ai_platforms_glance"))
 	}
-	if cr := b.citationRate(); cr != nil && b.r.GEO != nil {
+	if cr := b.citationRate(); gauge {
 		v := cr.Current
 		mk := func(w, h float64) template.HTML {
 			return b.gauge(charts.GaugeOpts{Value: v, Min: 0, Max: 100, Display: b.pct0(v), Label: b.t("kpi.citation_rate.label"),
@@ -147,4 +159,71 @@ func (b *builder) planGlance() *section {
 		return nil
 	}
 	return s
+}
+
+// aiTiles are the big-number tiles of the AI section when one or two
+// assistants send visits: visits (with their change), share of the traffic
+// and, without citation gauge, the citations found in AI answers.
+func (b *builder) aiTiles(refs []model.AIReferralRow, gauge bool) block {
+	var out []tile
+	if ai := b.aiSessions(); ai != nil && (ai.Current > 0 || ai.Previous != nil) {
+		t := tile{Icon: icoAI, Big: b.num(ai.Current), Label: b.t("kpi.ai_sessions.label"), Tone: "neu"}
+		if ai.Previous != nil {
+			t.Tone = b.kpiTone(insights.KeyGEOAISessions, ai, false)
+			t.Sign = toneSign[t.Tone]
+			t.Text = b.tf("tiles.vs_before", b.num(*ai.Previous))
+			if c, ok := b.humanChange(ai.Current, *ai.Previous, b.num); ok {
+				t.Text = c.Main + " · " + t.Text
+				t.Title = b.changeTitle(c, *ai, b.num)
+			}
+		}
+		var names []string
+		for _, r := range topN(refs, 2) {
+			if r.Sessions > 0 {
+				names = append(names, r.Platform)
+			}
+		}
+		if len(names) > 0 {
+			via := b.tf("tiles.via", strings.Join(names, ", "))
+			if t.Text != "" {
+				t.Text += " · " + via
+			} else {
+				t.Text = via
+			}
+		}
+		out = append(out, t)
+	}
+	if share := b.aiShare(); share != nil && len(out) > 0 {
+		out = append(out, tile{Icon: icoUsers, Big: i18nPct2(b, *share), Label: b.t("tiles.ai_share"), Text: b.t("tiles.ai_share.sub"), Tone: "neu"})
+	}
+	if !gauge {
+		if g := b.r.GEO; g != nil && len(g.Citations) > 0 {
+			cited := 0
+			for _, c := range g.Citations {
+				if c.Cited {
+					cited++
+				}
+			}
+			out = append(out, tile{Icon: icoQuote, Big: b.num(float64(cited)) + " / " + b.num(float64(len(g.Citations))), Label: b.t("tiles.ai_cited"), Text: b.t("tiles.ai_cited.sub"), Tone: "neu"})
+		}
+	}
+	if bg := b.r.Bing; bg != nil && bg.AIPerformance != nil && !b.r.SectionHidden("bing") {
+		if m := bg.AIPerformance.Citations; m.Current > 0 {
+			t := tile{Icon: icoQuote, Big: b.num(m.Current), Label: b.t("tiles.copilot"), Text: b.t("tiles.copilot.sub"), Tone: "neu"}
+			if m.Previous != nil {
+				t.Tone = b.kpiTone(insights.KeyBingAICitations, &m, false)
+				t.Sign = toneSign[t.Tone]
+				if *m.Previous == 0 {
+					t.Text = b.t("tiles.copilot.first")
+				} else {
+					t.Text = b.tf("tiles.vs_before", b.num(*m.Previous))
+				}
+			}
+			out = append(out, t)
+		}
+	}
+	if len(out) == 0 {
+		return block{}
+	}
+	return block{Kind: "tiles", Title: b.t("tiles.ai_title"), Tiles: topN(out, 3)}
 }

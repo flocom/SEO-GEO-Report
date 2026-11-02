@@ -28,6 +28,14 @@ type KPIStatus struct {
 	Tone     Tone    `json:"tone"`
 	DeltaPct float64 `json:"delta_pct"`
 	HasDelta bool    `json:"has_delta"`
+
+	// Expected marks a decline that is the normal side effect of a strong
+	// growth elsewhere: when impressions jump (new searches, often ranking
+	// lower at first), the average position and the click-through rate
+	// mechanically worsen. Tone is then Neutral and Note explains it in one
+	// localized sentence, to be shown next to the figure.
+	Expected bool   `json:"expected,omitempty"`
+	Note     string `json:"note,omitempty"`
 }
 
 // Analysis is the result of Analyze.
