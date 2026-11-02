@@ -61,7 +61,22 @@ func (r *Report) Opt() Options {
 	if o.MaxTableRows <= 0 {
 		o.MaxTableRows = 15
 	}
+	if o.DefaultView = NormView(o.DefaultView); o.DefaultView == "" {
+		o.DefaultView = ViewEssential
+	}
 	return o
+}
+
+// NormView returns ViewEssential or ViewAdvanced for a view name (French
+// and English spellings accepted), or "" when s is empty or unknown.
+func NormView(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "essential", "essentiel", "essentielle", "simple", "basic":
+		return ViewEssential
+	case "advanced", "avance", "avancé", "avancee", "avancée", "full", "complet", "complete", "detailed":
+		return ViewAdvanced
+	}
+	return ""
 }
 
 // SectionHidden reports whether a built-in section is hidden.
@@ -213,6 +228,9 @@ func (r *Report) Validate() (errs []string, warnings []string) {
 	}
 	if l := strings.ToLower(r.Meta.Language); l != "" && !strings.HasPrefix(l, "fr") && !strings.HasPrefix(l, "en") {
 		warnings = append(warnings, fmt.Sprintf("meta.language %q is not supported, French is used", r.Meta.Language))
+	}
+	if o := r.Options; o != nil && strings.TrimSpace(o.DefaultView) != "" && NormView(o.DefaultView) == "" {
+		warnings = append(warnings, fmt.Sprintf("options.default_view %q is not supported (essential or advanced), essential is used", o.DefaultView))
 	}
 	if r.SearchConsole == nil && r.Bing == nil && r.Analytics == nil && r.MerchantCenter == nil && r.BusinessProfile == nil && r.GEO == nil {
 		warnings = append(warnings, "no data provided: add search_console, bing, analytics, merchant_center, business_profile and/or geo")

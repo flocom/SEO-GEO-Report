@@ -168,7 +168,9 @@
 
 {{define "list"}}
 <div class="card list-card tone-{{.Tone}}">
-  <div class="card-head"><h3>{{.Title}}</h3>{{if .Sub}}<p class="card-sub list-more">{{if .Href}}<a href="{{.Href}}">{{.Sub}}</a>{{else}}{{.Sub}}{{end}}</p>{{end}}</div>
+  <div class="card-head"><h3>{{.Title}}</h3>{{if .Sub}}<p class="card-sub list-more">
+    {{- if and .Href .SubEss}}<a class="adv-only" href="{{.Href}}">{{.Sub}}</a><label class="ess-only link-switch" for="view-advanced" data-goto="{{slice .Href 1}}">{{.SubEss}}</label>
+    {{- else if .Href}}<a href="{{.Href}}">{{.Sub}}</a>{{else}}{{.Sub}}{{end}}</p>{{end}}</div>
   <ul class="checklist">
     {{- range .Items}}
     <li><span class="li-mark" aria-hidden="true"></span><span class="li-text">{{.HTML}}{{.Text}}</span></li>
@@ -224,7 +226,7 @@
 {{end}}
 
 {{define "glossary"}}
-<dl class="glossary">
+<dl class="glossary{{if .Tone}} glossary-{{.Tone}}{{end}}">
   {{- range .Glossary}}
   <div class="g-item"><dt>{{.Term}}</dt><dd>{{.Definition}}</dd></div>
   {{- end}}

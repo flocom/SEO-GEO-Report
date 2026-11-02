@@ -86,14 +86,18 @@ func writeOutput(path string, data []byte) error {
 }
 
 func cmdRender(args []string) error {
-	fs := newFlagSet("render", "-i data.json -o report.html|report.pdf [--lang fr|en] [--pdf]")
+	fs := newFlagSet("render", "-i data.json -o report.html|report.pdf [--lang fr|en] [--view essential|advanced] [--pdf]")
 	in := fs.String("i", "", "input report JSON (\"-\" = stdin)")
 	out := fs.String("o", "", "output file; .pdf renders a PDF (default: stdout, HTML)")
 	lang := fs.String("lang", "", "override the report language: fr or en")
+	view := fs.String("view", "", "report version: essential (key results, short PDF) or advanced (full report); the HTML holds both and opens on this one (default: options.default_view)")
 	asPDF := fs.Bool("pdf", false, "render a PDF regardless of the output extension (needs Chromium / Chrome)")
 	noFavicon := fs.Bool("no-favicon", false, "do not fetch the site favicon from meta.site_url")
 	if _, err := parseInterspersed(fs, args); err != nil {
 		return err
+	}
+	if *view != "" && model.NormView(*view) == "" {
+		return fmt.Errorf("--view %q: use essential or advanced", *view)
 	}
 	data, err := readInput(*in)
 	if err != nil {
@@ -125,7 +129,7 @@ func cmdRender(args []string) error {
 		cancel()
 	}
 	wantPDF := *asPDF || strings.EqualFold(filepath.Ext(*out), ".pdf")
-	html, err := render.HTML(r, render.Options{Lang: *lang})
+	html, err := render.HTML(r, render.Options{Lang: *lang, View: *view})
 	if err != nil {
 		return fmt.Errorf("rendering failed: %w", err)
 	}

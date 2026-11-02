@@ -13,6 +13,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/flocom/SEO-GEO-Report/internal/model"
 	"github.com/flocom/SEO-GEO-Report/internal/oauth"
 	"github.com/flocom/SEO-GEO-Report/internal/pdf"
 	"github.com/flocom/SEO-GEO-Report/internal/store"
@@ -25,9 +26,10 @@ const MaxRequestBytes = 32 << 20
 //
 //	/mcp                     Streamable HTTP MCP endpoint (bearer auth)
 //	/.well-known/...         OAuth metadata, /register, /authorize, /token
-//	/r/<token>               hosted report (HTML, ?lang=fr|en)
-//	/r/<token>/download      standalone HTML file (attachment)
-//	/r/<token>.pdf           PDF (also /r/<token>/pdf), ?download=1 for attachment
+//	/r/<token>               hosted report (HTML, ?lang=fr|en, ?view=essential|advanced)
+//	/r/<token>/download      standalone HTML file (attachment, both versions)
+//	/r/<token>.pdf           PDF (also /r/<token>/pdf), ?download=1 for attachment,
+//	                         ?view=essential (short) or advanced (full report)
 //	/healthz                 health check
 //	/admin                   update page (when Config.Admin is set)
 //	/                        home page with connection instructions
@@ -136,7 +138,9 @@ func (h *httpApp) health(w http.ResponseWriter, r *http.Request) {
 // ---------------------------------------------------------------------------
 // Report hosting
 
-func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record, string, bool) {
+// record looks up the report of the request and its language and version
+// (?lang= and ?view=, the report's defaults otherwise).
+func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record, string, string, bool) {
 	tok := strings.TrimSuffix(r.PathValue("token"), ".html")
 	rec, err := h.svc.store.ByShareToken(tok)
 	if err != nil {
@@ -144,14 +148,15 @@ func (h *httpApp) record(w http.ResponseWriter, r *http.Request) (*store.Record,
 			h.log.Error("report lookup", "err", err)
 		}
 		http.Error(w, "Rapport introuvable / Report not found", http.StatusNotFound)
-		return nil, "", false
+		return nil, "", "", false
 	}
 	rec = h.svc.EnsureFavicon(r.Context(), rec)
 	lang := rec.Report.Lang()
 	if l := r.URL.Query().Get("lang"); l != "" {
 		lang = normLang(l)
 	}
-	return rec, lang, true
+	view := normView(r.URL.Query().Get("view"), defaultView(rec))
+	return rec, lang, view, true
 }
 
 func reportHeaders(w http.ResponseWriter) {
@@ -170,12 +175,12 @@ func (h *httpApp) report(w http.ResponseWriter, r *http.Request) {
 		h.pdf(w, r)
 		return
 	}
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
-	links := LinksFor(h.auth.BaseURL(r), rec, lang)
-	html, err := h.svc.RenderHTML(rec, lang, links)
+	links := LinksFor(h.auth.BaseURL(r), rec, lang, view)
+	html, err := h.svc.RenderHTML(rec, lang, view, links)
 	if err != nil {
 		h.log.Error("render", "id", rec.ID, "err", err)
 		http.Error(w, "Rendering failed: "+err.Error(), http.StatusInternalServerError)
@@ -187,33 +192,34 @@ func (h *httpApp) report(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *httpApp) download(w http.ResponseWriter, r *http.Request) {
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
-	// The downloaded file keeps absolute links to the PDF.
-	links := LinksFor(h.auth.BaseURL(r), rec, lang)
+	// The downloaded file holds both versions (opening on the requested one)
+	// and keeps absolute links to the PDFs.
+	links := LinksFor(h.auth.BaseURL(r), rec, lang, view)
 	links.HTMLDownload = ""
-	html, err := h.svc.RenderHTML(rec, lang, links)
+	html, err := h.svc.RenderHTML(rec, lang, view, links)
 	if err != nil {
 		http.Error(w, "Rendering failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	reportHeaders(w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, DownloadName(rec, lang, "html")))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, DownloadName(rec, lang, "", "html")))
 	_, _ = w.Write(html)
 }
 
 func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 	r.SetPathValue("token", strings.TrimSuffix(r.PathValue("token"), ".pdf"))
-	rec, lang, ok := h.record(w, r)
+	rec, lang, view, ok := h.record(w, r)
 	if !ok {
 		return
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), pdf.DefaultTimeout)
 	defer cancel()
-	b, _, err := h.svc.RenderPDF(ctx, rec, lang)
+	b, _, err := h.svc.RenderPDF(ctx, rec, lang, view)
 	if err != nil {
 		h.log.Error("pdf", "id", rec.ID, "err", err)
 		status := http.StatusInternalServerError
@@ -223,7 +229,7 @@ func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(status)
 		fmt.Fprintf(w, "Le PDF n'a pas pu être généré / The PDF could not be generated.\n\n%v\n\nL'export HTML reste disponible / The HTML export is still available: %s\n",
-			err, LinksFor(h.auth.BaseURL(r), rec, lang).HTMLDownload)
+			err, LinksFor(h.auth.BaseURL(r), rec, lang, view).HTMLDownload)
 		return
 	}
 	disp := "inline"
@@ -233,13 +239,14 @@ func (h *httpApp) pdf(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Robots-Tag", "noindex, nofollow")
 	w.Header().Set("Cache-Control", "private, no-cache")
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`%s; filename="%s"`, disp, DownloadName(rec, lang, "pdf")))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`%s; filename="%s"`, disp, DownloadName(rec, lang, view, "pdf")))
 	_, _ = w.Write(b)
 }
 
 // DownloadName returns a friendly file name, e.g.
-// rapport-seo-geo-acme-2026-01-01_2026-03-31.html.
-func DownloadName(rec *store.Record, lang, ext string) string {
+// rapport-seo-geo-acme-2026-01-01_2026-03-31.html; a PDF of the essential
+// version ends with -essentiel / -essential (view "" = no suffix).
+func DownloadName(rec *store.Record, lang, view, ext string) string {
 	prefix := "rapport-seo-geo"
 	if lang == "en" {
 		prefix = "seo-geo-report"
@@ -251,6 +258,13 @@ func DownloadName(rec *store.Record, lang, ext string) string {
 	p := rec.Report.Meta.Period
 	if safeDate(p.Start) && safeDate(p.End) {
 		name += "-" + p.Start + "_" + p.End
+	}
+	if model.NormView(view) == model.ViewEssential {
+		if lang == "en" {
+			name += "-essential"
+		} else {
+			name += "-essentiel"
+		}
 	}
 	return name + "." + ext
 }

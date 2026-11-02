@@ -6,6 +6,7 @@ Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools
 
 - Vous exportez vos données (ou vous les collez / faites une capture), Claude les comprend, remplit le rapport et rédige l'analyse.
 - Le serveur produit un **rapport HTML hébergé** (lien partageable), un **fichier HTML autonome** à télécharger et un **PDF** A4.
+- **Deux versions sur la même page : Essentiel et Avancé.** Un sélecteur en haut du rapport bascule entre la version **Essentielle** (couverture, partie 1 et un lexique court : ce qu'un dirigeant doit savoir, sans tableaux denses, un PDF de quelques pages) et la version **Avancée** (le rapport complet avec l'analyse détaillée). Il fonctionne sans JavaScript, y compris dans le fichier HTML téléchargé, au clavier, et l'impression imprime la version affichée. Le rapport s'ouvre par défaut sur la version Essentielle (`options.default_view`, `?view=essential|advanced`, `--view`) et Claude donne les liens des deux : consultation en ligne, PDF essentiel, PDF complet.
 - **L'outil ne se connecte jamais à Google** : il ne fait que mettre en forme les données fournies.
 - Fonctionne comme **serveur MCP** : connecteur personnalisé claude.ai (connexion OAuth automatique), Claude Desktop, Claude Code, ou en ligne de commande.
 - Pour les sites marchands, les données **Google Merchant Center** ajoutent une section « Google Shopping » : clics et impressions des produits (fiches gratuites et annonces Shopping), meilleurs produits, santé du flux produits (produits approuvés, limités, refusés et problèmes à corriger en priorité) et compétitivité prix ; la partie 1 reçoit une carte « Clics Google Shopping ». Sans données Merchant Center, rien ne s'affiche.
@@ -157,7 +158,7 @@ ou entièrement en local (stdio, via Docker ou le binaire) :
 >
 > **Vous** : *(joint le zip Search Console, deux CSV GA4 et colle un tableau de tests)*
 >
-> **Claude** : *(create_report → import_search_console_csv × 6 → import_analytics_csv × 2 → set_geo → set_narrative → validate_report → render_report)* Voici votre rapport : lien en ligne, HTML et PDF. Points clés : clics Google +36 %, trafic depuis les IA ×2,6 (ChatGPT en tête), CTR en baisse sur les pages les plus vues…
+> **Claude** : *(create_report → import_search_console_csv × 6 → import_analytics_csv × 2 → set_geo → set_narrative → validate_report → render_report)* Voici votre rapport, en deux versions : Essentielle (les résultats clés, pour vous) et Avancée (l'analyse complète, pour votre équipe), chacune en ligne et en PDF, plus le fichier HTML. Points clés : clics Google +36 %, trafic depuis les IA ×2,6 (ChatGPT en tête), CTR en baisse sur les pages les plus vues…
 
 Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_business_profile`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_business_profile_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
 
@@ -167,11 +168,13 @@ Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_s
 
 | Lien | Contenu |
 |---|---|
-| `/r/<jeton>` | rapport en ligne (`?lang=en` pour l'autre langue) |
-| `/r/<jeton>/download` | fichier HTML autonome (CSS et graphiques SVG intégrés, aucune dépendance) |
-| `/r/<jeton>.pdf` (ou `/r/<jeton>/pdf`) | PDF A4 (`?download=1` pour forcer le téléchargement) |
+| `/r/<jeton>` | rapport en ligne (`?lang=en` pour l'autre langue ; `?view=essential` ou `?view=advanced` choisit la version affichée à l'ouverture ; les deux se combinent) |
+| `/r/<jeton>/download` | fichier HTML autonome avec les deux versions (CSS et graphiques SVG intégrés, aucune dépendance) |
+| `/r/<jeton>.pdf` (ou `/r/<jeton>/pdf`) | PDF A4 : `?view=essential` (couverture et résultats clés, quelques pages) ou `?view=advanced` (rapport complet) ; par défaut la version par défaut du rapport ; `?download=1` pour forcer le téléchargement |
 
-Le PDF est produit par Chromium sans interface (inclus dans l'image Docker avec les polices Noto / DejaVu / emoji), mis en cache dans le dossier de données et régénéré quand le rapport change. Hors Docker, Chromium ou Google Chrome est détecté automatiquement (`CHROME_PATH` pour forcer) ; s'il est absent, l'export HTML fonctionne toujours et l'erreur PDF est expliquée. `render_report` accepte `format` = `html` (défaut), `pdf` ou `both`, et `include_html` / `include_pdf` pour joindre le document à la réponse.
+La page contient les deux versions du rapport. `render_report` et `generate_report` renvoient `view_essential_url`, `view_advanced_url`, `pdf_essential_url`, `pdf_advanced_url` et `html_download_url` ; `html_url` et `pdf_url` fonctionnent toujours et ouvrent la version par défaut (`options.default_view` : `essential` par défaut, ou `advanced` ; les outils acceptent aussi un paramètre `view`).
+
+Le PDF est produit par Chromium sans interface (inclus dans l'image Docker avec les polices Noto / DejaVu / emoji), mis en cache dans le dossier de données (un fichier par langue et par version) et régénéré quand le rapport change. Hors Docker, Chromium ou Google Chrome est détecté automatiquement (`CHROME_PATH` pour forcer) ; s'il est absent, l'export HTML fonctionne toujours et l'erreur PDF est expliquée. `render_report` accepte `format` = `html` (défaut), `pdf` ou `both`, et `include_html` / `include_pdf` pour joindre le document à la réponse.
 
 ## Ligne de commande
 
@@ -181,6 +184,7 @@ seogeo schema > schema.json                 # schéma JSON du format
 seogeo validate -i data.json                # erreurs, avertissements, complétude
 seogeo render -i data.json -o rapport.html  # HTML autonome
 seogeo render -i data.json -o rapport.pdf   # PDF (Chromium requis)
+seogeo render -i data.json -o essentiel.pdf --view essential   # PDF court (version Essentielle)
 seogeo render -i - --lang en < data.json > report.html
 seogeo import-gsc export-gsc.zip -o gsc.json            # zip ou dossier de CSV Search Console
 seogeo import-gsc export-gsc.zip --into data.json -o data.json

@@ -463,7 +463,16 @@ type Options struct {
 	HideSections  []string `json:"hide_sections,omitempty" jsonschema:"Built-in section ids to hide"`
 	MaxTableRows  int      `json:"max_table_rows,omitempty" jsonschema:"Rows displayed per table (default 15)"`
 	AutoInsights  *bool    `json:"auto_insights,omitempty" jsonschema:"Generate automatic insights from the numbers (default true)"`
+	DefaultView   string   `json:"default_view,omitempty" jsonschema:"Version of the report shown first: essential (default: the key results in plain words, no detailed tables, for business owners) or advanced (the full report with the detailed analysis). Both versions are on the same page, readers switch with the selector at the top"`
 }
+
+// Report versions: both are in the same HTML page, switched by the reader.
+const (
+	// ViewEssential shows the cover and part 1 (key results in plain words).
+	ViewEssential = "essential"
+	// ViewAdvanced shows the full report (part 1 and the detailed analysis).
+	ViewAdvanced = "advanced"
+)
 
 // SectionIDs lists built-in sections in display order.
 var SectionIDs = []string{

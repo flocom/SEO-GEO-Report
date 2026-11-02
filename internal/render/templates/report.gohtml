@@ -14,11 +14,20 @@
 <style>{{.ThemeCSS}}</style>
 </head>
 <body>
+{{- /* Version switch without JavaScript: these radio buttons are siblings of
+     .doc, so views.css can hide the .adv-only / .ess-only parts with
+     "#view-essential:checked ~ .doc .adv-only". Their labels are the
+     segmented control of the cover. */}}
+<input class="view-radio" type="radio" name="seogeo-view" id="view-essential" value="essential" aria-labelledby="vs-label vs-ess-name" aria-describedby="vs-ess-sub"{{if ne .View "advanced"}} checked{{end}}>
+<input class="view-radio" type="radio" name="seogeo-view" id="view-advanced" value="advanced" aria-labelledby="vs-label vs-adv-name" aria-describedby="vs-adv-sub"{{if eq .View "advanced"}} checked{{end}}>
 <div class="doc">
 {{template "cover" .}}
 <main>
 {{- range .Sections}}
 {{template "section" .}}
+{{- end}}
+{{- with .Next}}
+{{template "next" .}}
 {{- end}}
 </main>
 <footer class="foot">
@@ -26,6 +35,7 @@
   <span class="foot-brand">{{t "footer.with"}}</span>
 </footer>
 </div>
+<script>{{template "viewjs"}}</script>
 </body>
 </html>
 {{- end}}
@@ -42,17 +52,27 @@
         {{- if .Cover.SiteURL}}{{if .Cover.SiteHref}}<a class="brand-url" href="{{.Cover.SiteHref}}">{{.Cover.SiteURL}}</a>{{else}}<span class="brand-url">{{.Cover.SiteURL}}</span>{{end}}{{end}}
       </div>
     </div>
-    {{- if or .Cover.PDF .Cover.HTMLDL}}
+    {{- if or .Cover.PDF .Cover.PDFEss .Cover.HTMLDL}}
     <div class="cover-actions no-print">
-      {{- if .Cover.HTMLDL}}<a class="btn-pdf btn-ghost" href="{{.Cover.HTMLDL}}" download>{{icon "file"}}<span>{{t "cover.html"}}</span></a>{{end}}
-      {{- if .Cover.PDF}}<a class="btn-pdf" href="{{.Cover.PDF}}" download>{{icon "download"}}<span>{{t "cover.pdf"}}</span></a>{{end}}
+      {{- if .Cover.HTMLDL}}<a class="btn-pdf btn-ghost" href="{{.Cover.HTMLDL}}" title="{{t "cover.html.title"}}" download>{{icon "file"}}<span>{{t "cover.html"}}</span></a>{{end}}
+      {{- if .Cover.PDFEss}}
+      <a class="btn-pdf btn-view btn-pdf-ess" href="{{.Cover.PDFEss}}" title="{{t "cover.pdf_ess.title"}}" download>{{icon "download"}}<span>{{t "cover.pdf_ess"}}</span></a>
+      <a class="btn-pdf btn-view btn-pdf-adv" href="{{.Cover.PDFAdv}}" title="{{t "cover.pdf_adv.title"}}" download>{{icon "download"}}<span>{{t "cover.pdf_adv"}}</span></a>
+      {{- else if .Cover.PDF}}<a class="btn-pdf" href="{{.Cover.PDF}}" download>{{icon "download"}}<span>{{t "cover.pdf"}}</span></a>{{end}}
     </div>
     {{- end}}
   </div>
+  <div class="view-switch no-print">
+    <p class="vs-label" id="vs-label">{{t "view.label"}}</p>
+    <div class="vs-seg">
+      <label class="vs-opt vs-ess" for="view-essential"><span class="vs-name" id="vs-ess-name">{{t "view.essential"}}</span><span class="vs-sub" id="vs-ess-sub">{{t "view.essential.sub"}}</span></label>
+      <label class="vs-opt vs-adv" for="view-advanced"><span class="vs-name" id="vs-adv-name">{{t "view.advanced"}}</span><span class="vs-sub" id="vs-adv-sub">{{t "view.advanced.sub"}}</span></label>
+    </div>
+  </div>
   <div class="cover-main">
-    <p class="cover-kicker">{{t "cover.eyebrow"}}</p>
+    <p class="cover-kicker">{{t "cover.eyebrow"}}<span class="ess-only"> · {{t "view.essential.kicker"}}</span><span class="adv-only"> · {{t "view.advanced.kicker"}}</span></p>
     <h1>{{.Cover.Title}}</h1>
-    <p class="cover-lead">{{t "cover.lead"}}</p>
+    <p class="cover-lead"><span class="ess-only">{{t "cover.lead_ess"}}</span><span class="adv-only">{{t "cover.lead"}}</span></p>
   </div>
   {{- $n := 2}}{{if .Cover.PreparedFor}}{{$n = add $n 1}}{{end}}{{if .Cover.PreparedBy}}{{$n = add $n 1}}{{end}}{{if .Cover.Sources}}{{$n = add $n 1}}{{end}}
   {{- $g := bal "meta" $n}}
@@ -76,11 +96,11 @@
     <h2>{{t "toc.title"}}</h2>
     <div class="toc-parts">
       {{- range .TOC}}
-      <div class="toc-part">
+      <div class="toc-part{{with only .Only}} {{.}}{{end}}">
         <p class="toc-part-title"><span>{{.Num}}</span> {{.Title}}</p>
         <ol>
           {{- range .Items}}
-          <li><a href="#{{.Anchor}}"><span class="toc-num">{{.Num}}</span><span class="toc-title">{{.Title}}</span></a></li>
+          <li{{with only .Only}} class="{{.}}"{{end}}><a href="#{{.Anchor}}"><span class="toc-num">{{.Num}}</span><span class="toc-title">{{.Title}}</span></a></li>
           {{- end}}
         </ol>
       </div>
@@ -93,19 +113,20 @@
 
 {{define "section"}}
 {{- if .IsPart}}
-<section class="part part-{{.Part}}{{if .Major}} major{{end}}" id="{{.Anchor}}">
+<section class="part part-{{.Part}}{{if .Major}} major{{end}}{{with only .Only}} {{.}}{{end}}" id="{{.Anchor}}">
   <p class="part-num">{{.PartNum}}</p>
   <h2 class="part-title">{{.Title}}</h2>
   <p class="part-intro">{{.Intro}}</p>
 </section>
 {{- else}}
-<section class="section{{if .Major}} major{{end}}{{if .Custom}} custom style-{{.Style}}{{end}}" id="{{.Anchor}}">
+<section class="section{{if .Major}} major{{end}}{{if .Custom}} custom style-{{.Style}}{{end}}{{with only .Only}} {{.}}{{end}}" id="{{.Anchor}}">
   <div class="sec-keep">
   <header class="sec-head">
     {{- if .Num}}<p class="sec-num">{{.Num}}</p>{{end}}
     <div class="sec-titles">
       <h2>{{.Title}}</h2>
-      {{- if .Intro}}<p class="sec-intro">{{.Intro}}</p>{{end}}
+      {{- if .IntroEss}}<p class="sec-intro"><span class="adv-only">{{.Intro}}</span><span class="ess-only">{{.IntroEss}}</span></p>
+      {{- else if .Intro}}<p class="sec-intro">{{.Intro}}</p>{{end}}
     </div>
   </header>
   {{- if .Note}}
@@ -135,3 +156,53 @@
 </section>
 {{- end}}
 {{end}}
+
+{{define "next"}}
+<aside class="next-step ess-only" aria-labelledby="next-title">
+  <p class="next-kicker">{{t "next.kicker"}}</p>
+  <h2 class="next-title" id="next-title">{{t "next.title"}}</h2>
+  <p class="next-text">{{t "next.text"}}</p>
+  <p class="next-count">{{.Count}}</p>
+  <ul class="next-list">
+    {{- range .Items}}
+    <li>{{.}}</li>
+    {{- end}}
+  </ul>
+  <p class="next-actions no-print">
+    <label class="next-btn" for="view-advanced" data-goto="part-2">{{t "next.button"}}</label>
+    {{- if .PDF}}<a class="next-pdf" href="{{.PDF}}" download>{{icon "download"}}<span>{{t "cover.pdf_adv"}}</span></a>{{end}}
+  </p>
+  <p class="next-print print-only">{{t "next.print"}}</p>
+</aside>
+{{end}}
+
+{{- /* Optional progressive enhancement: the page is complete without it.
+     It applies #essentiel / #avance and ?view= (hash first), remembers the
+     reader's choice for this page, writes ?view= back into the address
+     (http only), and switches to the advanced version when a link or the
+     address targets a part it holds. */}}
+{{define "viewjs"}}(function(){
+var E=document.getElementById("view-essential"),A=document.getElementById("view-advanced");
+if(!E||!A||!document.addEventListener)return;
+var K="seogeo-view:"+location.pathname;
+function norm(s){s=String(s||"").toLowerCase().replace(/^#/,"");
+if(/^(essential|essentiel|essentielle)$/.test(s))return"essential";
+if(/^(advanced|avance|avancee|full|complet)$/.test(s))return"advanced";return""}
+function pick(v){if(v==="advanced")A.checked=true;else if(v==="essential")E.checked=true}
+function save(){var v=A.checked?"advanced":"essential";
+try{localStorage.setItem(K,v)}catch(e){}
+if(/^https?:$/.test(location.protocol)){try{var u=new URL(location.href);u.searchParams.set("view",v);if(norm(u.hash))u.hash="";history.replaceState(history.state,"",u.href)}catch(e){}}}
+function reveal(id){var el=id&&document.getElementById(id);
+if(el&&E.checked&&el.closest&&el.closest(".adv-only")){A.checked=true;save();return el}return null}
+var h=norm(location.hash),q="",st="";
+try{q=norm(new URLSearchParams(location.search).get("view"))}catch(e){}
+try{st=norm(localStorage.getItem(K))}catch(e){}
+pick(h||q||st);
+if(location.hash&&!h){var t=reveal(decodeURIComponent(location.hash.slice(1)));if(t)t.scrollIntoView()}
+E.addEventListener("change",save);A.addEventListener("change",save);
+document.addEventListener("click",function(ev){var x=ev.target;
+var a=x.closest&&x.closest('a[href^="#"]');if(a){reveal(decodeURIComponent(a.getAttribute("href").slice(1)));return}
+var l=x.closest&&x.closest("label[data-goto]");
+if(l){setTimeout(function(){var g=document.getElementById(l.getAttribute("data-goto"));if(g)g.scrollIntoView({behavior:"smooth"})},0)}});
+window.addEventListener("hashchange",function(){var t=reveal(decodeURIComponent(location.hash.slice(1)));if(t)t.scrollIntoView()});
+})();{{end}}

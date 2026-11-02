@@ -204,7 +204,7 @@ func TestPartialReports(t *testing.T) {
 					t.Errorf("unexpected sections %v", ids)
 				}
 			case "meta-only":
-				if len(ids) != 2 || ids[0] != "sec-summary" || ids[1] != "sec-glossary" || !strings.Contains(s, "Aucune donnée") {
+				if len(ids) != 3 || ids[0] != "sec-summary" || ids[1] != "sec-"+idGlossaryEss || ids[2] != "sec-glossary" || !strings.Contains(s, "Aucune donnée") {
 					t.Errorf("empty report should show an empty-state summary and the glossary, got %v", ids)
 				}
 			}

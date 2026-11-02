@@ -506,6 +506,13 @@ func (b *builder) glanceLists() []block {
 		for i := range out {
 			if out[i].Sub != "" {
 				out[i].Href = "#sec-" + idReview
+				// The essential version has no part 2: the note switches
+				// to the advanced version instead.
+				extra := len(hi) - maxHi
+				if out[i].Tone == "neg" {
+					extra = len(co) - maxGlanceConcerns
+				}
+				out[i].SubEss = b.plural(float64(extra), "summary.more_adv")
 			}
 		}
 	}

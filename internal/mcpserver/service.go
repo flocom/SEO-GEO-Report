@@ -51,31 +51,90 @@ func NewService(cfg Config) *Service {
 	return &Service{cfg: cfg, store: cfg.Store}
 }
 
-// Links are the public URLs of a report.
+// Links are the public URLs of a report. The page holds two versions of
+// the report (essential and advanced) with a selector at the top; HTML and
+// PDF open the requested (or default) version, the *_essential / *_advanced
+// links a given one. The HTML download is one file with both versions.
 type Links struct {
 	HTML         string `json:"html_url,omitempty"`
 	HTMLDownload string `json:"html_download_url,omitempty"`
 	PDF          string `json:"pdf_url,omitempty"`
+
+	HTMLEssential string `json:"view_essential_url,omitempty"`
+	HTMLAdvanced  string `json:"view_advanced_url,omitempty"`
+	PDFEssential  string `json:"pdf_essential_url,omitempty"`
+	PDFAdvanced   string `json:"pdf_advanced_url,omitempty"`
+	// DefaultView is the version html_url and pdf_url open.
+	DefaultView string `json:"default_view,omitempty"`
 }
 
 // LinksFor builds the public URLs of a record for a base URL ("" = unknown).
-func LinksFor(base string, rec *store.Record, lang string) Links {
+// lang and view select the language and version of html_url, pdf_url and
+// html_download_url ("" = the report's own); the query string only carries
+// what differs from the report's defaults, so the plain /r/<token> link keeps
+// working.
+func LinksFor(base string, rec *store.Record, lang, view string) Links {
 	if base == "" {
 		return Links{}
 	}
-	q := ""
-	if lang != "" && lang != rec.Report.Lang() {
-		q = "?lang=" + url.QueryEscape(lang)
+	def := defaultView(rec)
+	view = normView(view, def)
+	query := func(v string) string {
+		q := url.Values{}
+		if lang != "" && normLang(lang) != rec.Report.Lang() {
+			q.Set("lang", normLang(lang))
+		}
+		if v != def {
+			q.Set("view", v)
+		}
+		if len(q) == 0 {
+			return ""
+		}
+		return "?" + q.Encode()
+	}
+	explicit := func(v string) string {
+		q := query(v)
+		if v == def { // explicit links name their version even when it is the default
+			if q == "" {
+				q = "?view=" + v
+			} else {
+				q += "&view=" + v
+			}
+		}
+		return q
 	}
 	p := base + "/r/" + rec.ShareToken
-	return Links{HTML: p + q, HTMLDownload: p + "/download" + q, PDF: p + ".pdf" + q}
+	return Links{
+		HTML: p + query(view), HTMLDownload: p + "/download" + query(view), PDF: p + ".pdf" + query(view),
+		HTMLEssential: p + explicit(model.ViewEssential), HTMLAdvanced: p + explicit(model.ViewAdvanced),
+		PDFEssential: p + ".pdf" + explicit(model.ViewEssential), PDFAdvanced: p + ".pdf" + explicit(model.ViewAdvanced),
+		DefaultView: view,
+	}
+}
+
+// defaultView is the version a report opens on (options.default_view).
+func defaultView(rec *store.Record) string { return rec.Report.Opt().DefaultView }
+
+// normView returns "essential" or "advanced", def for an empty or unknown
+// value.
+func normView(v, def string) string {
+	if n := model.NormView(v); n != "" {
+		return n
+	}
+	if n := model.NormView(def); n != "" {
+		return n
+	}
+	return model.ViewEssential
 }
 
 // RenderHTML renders a record. links carries the download buttons shown in
-// the page (empty = no buttons, e.g. for the PDF itself).
-func (s *Service) RenderHTML(rec *store.Record, lang string, links Links) ([]byte, error) {
+// the page (empty = no buttons, e.g. for the PDF itself); view is the
+// version selected when the page opens ("" = the report's default).
+func (s *Service) RenderHTML(rec *store.Record, lang, view string, links Links) ([]byte, error) {
 	r := deepCopy(rec.Report)
-	html, err := render.HTML(&r, renderOptions(lang, links))
+	opts := renderOptions(lang, links)
+	opts.View = normView(view, defaultView(rec))
+	html, err := render.HTML(&r, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -112,16 +171,20 @@ func (s *Service) EnsureFavicon(ctx context.Context, rec *store.Record) *store.R
 
 // renderOptions maps the public links to the renderer's download buttons.
 func renderOptions(lang string, l Links) render.Options {
-	return render.Options{Lang: lang, PDFURL: l.PDF, HTMLDownloadURL: l.HTMLDownload}
+	return render.Options{Lang: lang, PDFURL: l.PDF, HTMLDownloadURL: l.HTMLDownload,
+		PDFEssentialURL: l.PDFEssential, PDFAdvancedURL: l.PDFAdvanced}
 }
 
-// RenderPDF returns the PDF of a record, using the cache when it is fresh.
-func (s *Service) RenderPDF(ctx context.Context, rec *store.Record, lang string) ([]byte, string, error) {
+// RenderPDF returns the PDF of a record in one language and version
+// ("essential": cover and part 1, a few pages; "advanced": the full report;
+// "" = the report's default), using the cache when it is fresh.
+func (s *Service) RenderPDF(ctx context.Context, rec *store.Record, lang, view string) ([]byte, string, error) {
 	lang = normLang(lang)
-	if b, ok := s.store.CachedPDF(rec, lang); ok {
-		return b, s.store.PDFPath(rec.ID, lang), nil
+	view = normView(view, defaultView(rec))
+	if b, ok := s.store.CachedPDF(rec, lang, view); ok {
+		return b, s.store.PDFPath(rec.ID, lang, view), nil
 	}
-	html, err := s.RenderHTML(rec, lang, Links{})
+	html, err := s.RenderHTML(rec, lang, view, Links{})
 	if err != nil {
 		return nil, "", err
 	}
@@ -129,7 +192,7 @@ func (s *Service) RenderPDF(ctx context.Context, rec *store.Record, lang string)
 	if err != nil {
 		return nil, "", err
 	}
-	p, err := s.store.SavePDF(rec.ID, lang, out)
+	p, err := s.store.SavePDF(rec.ID, lang, view, out)
 	if err != nil {
 		return nil, "", err
 	}

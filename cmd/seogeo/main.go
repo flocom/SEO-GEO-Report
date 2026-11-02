@@ -21,7 +21,7 @@ Usage:
   seogeo <command> [options]
 
 Report commands:
-  render     -i data.json -o report.html|report.pdf [--lang en] [--pdf] [--no-favicon]
+  render     -i data.json -o report.html|report.pdf [--lang en] [--view essential|advanced] [--pdf] [--no-favicon]
              Render a report. Input "-" = stdin. The format follows the output
              extension (.pdf needs Chromium / Google Chrome); default output: stdout (HTML).
   validate   -i data.json          Check a report file (errors, warnings, completeness).

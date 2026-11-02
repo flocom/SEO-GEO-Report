@@ -16,7 +16,8 @@ import (
 // the model). Keep them short: the full guide is a tool / resource.
 const Instructions = `SEO & GEO Report formats data YOU provide into a beautiful, bilingual (French/English) HTML + PDF report about a website's visibility in Google (Search Console) and Bing (Bing Webmaster Tools), its traffic (GA4), its products in Google Shopping (Merchant Center, optional), its local visibility (Google Business Profile, optional) and its visibility in AI assistants (GEO: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot...).
 It NEVER connects to Google, Bing or any other service: all numbers come from the user (exports, screenshots, copy-paste) and you pass them through the tools.
-Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_merchant_center / set_business_profile / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned URL. generate_report does everything in one call when you already have all the data.
+Start with get_report_guide (workflow, field conventions, what to ask the user), then create_report -> set_search_console / set_bing / set_analytics / set_merchant_center / set_business_profile / set_geo (or import_*_csv with raw CSV text) -> set_narrative -> validate_report -> render_report, and give the user the returned links. generate_report does everything in one call when you already have all the data.
+Every report has two versions on the same page (selector at the top): Essential (key results in plain words, short PDF, opens by default) and Advanced (the full analysis). Always give the user both: view_essential_url and view_advanced_url, pdf_essential_url and pdf_advanced_url, and html_download_url (one file with both versions).
 Data with a native section goes to its tool, never to a free-text section (add_text_section): Google Business Profile -> set_business_profile, Bing Webmaster Tools -> set_bing, Google Merchant Center -> set_merchant_center.
 Conventions: percentages in percent (3.2 = 3.2 %), dates YYYY-MM-DD, durations in seconds, every metric = {"current": x, "previous": y} where previous is the comparison period (drives the progress visuals).`
 
@@ -67,9 +68,20 @@ you collect the numbers from the user and pass them in.
    Bing Webmaster Tools figures to ` + "`set_bing`" + `, Merchant Center figures to ` + "`set_merchant_center`" + `
    (the native sections draw charts, compute progress and insights; a text section does not).
 5. ` + "`validate_report`" + ` → fix errors, consider warnings (missing previous values, ratios instead of percents...).
-6. ` + "`render_report`" + ` → returns the public URL of the HTML report and of the PDF, plus a summary of
-   KPIs and automatic insights. Give the links to the user and comment the key takeaways.
+6. ` + "`render_report`" + ` → returns the public links of the report, plus a summary of KPIs and
+   automatic insights. Give the links to the user and comment the key takeaways.
    Rendering again after a change updates the same URLs.
+   **Two versions, one page**: every report holds an **Essential** version (cover and key
+   results in plain words: verdict, channel scorecard, wins, key indicators, AI visibility,
+   what was done / what is next, a short glossary; a PDF of a few pages) and an **Advanced**
+   version (the full report with the detailed analysis, tables and glossary). Readers switch
+   with the selector at the top of the page. The links: ` + "`view_essential_url`" + `,
+   ` + "`view_advanced_url`" + `, ` + "`pdf_essential_url`" + ` (short), ` + "`pdf_advanced_url`" + ` (full),
+   ` + "`html_download_url`" + ` (one interactive file with both versions); ` + "`html_url`" + ` / ` + "`pdf_url`" + `
+   open on the default version. Give the user both versions: Essential for the business
+   owner, Advanced for the team or the agency. ` + "`view`" + ` (render_report / generate_report)
+   picks the version html_url, pdf_url and a PDF generated now open on;
+   ` + "`options.default_view`" + ` (essential by default, or advanced) sets the report's default.
 7. Next month: ` + "`duplicate_report`" + ` (keeps meta, branding, pending actions and recommendations; clears data) then fill the new data.
 
 One-shot alternative: ` + "`generate_report`" + ` with the complete report JSON (same structure as
@@ -184,7 +196,9 @@ access) performed:
 ## Options
 
 ` + "`set_options`" + `: ` + "`hide_sections`" + ` (section ids), ` + "`max_table_rows`" + ` (default 15), ` + "`show_glossary`" + `,
-` + "`beginner_hints`" + ` ("how to read this chart" explanations), ` + "`auto_insights`" + ` (automatic observations).
+` + "`beginner_hints`" + ` ("how to read this chart" explanations), ` + "`auto_insights`" + ` (automatic observations),
+` + "`default_view`" + ` (` + "`essential`" + `, the default, or ` + "`advanced`" + `: the version of the report shown first;
+hosted pages also accept ` + "`?view=essential|advanced`" + `, combined with ` + "`?lang=`" + `).
 Branding: ` + "`meta.brand_color`" + ` (hex), ` + "`meta.logo_url`" + ` (https URL or data: URI), ` + "`meta.prepared_by`" + `, ` + "`meta.prepared_for`" + `.
 `
 

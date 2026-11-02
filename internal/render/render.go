@@ -30,6 +30,12 @@ var reportCSS string
 //go:embed assets/gbp.css
 var gbpCSS string
 
+// viewsCSS switches between the essential and the advanced versions (pure
+// CSS: hidden radio buttons at the top of the body).
+//
+//go:embed assets/views.css
+var viewsCSS string
+
 // baseTemplates is parsed once; each render clones it to bind the language.
 var baseTemplates = template.Must(template.New("report").Funcs(templateFuncs("fr")).ParseFS(templateFS, "templates/*.gohtml"))
 
@@ -37,6 +43,7 @@ func templateFuncs(lang string) template.FuncMap {
 	return template.FuncMap{
 		"t":         func(key string) string { return i18n.T(lang, key) },
 		"span":      func(n int) string { return fmt.Sprintf("span-%d", n) },
+		"only":      onlyClass,
 		"icon":      namedIcon,
 		"bal":       balFor,
 		"add":       func(a, b int) int { return a + b },
@@ -114,11 +121,16 @@ func render(src *model.Report, opts Options) (out []byte, err error) {
 		b.an.KPIs = map[string]insights.KPIStatus{}
 	}
 
+	view := model.NormView(opts.View)
+	if view == "" {
+		view = opt.DefaultView
+	}
 	p := &page{
 		Lang:     lang,
-		CSS:      template.CSS(reportCSS + "\n" + gbpCSS), //nolint:gosec // embedded assets
+		CSS:      template.CSS(reportCSS + "\n" + gbpCSS + "\n" + viewsCSS), //nolint:gosec // embedded assets
 		ThemeCSS: themeCSS(b.accent),
 		Cover:    b.cover(opts),
+		View:     view,
 	}
 	p.Title = p.Cover.Title
 	if r.Meta.SiteName != "" {
@@ -128,14 +140,15 @@ func render(src *model.Report, opts Options) (out []byte, err error) {
 	p.Sections = b.sections()
 	for _, s := range p.Sections {
 		if s.IsPart {
-			p.TOC = append(p.TOC, tocPart{Num: s.PartNum, Title: s.Title})
+			p.TOC = append(p.TOC, tocPart{Num: s.PartNum, Title: s.Title, Only: s.Only})
 			continue
 		}
 		if len(p.TOC) > 0 {
 			last := &p.TOC[len(p.TOC)-1]
-			last.Items = append(last.Items, tocItem{Anchor: s.Anchor, Num: s.Num, Title: s.Title})
+			last.Items = append(last.Items, tocItem{Anchor: s.Anchor, Num: s.Num, Title: s.Title, Only: s.Only})
 		}
 	}
+	p.Next = b.nextStep(p.Sections, p.Cover.PDFAdv)
 	p.Favicon = p.Cover.Favicon
 
 	tpl, err := baseTemplates.Clone()
@@ -185,8 +198,13 @@ func (b *builder) cover(opts Options) cover {
 		PreparedBy:  strings.TrimSpace(m.PreparedBy),
 		PreparedFor: strings.TrimSpace(m.PreparedFor),
 		PDF:         pdfURL(opts.PDFURL),
+		PDFEss:      pdfURL(opts.PDFEssentialURL),
+		PDFAdv:      pdfURL(opts.PDFAdvancedURL),
 		HTMLDL:      pdfURL(opts.HTMLDownloadURL),
 		Favicon:     faviconURL(m.FaviconURL),
+	}
+	if c.PDFEss == "" || c.PDFAdv == "" {
+		c.PDFEss, c.PDFAdv = "", "" // one PDF link (PDFURL) or none
 	}
 	if c.Title == "" {
 		c.Title = b.t("report.title_default")
@@ -302,6 +320,9 @@ func (b *builder) sections() []*section {
 		s.Anchor = "sec-" + id
 		s.Title = b.t("sec." + id + ".title")
 		s.Intro = b.t("sec." + id + ".intro")
+		if k := "sec." + id + ".intro_ess"; i18n.Has(k) {
+			s.IntroEss = b.t(k)
+		}
 		s.Icon = sectionIcon(id)
 		s.Major = majorSections[id]
 		s.Note = Markdown(b.r.Note(id))
@@ -328,6 +349,16 @@ func (b *builder) sections() []*section {
 		part2 = append(part2, customs[id]...)
 	}
 
+	// Part 2 only exists in the advanced version; the essential version
+	// closes part 1 with a short glossary of the terms it uses.
+	for _, s := range part2 {
+		s.Only = model.ViewAdvanced
+	}
+	ess := b.glossaryEssential()
+	if ess != nil && len(part1) > 0 {
+		part1 = append(part1, ess)
+	}
+
 	var out []*section
 	n := 0
 	for pi, list := range [][]*section{part1, part2} {
@@ -342,10 +373,19 @@ func (b *builder) sections() []*section {
 			Intro:  b.t(fmt.Sprintf("part.%d.intro", num)),
 			Major:  num == 2,
 		}
+		if num == 2 {
+			banner.Only = model.ViewAdvanced
+		}
 		out = append(out, banner)
 		for i, s := range list {
-			n++
-			s.Num = twoDigits(n)
+			if s == ess {
+				// Numbered after part 1 without shifting part 2: each
+				// version reads 01, 02, 03... without a gap.
+				s.Num = twoDigits(n + 1)
+			} else {
+				n++
+				s.Num = twoDigits(n)
+			}
 			s.Part = num
 			if num == 1 {
 				s.Major = false // part 1 flows on as few pages as possible

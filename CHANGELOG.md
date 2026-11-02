@@ -57,6 +57,34 @@ All notable changes to this project are documented here. The format follows [Kee
   nothing to configure, and the seogeo container still has no access to the
   Docker socket. Optional `WATCHTOWER_HTTP_API_TOKEN` and `WATCHTOWER_URL`.
 
+- Two report versions on the same page: Essential and Advanced. A segmented
+  control at the top of the cover ("Essentiel | Avancé" / "Essential |
+  Advanced", one line of description each) switches between the Essential
+  version (simplified cover, Part 1, a short glossary limited to the terms it
+  uses and a "go further" note listing what the advanced version adds; no
+  dense tables) and the Advanced version (the full report, as before). Pure
+  CSS (hidden radio buttons and sibling selectors): it works without
+  JavaScript, in the downloaded HTML file, with the keyboard (focus ring,
+  arrow keys, labelled radios), in dark mode, and printing prints the version
+  on screen; the table of contents and the section numbering adapt, and
+  links to a part of the advanced version still land on it. A small optional
+  script syncs `?view=` / `#essentiel` / `#avance` and remembers the reader's
+  choice.
+- `options.default_view` (`essential`, the default, or `advanced`; settable
+  with `set_options`), `render.Options.View`, `?view=essential|advanced` on
+  hosted pages (combined with `?lang=`), `/r/<token>.pdf?view=essential` (a
+  short PDF: cover and about four pages) and `?view=advanced` (full report),
+  cached separately per language and version. The header offers "PDF
+  essentiel" and "PDF complet" next to the HTML download (one interactive
+  file with both versions); essential PDFs are named `…-essentiel.pdf` /
+  `…-essential.pdf`. CLI: `seogeo render --view essential|advanced`.
+- `render_report` / `generate_report` take an optional `view` and return
+  `view_essential_url`, `view_advanced_url`, `pdf_essential_url`,
+  `pdf_advanced_url` and `default_view` next to `html_url`, `pdf_url` and
+  `html_download_url` (unchanged, they open the default version); the text
+  summary, tool descriptions, guide, server instructions, prompt and inline
+  viewer tell the assistant to give the user both versions.
+
 ### Changed
 - Beginner-friendly Part 1, visual first: a compact color code shown once
   (▲ good news, ▼ to watch, ● expected / normal, ▶ stable) replaces the long

@@ -16,6 +16,17 @@ type Options struct {
 	// HTMLDownloadURL, when non-empty, adds a "Download (HTML)" link next to
 	// the PDF one (hidden when printing). Same URL rules as PDFURL.
 	HTMLDownloadURL string
+
+	// PDFEssentialURL and PDFAdvancedURL, when both are set, replace the
+	// single PDF link with two: "Essential PDF" and "Full PDF". Same URL
+	// rules as PDFURL.
+	PDFEssentialURL string
+	PDFAdvancedURL  string
+
+	// View selects the version shown when the page opens (and therefore
+	// printed): "essential" or "advanced". Empty = options.default_view.
+	// Both versions are always in the page; readers switch at the top.
+	View string
 }
 
 // HTML renders the report as a standalone HTML page (inline CSS and SVG, no

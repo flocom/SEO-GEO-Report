@@ -22,6 +22,7 @@ You export your data (or paste a table, or attach a screenshot), Claude reads it
 - 🤖 **GEO, built in**: traffic from AI assistants is detected automatically in your GA4 sources (chatgpt.com, perplexity.ai, gemini.google.com…), and the report also covers AI citation checks, share of voice, AI Overviews, AI crawler hits and the Bing Webmaster Tools AI Performance report (how often Microsoft Copilot cites your pages, and for which grounding queries).
 - 🛍️ **Google Shopping, when you sell products**: with Google Merchant Center data, a dedicated section shows product clicks and impressions (free listings vs Shopping ads), top products, product feed health (approved / limited / disapproved products and the issues to fix first) and price competitiveness against the market; Part 1 gets a "Google Shopping clicks" card. Nothing is shown without Merchant Center data.
 - 📍 **Local visibility, when you have a Google profile**: with Google Business Profile data (ex Google My Business), a dedicated section explains in plain words what the Google profile is and shows its views per day, where people found you (Google Search or Maps, mobile or desktop), what they did (calls, directions, website clicks, messages, bookings), the local searches that show the profile, the reviews (average rating with stars, star breakdown, new reviews, reply rate, latest reviews kept as written) and the profile checklist; several locations get a comparison table. Part 1 gets a "Google profile actions" card. Nothing is shown without Business Profile data.
+- 🎚️ **Two versions on the same page: Essential and Advanced**: a selector at the top of the report switches between the **Essential** version (cover, Part 1 and a short glossary: what a business owner needs, no dense tables, a PDF of a few pages) and the **Advanced** version (the full report with the detailed analysis). It works without JavaScript, in the downloaded HTML file too, with the keyboard, and printing prints the version on screen. The report opens on the Essential version by default (`options.default_view`, `?view=essential|advanced`, `--view`), and Claude gives both links: online views, essential PDF, full PDF.
 - 🌍 **French and English**: one data file, rendered in either language (`?lang=en`).
 - 📄 **HTML and PDF export**: hosted page, self-contained HTML file (inline CSS and SVG charts, works offline) and print-ready PDF (Chromium is included in the Docker image).
 - 🧠 **Automatic insights**: trends, wins, alerts and a progress index computed from the numbers, on top of the narrative Claude writes.
@@ -154,7 +155,7 @@ or fully local over stdio:
 >
 > **You:** *(attaches the Search Console zip, two GA4 CSV files and pastes a table of AI checks)*
 >
-> **Claude:** *(create_report → import_search_console_csv → import_analytics_csv → set_geo → set_narrative → validate_report → render_report)* Here is your report: online view, HTML and PDF. Key takeaways: Google clicks +36 %, AI-assistant traffic ×2.6 (led by ChatGPT), click-through rate slipping on your most viewed pages…
+> **Claude:** *(create_report → import_search_console_csv → import_analytics_csv → set_geo → set_narrative → validate_report → render_report)* Here is your report, in two versions: Essential (key results, for you) and Advanced (the full analysis, for your team), each online and as a PDF, plus the HTML file. Key takeaways: Google clicks +36 %, AI-assistant traffic ×2.6 (led by ChatGPT), click-through rate slipping on your most viewed pages…
 
 **Tools:** `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_business_profile`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_business_profile_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report`.
 
@@ -166,11 +167,13 @@ or fully local over stdio:
 
 | URL | Content |
 |---|---|
-| `/r/<token>` | online report (`?lang=fr` or `?lang=en`) |
-| `/r/<token>/download` | standalone HTML file, no external dependency |
-| `/r/<token>.pdf` (or `/r/<token>/pdf`) | A4 PDF (`?download=1` to force download) |
+| `/r/<token>` | online report (`?lang=fr` or `?lang=en`; `?view=essential` or `?view=advanced` selects the version shown first; both combine) |
+| `/r/<token>/download` | standalone HTML file with both versions, no external dependency |
+| `/r/<token>.pdf` (or `/r/<token>/pdf`) | A4 PDF: `?view=essential` (cover and key results, a few pages) or `?view=advanced` (full report); default = the report's default version; `?download=1` to force download |
 
-PDFs are rendered by headless Chromium, which ships in the image with Noto, DejaVu and emoji fonts. They are cached and regenerated when the report changes. Outside Docker, Chromium or Google Chrome is auto-detected (`CHROME_PATH` to force one). Without it, the HTML export still works and the PDF error is explained.
+The page holds both versions of the report. `render_report` and `generate_report` return `view_essential_url`, `view_advanced_url`, `pdf_essential_url`, `pdf_advanced_url` and `html_download_url`; `html_url` and `pdf_url` still work and open the default version (`options.default_view`: `essential` by default, or `advanced`; the tools also take a `view` parameter).
+
+PDFs are rendered by headless Chromium, which ships in the image with Noto, DejaVu and emoji fonts. They are cached per language and version, and regenerated when the report changes. Outside Docker, Chromium or Google Chrome is auto-detected (`CHROME_PATH` to force one). Without it, the HTML export still works and the PDF error is explained.
 
 ## Command line
 
@@ -181,6 +184,7 @@ seogeo validate -i data.json                # errors, warnings, completeness
 seogeo render -i data.json -o report.html   # standalone HTML
 seogeo render -i data.json -o report.pdf    # PDF (needs Chromium / Chrome)
 seogeo render -i data.json -o report.html --lang fr --no-favicon
+seogeo render -i data.json -o essential.pdf --view essential   # short PDF (Essential version)
 seogeo import-gsc gsc-export.zip --into data.json -o data.json
 seogeo import-bing bing-exports/ --into data.json -o data.json   # zip, folder or one CSV
 seogeo import-ga4 channels.csv sources.csv --into data.json -o data.json
