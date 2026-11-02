@@ -47,6 +47,15 @@ func prevName(name string) string {
 	return name
 }
 
+// itemDeltaFormat returns the badge formatter of one bar: ChangeFormat bound
+// to its values when set, the relative-change formatter otherwise.
+func itemDeltaFormat(o BarsOpts, df Formatter, cur, prev float64) Formatter {
+	if o.ChangeFormat == nil {
+		return df
+	}
+	return func(float64) string { return o.ChangeFormat(cur, prev) }
+}
+
 func bars(o BarsOpts) template.HTML {
 	W := math.Max(def(o.Width, 720), 200)
 	f := o.Format
@@ -78,7 +87,7 @@ func bars(o BarsOpts) template.HTML {
 		r := textWidth(f(v), valueSize) + 8
 		if o.ShowDelta && it.Previous != nil {
 			if d, ok := delta(v, *it.Previous); ok {
-				r += badgeWidth(d, df) + 8
+				r += badgeWidth(d, itemDeltaFormat(o, df, v, *it.Previous)) + 8
 			}
 		}
 		maxRight = math.Max(maxRight, r)
@@ -166,8 +175,12 @@ func bars(o BarsOpts) template.HTML {
 		vx := end + 8
 		vs := f(it.Value)
 		c.text(vx, cy+valueSize*0.35, vs, valueSize, "", inkPrimary+` font-weight="600" style="font-variant-numeric:tabular-nums"`)
+		idf := df
+		if it.Previous != nil {
+			idf = itemDeltaFormat(o, df, it.Value, *it.Previous)
+		}
 		if o.ShowDelta && hasDelta {
-			badge(&c, vx+textWidth(vs, valueSize)+8, cy, d, df)
+			badge(&c, vx+textWidth(vs, valueSize)+8, cy, d, idf)
 		}
 
 		// Hover zone: highlight the bar and show the details.
@@ -181,7 +194,13 @@ func bars(o BarsOpts) template.HTML {
 			rows = append(rows, tipRow{key: ColorPrevious, name: prevName(o.PreviousLabel), value: f(*it.Previous), muted: true})
 		}
 		if hasDelta {
-			rows = append(rows, tipRow{name: "Δ", value: df(d)})
+			v := df(d)
+			if o.ChangeFormat != nil {
+				if alt := idf(d); alt != v {
+					v = alt + " (" + v + ")"
+				}
+			}
+			rows = append(rows, tipRow{name: "Δ", value: v})
 		}
 		tooltip(&hv, math.Max(xs(it.Value), zero), cy, W, H, it.Label, rows, 12)
 		hv.raw(`</g></g>`)

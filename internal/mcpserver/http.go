@@ -29,6 +29,7 @@ const MaxRequestBytes = 32 << 20
 //	/r/<token>/download      standalone HTML file (attachment)
 //	/r/<token>.pdf           PDF (also /r/<token>/pdf), ?download=1 for attachment
 //	/healthz                 health check
+//	/admin                   update page (when Config.Admin is set)
 //	/                        home page with connection instructions
 func NewHTTPHandler(svc *Service, auth *oauth.Server, logger *slog.Logger) http.Handler {
 	if logger == nil {
@@ -67,6 +68,10 @@ func NewHTTPHandler(svc *Service, auth *oauth.Server, logger *slog.Logger) http.
 	mux.HandleFunc("GET /r/{token}/download", h.download)
 	mux.HandleFunc("GET /r/{token}/pdf", h.pdf)
 	mux.HandleFunc("GET /{$}", h.home)
+	if svc.cfg.Admin != nil {
+		mux.Handle("/admin", svc.cfg.Admin)
+		mux.Handle("/admin/", svc.cfg.Admin)
+	}
 	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
@@ -118,9 +123,14 @@ func (h *httpApp) logRequests(next http.Handler) http.Handler {
 	})
 }
 
+// processStart identifies the running process in /healthz ("started"), so
+// that the /admin page can tell when the container has been restarted.
+var processStart = time.Now().UTC().Format(time.RFC3339)
+
 func (h *httpApp) health(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(map[string]any{"status": "ok", "version": h.svc.cfg.Version})
+	w.Header().Set("Cache-Control", "no-store")
+	_ = json.NewEncoder(w).Encode(map[string]any{"status": "ok", "version": h.svc.cfg.Version, "started": processStart})
 }
 
 // ---------------------------------------------------------------------------
@@ -287,8 +297,8 @@ ol{padding-left:20px;margin:8px 0}li{margin:4px 0}
 <p class="lead">Serveur MCP qui transforme vos exports Google Search Console, GA4 et vos relevés de visibilité dans les IA en un rapport visuel (HTML + PDF), avec Claude.<br>
 <span class="muted">MCP server turning your Search Console, GA4 and AI-visibility data into a visual report (HTML + PDF), with Claude. The tool never connects to Google.</span></p>
 {{with .Update}}<div class="card" style="border-color:var(--accent)"><b>Nouvelle version {{.Tag}} disponible / New version {{.Tag}} available</b> — <a href="{{.URL}}">notes</a><br>
-<span class="muted">Avec le docker-compose.yml fourni, Watchtower l'installe automatiquement dans l'heure. Sinon / Otherwise: <code>docker compose pull &amp;&amp; docker compose up -d</code></span></div>{{end}}
-<p><span class="pill">v{{.Version}}</span><span class="pill">{{if .AuthDisabled}}auth: off{{else}}auth: OAuth + password{{end}}</span><span class="pill">PDF: {{if .PDF}}ready{{else}}unavailable (no Chromium){{end}}</span></p>
+<span class="muted">Avec le docker-compose.yml fourni, Watchtower l'installe automatiquement dans l'heure. Sinon / Otherwise: <code>docker compose pull &amp;&amp; docker compose up -d</code></span>{{if $.Admin}}<br><a href="/admin">Mettre à jour maintenant / Update now →</a>{{end}}</div>{{end}}
+<p><span class="pill">v{{.Version}}</span><span class="pill">{{if .AuthDisabled}}auth: off{{else}}auth: OAuth + password{{end}}</span><span class="pill">PDF: {{if .PDF}}ready{{else}}unavailable (no Chromium){{end}}</span>{{if .Admin}}<a class="pill" href="/admin">Mises à jour / Updates</a>{{end}}</p>
 
 <div class="card"><h2>URL du serveur MCP / MCP server URL</h2>
 <div class="url"><code class="big" id="u">{{.MCPURL}}</code><button onclick="navigator.clipboard.writeText(document.getElementById('u').textContent)">Copier / Copy</button></div>
@@ -344,5 +354,6 @@ func (h *httpApp) home(w http.ResponseWriter, r *http.Request) {
 		"PDF":          pdf.Available(),
 		"Local":        local,
 		"Update":       h.svc.cfg.Updates.Available(),
+		"Admin":        h.svc.cfg.Admin != nil,
 	})
 }

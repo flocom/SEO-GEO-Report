@@ -28,10 +28,16 @@ func (b *builder) geo() *section {
 
 	// AI traffic over time.
 	if dates, vals := b.aiDaily(); len(vals) >= 2 && nonZero(vals) {
-		svg := func(w, h float64) template.HTML {
-			return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: dates, XFormat: b.fmtDateTick, TooltipXFormat: b.fmtDateTip, Series: []charts.Series{{Name: b.t("lbl.ai_sessions"), Values: vals, Color: colorAI, Area: true}}, YFormat: b.fmtCompact(), Title: b.t("chart.ai_daily")})
+		labels, tip, title, sub, hint := dates, b.fmtDateTip, b.t("chart.ai_daily"), "", b.hint("ai_daily")
+		// AI visits are usually a handful a day: weekly points read better.
+		if wantWeekly(vals, false) {
+			w := b.toWeekly(dates, vals, nil, aggSum)
+			labels, vals, tip, title, sub, hint = w.labels, w.cur, w.tip(b.fmtDateTip), b.t("chart.ai_weekly"), b.t("chart.weekly_sub"), b.hint("weekly")
 		}
-		s.Blocks = add(s.Blocks, block{Kind: "chart", Title: b.t("chart.ai_daily"), mk: svg}, 12, b.hint("ai_daily"))
+		svg := func(w, h float64) template.HTML {
+			return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: labels, XFormat: b.fmtDateTick, TooltipXFormat: tip, Series: []charts.Series{{Name: b.t("lbl.ai_sessions"), Values: vals, Color: colorAI, Area: true}}, YFormat: b.fmtCompact(), Title: title})
+		}
+		s.Blocks = add(s.Blocks, block{Kind: "chart", Title: title, Sub: sub, mk: svg}, 12, hint)
 	}
 
 	// AI referrals by platform.

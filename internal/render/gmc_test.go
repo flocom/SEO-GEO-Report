@@ -14,7 +14,7 @@ func TestMerchantCenterSection(t *testing.T) {
 		s := mustRender(t, example.Demo(lang), Options{})
 		ids := sectionIDs(s)
 		i := slices.Index(ids, "sec-merchant_center")
-		if i < 0 || ids[i-1] != "sec-landing_pages" || ids[i+1] != "sec-geo" {
+		if i < 0 || ids[i-1] != "sec-landing_pages" || ids[i+1] != "sec-business_profile" {
 			t.Fatalf("%s: merchant_center section misplaced in %v", lang, ids)
 		}
 		sec := s[strings.Index(s, `id="sec-merchant_center"`):strings.Index(s, `id="sec-geo"`)]
@@ -38,10 +38,11 @@ func TestMerchantCenterSection(t *testing.T) {
 		if !strings.Contains(s, "Google Merchant Center") {
 			t.Errorf("%s: cover sources miss Google Merchant Center", lang)
 		}
-		// Part 1: a seventh key indicator, on one row on desktop.
+		// Part 1: a Google Shopping key indicator (the eighth with the
+		// Google profile card), on one row on desktop.
 		kpis := s[strings.Index(s, `id="sec-kpis"`):]
 		kpis = kpis[:strings.Index(kpis, "</section>")]
-		if !strings.Contains(kpis, `class="kpi-grid bal n-7 big" style="--bd:7;`) || !strings.Contains(kpis, map[string]string{"fr": "Clics Google Shopping", "en": "Google Shopping clicks"}[lang]) {
+		if !strings.Contains(kpis, `class="kpi-grid bal n-8 big" style="--bd:8;`) || !strings.Contains(kpis, map[string]string{"fr": "Clics Google Shopping", "en": "Google Shopping clicks"}[lang]) {
 			t.Errorf("%s: key indicators should hold the Google Shopping clicks card on one row", lang)
 		}
 		if !strings.Contains(s, map[string]string{"fr": "Fiches produits gratuites", "en": "Free listings"}[lang]) {
@@ -57,8 +58,8 @@ func TestMerchantCenterAbsentOrHidden(t *testing.T) {
 	if strings.Contains(s, `id="sec-merchant_center"`) || strings.Contains(s, "Google Shopping clicks") || strings.Contains(s, "Offer ID") {
 		t.Error("no Merchant Center data: no section, no KPI card, no glossary terms")
 	}
-	if !strings.Contains(s, `class="kpi-grid bal n-6 big" style="--bd:6;`) {
-		t.Error("without Merchant Center the key indicators keep six cards on one row")
+	if !strings.Contains(s, `class="kpi-grid bal n-7 big" style="--bd:7;`) {
+		t.Error("without Merchant Center the key indicators keep seven cards (six + Google profile) on one row")
 	}
 
 	r = example.Demo("en")

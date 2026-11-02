@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"net/http"
 	"net/url"
 	"sort"
 	"strings"
@@ -32,6 +33,8 @@ type Config struct {
 	Favicons *favicon.Resolver
 	// Updates reports newer releases on the home page (nil = disabled).
 	Updates *update.Checker
+	// Admin serves the /admin update page in HTTP mode (nil = disabled).
+	Admin http.Handler
 }
 
 // Service holds the shared logic of the MCP tools and the HTTP endpoints.
@@ -208,6 +211,7 @@ func Summarize(rep model.Report) Summary {
 		add("gmc.conversion_value", "Google Shopping conversion value", mc.Totals.ConversionValue)
 		add("gmc.approved_rate", "Approved products in Merchant Center (%)", mc.ProductStatus.ApprovedRate())
 	}
+	gbpSummary(r.BusinessProfile, add)
 	add("geo.ai_sessions", "Sessions from AI assistants", a.AISessions)
 	add("geo.citation_rate", "AI citation rate (%)", a.CitationRate)
 
@@ -279,6 +283,7 @@ func CheckCompleteness(r *model.Report) Completeness {
 	mc := r.MerchantCenter
 	check(mc != nil && mc.HasPerformance(), "merchant_center.totals (or daily)")
 	check(mc != nil && (mc.ProductStatus != nil || len(mc.Issues) > 0), "merchant_center.product_status/issues")
+	gbpCompleteness(r, check, &c)
 	an := r.Analytics
 	check(an != nil && an.Totals.Sessions != nil, "analytics.totals")
 	check(an != nil && an.OrganicTotals != nil, "analytics.organic_totals")

@@ -2,8 +2,8 @@
 //
 // Every value is supplied by the user (or by Claude through MCP): the tool never
 // connects to Google or Bing. Data typically comes from Google Search Console,
-// Bing Webmaster Tools, Google Analytics 4 and Google Merchant Center exports,
-// plus optional manual GEO checks (AI citations).
+// Bing Webmaster Tools, Google Analytics 4, Google Merchant Center and Google
+// Business Profile exports, plus optional manual GEO checks (AI citations).
 //
 // Conventions:
 //   - Dates are "YYYY-MM-DD".
@@ -16,15 +16,16 @@ package model
 
 // Report is the complete input of a report.
 type Report struct {
-	Meta           Meta            `json:"meta" jsonschema:"Report identity: site, period, language, branding"`
-	SearchConsole  *SearchConsole  `json:"search_console,omitempty" jsonschema:"Data exported from Google Search Console (organic Google search performance)"`
-	Bing           *Bing           `json:"bing,omitempty" jsonschema:"Data exported from Bing Webmaster Tools (organic Bing search performance and AI Performance citations in Microsoft Copilot)"`
-	Analytics      *Analytics      `json:"analytics,omitempty" jsonschema:"Data exported from Google Analytics 4 (traffic, engagement, conversions)"`
-	MerchantCenter *MerchantCenter `json:"merchant_center,omitempty" jsonschema:"Data exported from Google Merchant Center (product listings in Google Shopping: free listings and Shopping ads performance, product feed health, price competitiveness). Only for sites that sell products"`
-	GEO            *GEO            `json:"geo,omitempty" jsonschema:"Generative Engine Optimization data: traffic from AI assistants, citation checks in AI answers, share of voice"`
-	Narrative      *Narrative      `json:"narrative,omitempty" jsonschema:"Free text written by the analyst: executive summary, highlights, actions, recommendations, per-section notes"`
-	Sections       []TextSection   `json:"sections,omitempty" jsonschema:"Additional free-text sections (Markdown) inserted anywhere in the report"`
-	Options        *Options        `json:"options,omitempty" jsonschema:"Display options"`
+	Meta            Meta             `json:"meta" jsonschema:"Report identity: site, period, language, branding"`
+	SearchConsole   *SearchConsole   `json:"search_console,omitempty" jsonschema:"Data exported from Google Search Console (organic Google search performance)"`
+	Bing            *Bing            `json:"bing,omitempty" jsonschema:"Data exported from Bing Webmaster Tools (organic Bing search performance and AI Performance citations in Microsoft Copilot)"`
+	Analytics       *Analytics       `json:"analytics,omitempty" jsonschema:"Data exported from Google Analytics 4 (traffic, engagement, conversions)"`
+	MerchantCenter  *MerchantCenter  `json:"merchant_center,omitempty" jsonschema:"Data exported from Google Merchant Center (product listings in Google Shopping: free listings and Shopping ads performance, product feed health, price competitiveness). Only for sites that sell products"`
+	BusinessProfile *BusinessProfile `json:"business_profile,omitempty" jsonschema:"Data from Google Business Profile (ex Google My Business: the business card shown in Google Search and Google Maps with address, opening hours and reviews). Maps to the profile's Performance page (views by Search / Maps and mobile / desktop, calls, website clicks, direction requests, messages, bookings, searches used to find the business) plus reviews and the profile checklist. Several locations are supported. Only for businesses with a profile; put GBP numbers here, never in a free-text section"`
+	GEO             *GEO             `json:"geo,omitempty" jsonschema:"Generative Engine Optimization data: traffic from AI assistants, citation checks in AI answers, share of voice"`
+	Narrative       *Narrative       `json:"narrative,omitempty" jsonschema:"Free text written by the analyst: executive summary, highlights, actions, recommendations, per-section notes"`
+	Sections        []TextSection    `json:"sections,omitempty" jsonschema:"Additional free-text sections (Markdown) inserted anywhere in the report"`
+	Options         *Options         `json:"options,omitempty" jsonschema:"Display options"`
 }
 
 // Meta identifies the report.
@@ -424,7 +425,7 @@ type Narrative struct {
 	Concerns         []string          `json:"concerns,omitempty" jsonschema:"Points of attention, one sentence each"`
 	Actions          []Action          `json:"actions,omitempty" jsonschema:"Work done or in progress during the period"`
 	Recommendations  []Recommendation  `json:"recommendations,omitempty" jsonschema:"Next steps"`
-	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations"`
+	SectionNotes     map[string]string `json:"section_notes,omitempty" jsonschema:"Markdown commentary displayed inside a built-in section. Keys: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, business_profile, geo, technical, actions, recommendations"`
 }
 
 // Action is a task performed for the site.
@@ -451,7 +452,7 @@ type TextSection struct {
 	ID    string `json:"id,omitempty" jsonschema:"Identifier, generated when omitted"`
 	Title string `json:"title" jsonschema:"Section title"`
 	Body  string `json:"body" jsonschema:"Markdown content (lists, tables, links, bold...)"`
-	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
+	After string `json:"after,omitempty" jsonschema:"Built-in section after which this one is inserted: summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, business_profile, geo, technical, actions, recommendations. Use 'start' or 'end'. Defaults to 'end'"`
 	Style string `json:"style,omitempty" jsonschema:"plain, info, success, warning or note. Defaults to plain"`
 }
 
@@ -467,6 +468,6 @@ type Options struct {
 // SectionIDs lists built-in sections in display order.
 var SectionIDs = []string{
 	"summary", "kpis", "search_console", "queries", "pages", "countries_devices", "bing",
-	"analytics", "channels", "landing_pages", "merchant_center", "geo", "technical",
+	"analytics", "channels", "landing_pages", "merchant_center", "business_profile", "geo", "technical",
 	"actions", "recommendations", "glossary",
 }

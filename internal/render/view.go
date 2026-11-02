@@ -84,7 +84,7 @@ func (s *section) RestBlocks() []block { return s.Blocks[s.leadLen():] }
 
 func (s *section) leadLen() int {
 	i := 0
-	for i < len(s.Blocks) && s.Blocks[i].Kind == "callouts" {
+	for i < len(s.Blocks) && (s.Blocks[i].Kind == "callouts" || s.Blocks[i].Kind == "legend") {
 		i++
 	}
 	span := 0
@@ -137,6 +137,10 @@ type block struct {
 	Glossary []i18n.GlossaryEntry
 	Legend   []legendItem
 	Plan     []planItem
+	Score    []scoreRow // part 1 scorecard
+	Tiles    []tile     // part 1 big-number tiles
+	Href     string     // link of the "more in part 2" note (Sub)
+	Foot     string     // one line under a KPI grid (expected changes explained)
 }
 
 // planItem is one line of the "what we did / what's next" summary.
@@ -151,6 +155,8 @@ type planItem struct {
 type legendItem struct {
 	Label string
 	Color template.CSS
+	Tone  string // color-code legend: pos, neg, exp, neu
+	Sign  string
 }
 
 type hero struct {
@@ -168,19 +174,23 @@ type hero struct {
 type deltaView struct {
 	Text  string // main text, e.g. "+12,3 %"
 	Sub   string // secondary text, e.g. "+134"
-	Tone  string // pos, neg, neu
+	Tone  string // pos, neg, neu, exp (expected change, see insights.KPIStatus)
 	Dir   string // up, down, flat
 	Arrow template.HTML
+	Title string // hover detail, e.g. "+500 % · 1 → 6"
 }
 
 type kpiCard struct {
 	Key     string
-	Label   string
+	Label   string // plain-language label ("Visites depuis Google")
+	Term    string // technical term, secondary ("Clics (Search Console)")
 	Value   string
 	Prev    string
 	Explain string
 	Delta   *deltaView
 	Spark   template.HTML
+	Mini    template.HTML // before / after bars when there is no sparkline
+	Note    string        // why a change is expected (amber tone)
 	Tone    string
 	Icon    template.HTML
 	Style   template.CSS // grid placement, set by the template

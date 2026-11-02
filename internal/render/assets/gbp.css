@@ -1,0 +1,41 @@
+/* ---------------------------------------------- local profile (GBP) */
+.gbp-rating { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 6px 0 2px; text-align: center; }
+.gbp-rating-main { display: flex; align-items: baseline; gap: 8px; }
+.gbp-rating-value { font-family: var(--serif); font-size: 64px; line-height: 1; font-weight: 500; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.gbp-rating-of { font-size: 15px; color: var(--muted); }
+.gbp-stars { position: relative; display: inline-block; width: 150px; height: 30px; line-height: 0; }
+.chart .gbp-stars svg, .gbp-stars svg { display: block; width: 150px; height: 30px; max-width: none; margin: 0; overflow: visible; }
+.gbp-stars-fg { position: absolute; left: 0; top: 0; height: 30px; overflow: hidden; }
+.gbp-rating-meta { font-size: 13.5px; color: var(--ink-2); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 6px; }
+.gbp-rating-prev { color: var(--muted); font-size: 12.5px; }
+.gbp-sep { color: var(--faint); }
+.p-warn .plan-ico { color: var(--warn-solid); }
+.plan-card.tone-warn .card-sub { color: var(--warn); }
+.plan-card.tone-pos .card-sub { color: var(--pos); }
+
+/* Eight Part 1 key indicators on one desktop row: tighter type. */
+.big.n-8 .kpi { padding: 13px 11px 11px; }
+.big.n-8 .kpi-value { font-size: clamp(17px, 1.45vw, 21px); }
+.big.n-8 .kpi-label { font-size: 10.5px; letter-spacing: .035em; min-height: 3.6em; }
+.big.n-8 .kpi-explain { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; font-size: 11.5px; }
+.big.n-8 .kpi-delta .delta-sub { display: none; }
+@media screen and (max-width: 1099px) {
+  .big.n-8 .kpi-label { min-height: 0; }
+  .big.n-8 .kpi-value { font-size: 28px; }
+  .big.n-8 .kpi-explain { -webkit-line-clamp: 3; }
+}
+@media screen and (max-width: 640px) {
+  .big.n-8 .kpi-value { font-size: 22px; }
+  .gbp-rating-value { font-size: 52px; }
+}
+@media screen and (prefers-color-scheme: dark) {
+  .gbp-stars svg { filter: none; }
+}
+@media print {
+  .big.n-8 .kpi-label { min-height: 0; font-size: 11px; letter-spacing: .05em; }
+  .big.n-8 .kpi-value { font-size: 28px; }
+  .big.n-8 .kpi-explain { display: block; -webkit-line-clamp: none; }
+  .big.n-8 .kpi-delta .delta-sub { display: inline; }
+  .gbp-rating-value { font-size: 54px; }
+  .gbp-rating { break-inside: avoid; }
+}

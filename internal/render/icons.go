@@ -1,6 +1,9 @@
 package render
 
-import "html/template"
+import (
+	"html/template"
+	"strings"
+)
 
 // Small stroke icons (24×24 grid, currentColor), inlined in the page.
 func icon(paths string) template.HTML {
@@ -63,6 +66,8 @@ func sectionIcon(id string) template.HTML {
 		return icoCompass
 	case "merchant_center":
 		return icoBag
+	case "business_profile":
+		return icoStore
 	case "analytics":
 		return icoChart
 	case "channels":
@@ -83,6 +88,8 @@ func sectionIcon(id string) template.HTML {
 		return icoAI
 	case idPlanGlance:
 		return icoActions
+	case idReview:
+		return icoSummary
 	}
 	return icoText
 }
@@ -130,4 +137,62 @@ func namedIcon(name string) template.HTML {
 		return icoInfo
 	}
 	return ""
+}
+
+// Pictograms of the KPI cards, scorecard rows and tiles (same 24×24 stroke
+// style as the section icons).
+var (
+	icoClick   = icon(`<path d="M9 9l11 4-4.5 1.5L14 19z"/><path d="M5 3.5l1.2 2.3M3 8.5l2.4.6M10.5 2.5l-.4 2.6"/>`)
+	icoEye     = icon(`<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>`)
+	icoPercent = icon(`<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>`)
+	icoPodium  = icon(`<path d="M9 21V9h6v12M3 21v-7h6M15 21v-9h6v9M2 21h20"/><path d="M12 3l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z"/>`)
+	icoUsers   = icon(`<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>`)
+	icoTarget  = icon(`<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>`)
+	icoCoin    = icon(`<circle cx="12" cy="12" r="9"/><path d="M15 8.5a3.5 3.5 0 1 0 0 7M7.5 11h6M7.5 13.5h6"/>`)
+	icoQuote   = icon(`<path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01"/>`)
+	icoPin     = icon(`<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>`)
+	icoHome    = icon(`<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10M10 20v-6h4v6"/>`)
+	icoPages   = icon(`<rect x="7" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10M11 8h5M11 12h5"/>`)
+	icoHeart   = icon(`<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1z"/>`)
+)
+
+// kpiIcon is the pictogram of a KPI key ("gsc.clicks", "ga4.sessions"...).
+func kpiIcon(key string) template.HTML {
+	k := key
+	if i := strings.IndexByte(key, '.'); i >= 0 {
+		k = key[i+1:]
+	}
+	switch {
+	case strings.HasPrefix(key, "gmc."):
+		return icoBag
+	case strings.HasPrefix(key, "gbp."):
+		return icoPin
+	}
+	switch k {
+	case "clicks":
+		return icoClick
+	case "impressions":
+		return icoEye
+	case "ctr":
+		return icoPercent
+	case "position":
+		return icoPodium
+	case "sessions", "users", "new_users":
+		return icoUsers
+	case "organic_sessions":
+		return icoSearch
+	case "engagement_rate", "engaged_sessions", "avg_engagement_time":
+		return icoHeart
+	case "key_events", "conversions":
+		return icoTarget
+	case "revenue", "conversion_value":
+		return icoCoin
+	case "ai_sessions", "ai_share":
+		return icoAI
+	case "citation_rate", "share_of_voice", "aio_cited", "ai_citations", "cited_pages":
+		return icoQuote
+	case "indexed", "not_indexed", "index_rate":
+		return icoPages
+	}
+	return icoChart
 }

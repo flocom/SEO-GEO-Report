@@ -1,0 +1,165 @@
+{{define "head"}}<!doctype html>
+<html lang="{{.Lang}}"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="same-origin">
+<title>{{.T "title"}} — SEO &amp; GEO Report</title>
+<link rel="icon" href="/favicon.ico" type="image/svg+xml">
+<style>
+:root{--bg:#f8fafc;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb;--ok:#15803d;--okbg:#dcfce7;--warn:#b45309;--warnbg:#fef3c7;--err:#dc2626;--errbg:#fee2e2;--code:#f1f5f9}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111827;--fg:#e5e7eb;--muted:#94a3b8;--line:#1f2937;--code:#0f172a;--ok:#4ade80;--okbg:#052e16;--warn:#f59e0b;--warnbg:#3a2a06;--err:#f87171;--errbg:#3b0d0d}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:28px 16px 64px}
+a{color:var(--accent)}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.top h1{margin:0;font-size:22px;flex:1;min-width:180px}
+.top nav{display:flex;gap:12px;align-items:center;font-size:14px}
+.lead{color:var(--muted);margin:4px 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+h2{font-size:16px;margin:0 0 10px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--muted)}dd{margin:0;word-break:break-word}
+@media (max-width:520px){dl{grid-template-columns:1fr}dt{margin-top:6px}}
+code,pre{background:var(--code);border-radius:8px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+code{padding:2px 6px;word-break:break-all}pre{padding:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:8px 0}
+.notes{max-height:320px;overflow:auto;font:13px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);border:1px solid var(--line)}
+.badge{display:inline-block;border-radius:999px;padding:1px 10px;font-size:13px;font-weight:600}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.err{background:var(--errbg);color:var(--err)}.badge.muted{background:var(--code);color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.actions form{margin:0}
+button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:9px 14px;cursor:pointer;font:inherit;font-weight:600}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.link{border:0;background:none;color:var(--accent);padding:0;font-weight:400;font-size:14px}
+.flash{border-radius:10px;padding:10px 14px;margin:14px 0;font-weight:600}
+.flash.ok{background:var(--okbg);color:var(--ok)}.flash.err{background:var(--errbg);color:var(--err)}.flash.info{background:var(--code);color:var(--fg);font-weight:400}
+.muted{color:var(--muted);font-size:13px}.warn{color:var(--warn)}
+details summary{cursor:pointer;color:var(--accent)}
+label{display:block;font-weight:600;margin-bottom:6px}
+input[type=password]{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px}
+input[type=password]:focus{outline:2px solid var(--accent);outline-offset:1px}
+.login{max-width:420px;margin:8vh auto 0}
+</style></head><body><main>{{end}}
+
+{{define "brand"}}<svg width="32" height="32" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7" fill="#2563eb"/><path d="M6 19l5-6 4 3 6-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>{{end}}
+
+{{define "foot"}}</main></body></html>{{end}}
+
+{{define "message"}}{{template "head" .}}
+<div class="login card">
+<div class="top">{{template "brand"}}<h1>SEO &amp; GEO Report</h1></div>
+<p class="flash err">{{.Error}}</p>
+<p><a href="/admin">{{.T "title"}}</a> · <a href="/">{{.T "home"}}</a></p>
+</div>
+{{template "foot"}}{{end}}
+
+{{define "login"}}{{template "head" .}}
+<div class="login card">
+<div class="top">{{template "brand"}}<h1>{{.T "login_title"}}</h1><nav><a href="?lang={{.OtherLang}}" hreflang="{{.OtherLang}}">{{.T "lang_switch"}}</a></nav></div>
+<p class="lead">SEO &amp; GEO Report — {{.T "title"}}</p>
+{{with .Info}}<p class="flash ok">{{.}}</p>{{end}}
+<form method="post" action="/admin/login" autocomplete="off">
+<label for="pw">{{.T "password_label"}}</label>
+<input id="pw" name="password" type="password" autofocus required autocomplete="current-password">
+{{with .Error}}<p class="flash err">{{.}}</p>{{end}}
+<div class="actions"><button class="primary" type="submit">{{.T "login_btn"}}</button></div>
+</form>
+<p class="muted">{{.T "login_help"}}</p>
+<p class="muted"><a href="/">{{.T "home"}}</a></p>
+</div>
+{{template "foot"}}{{end}}
+
+{{define "admin"}}{{template "head" .}}
+<div class="top">{{template "brand"}}<h1>{{.T "title"}}</h1>
+<nav><a href="/">{{.T "home"}}</a><a href="?lang={{.OtherLang}}" hreflang="{{.OtherLang}}">{{.T "lang_switch"}}</a>
+{{if not .AuthDisabled}}<form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{.CSRF}}"><button class="link" type="submit">{{.T "logout"}}</button></form>{{end}}</nav></div>
+<p class="lead">{{.T "subtitle"}}</p>
+{{if .AuthDisabled}}<p class="flash err">{{.T "auth_disabled_warn"}}</p>{{end}}
+{{with .Flash}}<p class="flash {{$.FlashKind}}" role="status">{{.}}</p>{{end}}
+
+{{if .Progress}}<div class="card" id="progress" data-from="{{.FromVersion}}" data-started="{{.StartedUnix}}" data-boot="{{.BootID}}"
+ data-t-restarting="{{.T "progress_restarting"}}" data-t-done="{{.T "progress_done" "%s"}}" data-t-restarted="{{.T "progress_restarted" "%s"}}"
+ data-t-nothing="{{.T "progress_nothing"}}" data-t-failed="{{.T "progress_failed"}}" data-t-timeout="{{.T "progress_timeout"}}">
+<h2>{{.T "sec_update"}}</h2>
+{{if .ProgressDone}}<p class="flash ok" role="status">{{.ProgressDone}}</p>{{else}}
+<p class="flash info" id="progress-msg" role="status" aria-live="polite">{{.T "progress_started"}}</p>
+<noscript><p class="muted">{{.T "progress_noscript"}}</p></noscript>{{end}}
+<p class="muted"><a href="/admin">{{.T "reload"}}</a></p>
+</div>{{end}}
+
+<div class="card"><h2>{{.T "sec_version"}}</h2>
+<dl>
+<dt>{{.T "current_version"}}</dt><dd><b>v{{.S.Version}}</b></dd>
+<dt>{{.T "build"}}</dt><dd>{{.S.GoVersion}} · {{.S.Platform}}{{with .S.Revision}} · {{.}}{{end}}{{with .S.BuildTime}} · {{.}}{{end}}</dd>
+<dt>{{.T "uptime"}}</dt><dd>{{.Uptime}} <span class="muted">({{.T "started" .StartedAt}})</span></dd>
+</dl></div>
+
+<div class="card"><h2>{{.T "sec_latest"}}</h2>
+<dl>
+<dt>{{.T "status"}}</dt><dd><span class="badge {{.StatusClass}}">{{.StatusText}}</span></dd>
+{{with .S.Update.Latest}}<dt>Version</dt><dd><b>{{.Tag}}</b>{{if and .Name (ne .Name .Tag)}} — {{.Name}}{{end}}</dd>
+{{if $.Published}}<dt>{{$.T "published"}}</dt><dd>{{$.Published}}</dd>{{end}}{{end}}
+<dt>{{.T "last_check"}}</dt><dd>{{.LastCheck}}{{with .S.Update.LastError}} — <span class="warn">{{$.T "check_error" .}}</span>{{end}}</dd>
+</dl>
+{{with .S.Update.Latest}}{{if .Notes}}<details{{if eq $.S.Update.Status "available"}} open{{end}}><summary>{{$.T "notes"}}</summary>
+<pre class="notes">{{.Notes}}</pre>{{if .NotesTruncated}}<p class="muted">{{$.T "notes_truncated"}}</p>{{end}}</details>{{end}}
+<p><a href="{{.URL}}" rel="noopener noreferrer" target="_blank">{{$.T "view_release"}}</a></p>{{end}}
+<p class="muted">{{if .S.Update.AutoCheck}}{{.T "auto_check_on"}}{{else}}{{.T "auto_check_off"}}{{end}}</p>
+<div class="actions"><form method="post" action="/admin/check"><input type="hidden" name="csrf" value="{{.CSRF}}"><button type="submit">{{.T "btn_check"}}</button></form></div>
+</div>
+
+<div class="card"><h2>{{.T "sec_update"}}</h2>
+<dl><dt>{{.T "auto_updates"}}</dt><dd>
+{{$wt := .S.Watchtower.State}}<span class="badge {{if eq $wt "ok"}}ok{{else if eq $wt "not_configured"}}muted{{else}}err{{end}}">{{.T (printf "wt_%s" $wt)}}</span>
+{{with .S.Watchtower.Detail}}<span class="muted">({{.}})</span>{{end}}
+{{if eq $wt "unauthorized"}}<br><span class="muted">{{.T "wt_hint_unauthorized"}}</span>{{end}}
+{{with .S.Job}}{{with .Summary}}<br><span class="muted">{{$.T "wt_last_job" $.JobTime .Scanned .Updated .Failed}}</span>{{end}}{{end}}
+</dd></dl>
+
+{{if eq .Mode "source"}}
+<h2 style="margin-top:14px">{{.T "source_title"}}</h2><p>{{.T "source_help"}}</p>
+<pre>git pull
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build</pre>
+{{else if eq .Mode "binary"}}
+<h2 style="margin-top:14px">{{.T "binary_title"}}</h2><p>{{.T "binary_help"}} <a href="https://github.com/flocom/SEO-GEO-Report/releases/latest" rel="noopener noreferrer" target="_blank">GitHub Releases</a></p>
+{{else}}
+{{if .S.CanUpdate}}<p class="muted">{{.T "update_help"}}</p>
+{{if ne .S.Update.Status "available"}}<p class="warn">{{.T "force_warning"}}</p>{{end}}{{end}}
+<div class="actions"><form method="post" action="/admin/update"><input type="hidden" name="csrf" value="{{.CSRF}}">
+<button{{if eq .S.Update.Status "available"}} class="primary"{{end}} type="submit"{{if not .S.CanUpdate}} disabled{{end}}>{{if or (eq .S.Update.Status "available") (not .S.CanUpdate)}}{{.T "btn_update"}}{{else}}{{.T "btn_force"}}{{end}}</button></form></div>
+{{if not .S.CanUpdate}}
+<h2 style="margin-top:16px">{{.T "manual_title"}}</h2><p>{{.T "manual_docker"}}</p>
+<pre>docker compose pull && docker compose up -d</pre>
+{{if eq $wt "not_configured"}}<details><summary>{{.T "enable_title"}}</summary><p class="muted">{{.T "enable_help"}}</p><pre>{{.Snippet}}</pre></details>{{end}}
+{{end}}
+{{end}}
+</div>
+<p class="muted">{{.T "api_hint"}}</p>
+{{if .Progress}}{{if not .ProgressDone}}<script nonce="{{.Nonce}}">
+(function(){
+  var box=document.getElementById('progress'), msg=document.getElementById('progress-msg');
+  if(!box||!msg)return;
+  var d=box.dataset, from=d.from, boot=d.boot, startedID=parseInt(d.started,10);
+  var deadline=Date.now()+5*60*1000, down=false;
+  function show(text,cls){msg.textContent=text;msg.className='flash '+(cls||'info');}
+  function finish(text,cls){show(text,cls);var a=document.createElement('a');a.href='/admin';a.textContent=' ↻';msg.appendChild(a);}
+  function later(){setTimeout(tick,3000);}
+  function tick(){
+    if(Date.now()>deadline){show(d.tTimeout,'err');return;}
+    fetch('/healthz',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+      if(!j){down=true;show(d.tRestarting);return later();}
+      var v=String(j.version||'').replace(/^v/,'');
+      if(from&&j.version&&j.version!==from){finish(d.tDone.replace('%s',v),'ok');return;}
+      if(j.started&&boot&&j.started!==boot){finish(d.tRestarted.replace('%s',v),'ok');return;}
+      return fetch('/admin/api/status',{cache:'no-store',credentials:'same-origin'}).then(function(r){return r.ok?r.json():null;}).then(function(s){
+        var job=s&&s.job;
+        if(job&&job.id===startedID){
+          var sum=job.summary||{};
+          if(job.state==='failed'||sum.failed>0||sum.scan_failed){finish(d.tFailed+(job.error?' ('+job.error+')':''),'err');return;}
+          if(job.state==='done'&&!sum.updated){finish(d.tNothing,'ok');return;}
+        }
+        later();
+      });
+    }).catch(function(){down=true;show(d.tRestarting);later();});
+  }
+  setTimeout(tick,2000);
+})();
+</script>{{end}}{{end}}
+{{template "foot"}}{{end}}

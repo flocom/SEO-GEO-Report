@@ -4,6 +4,107 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-02
+
+### Added
+- Google Business Profile section ("Fiche Google (Google Business Profile)" /
+  "Google Business Profile (local visibility)"), displayed only when Business
+  Profile data is provided, between Google Shopping and AI visibility: a
+  plain-language explanation of the Google profile, views, interactions,
+  calls, direction requests and website clicks with a daily chart, where
+  people found the profile (Google Search or Maps, mobile or desktop), what
+  they did (calls, website, directions, messages, bookings), the local
+  searches that show the profile ("<15" thresholds kept), reviews (big
+  average rating with stars, star breakdown, new reviews, reply rate, latest
+  reviews kept as customers wrote them), the profile checklist and publishing
+  activity, and a comparison table when the business has several locations.
+  Part 1 gets a "Google profile actions" card (the key indicators then hold
+  up to eight cards, still on one row on desktop).
+- `business_profile` in the report format (locations, totals, daily series,
+  search keywords, reviews, posts, photos, profile completeness, checklist;
+  views and interactions are derived from their parts), MCP tools
+  `set_business_profile` and `import_business_profile_csv`, CLI command
+  `import-gbp` (Performance / bulk insights export per location, daily
+  metrics, search keywords, reviews; French or English headers).
+- Business Profile figures feed the KPI tones, the automatic insights (views
+  and actions trend, fastest-growing action, Maps vs Search and mobile
+  shares, rating and new reviews, unanswered reviews, top local search,
+  missing profile information) and the progress index with a modest weight
+  (interactions, 0.05); up to three automatic insights are kept for the
+  section. Glossary entries for the local terms (shown only with Business
+  Profile data); the demo reports include the Lyon showroom profile.
+- The guide, the server instructions and the prompt tell the assistant to
+  put Google Business Profile, Bing and Merchant Center figures in their
+  native sections, never in a free-text section.
+
+- /admin page to check for updates and update in one click: sign-in with
+  the access password (same rate limit as the OAuth login, signed
+  `HttpOnly` / `SameSite=Strict` session cookie, CSRF tokens, origin checks,
+  `no-store`), French or English. It shows the installed version, build and
+  uptime, the latest GitHub release (date, release notes, link), "Up to date"
+  / "Update available", the last check and whether Watchtower is reachable.
+  "Check for updates" queries GitHub right away (at most once a minute);
+  "Update now" asks Watchtower to pull the new image and restart the service,
+  then the page follows the restart and shows "Updated to vX". When one-click
+  updates are not available (older compose file, source build, binary), the
+  page explains the manual steps. JSON API: `GET /admin/api/status`,
+  `POST /admin/api/update` (Bearer access password). Linked from the home
+  page; `/healthz` now also returns the process start time.
+- `docker-compose.yml` enables the Watchtower HTTP API (update + status
+  endpoints, hourly polls kept), reachable only on the internal compose
+  network and protected by a random token generated at first start by a
+  one-shot `watchtower-token` service (shared `watchtower-api` volume):
+  nothing to configure, and the seogeo container still has no access to the
+  Docker socket. Optional `WATCHTOWER_HTTP_API_TOKEN` and `WATCHTOWER_URL`.
+
+### Changed
+- Beginner-friendly Part 1, visual first: a compact color code shown once
+  (▲ good news, ▼ to watch, ● expected / normal, ▶ stable) replaces the long
+  "How to read these indicators?" paragraph; the progress verdict is followed
+  by a channel-by-channel scorecard (Google, your website, AI assistants,
+  Bing, Google Shopping, Google profile, each with a pictogram, the key
+  figure, a colored traffic light and a plain status such as "More visits
+  from Google"; new channels register with one function call) and by big
+  "Key takeaways" tiles (the three strongest wins and up to two points to
+  watch). The executive summary becomes a lighter pull quote, and Part 1
+  keeps at most four highlights and two concerns: the complete lists open
+  Part 2 in a new "Highlights and points of attention" section.
+- KPI cards use plain-language titles with the technical term below
+  ("Visits from Google" / "Clicks (Search Console)", "Appearances in Google"
+  / "Impressions", "Average ranking" / "Average position"...), a pictogram,
+  a CTR explained in words ("Out of 100 appearances in Google, about 3 turn
+  into a visit") and, without daily data, a before / after mini bar so that
+  cards stay balanced.
+- Readable changes everywhere (KPI cards, scorecard, tiles, table and chart
+  badges, automatic insights), with one rule (`insights.ChangeKind`): a small
+  base shows the absolute change ("+5" instead of "+500 %"), a figure
+  multiplied by 3 or more a multiplier ("×3.8", "×47"); the percentage stays
+  in the hover text. Visible percentages never exceed +200 %.
+- Expected declines are no longer red: when impressions jump (> +50 %) with
+  more ranking queries and stable or rising clicks, a worse average position
+  and click-through rate are the normal dilution effect. Their cards get a
+  short amber "Normal" pill (the explanation is in the hover text and for
+  screen readers) and one amber line under the key indicators explains them
+  once; card contents use fixed slots so that a row stays compact and
+  aligned. The CTR alert insight is
+  replaced by an explanation, and the position no longer lowers the progress
+  index (`KPIStatus.Expected` / `KPIStatus.Note`, also for Bing).
+- GA4 channel names are translated in French ("Organic Search" →
+  "Recherche naturelle", "Direct" → "Accès direct", "Referral" → "Sites
+  référents", "AI Assistant" → "Assistants IA"...) in charts, tables and
+  insights (`i18n.ChannelName`; unknown custom channels are kept as is).
+- Tiny volumes (under 5 a day) and, in Part 1, periods over 60 days are
+  charted per week (with the week range in tooltips) instead of day by day,
+  including KPI sparklines; Part 2 keeps daily charts when volumes allow.
+- Part 1 AI section: with one or two assistants, big-number tiles (visits
+  and change, share of traffic, citations found in AI answers or in Copilot)
+  replace the lonely bar chart.
+- Part 1 chart captions are one sentence; tests check that every message is
+  translated (no empty or untranslated-looking text, including the messages
+  merged from other files) and that no French UI text leaks into English
+  reports and vice versa, whether the language comes from `meta.language` or
+  from the render override.
+
 ## [0.2.0] - 2026-10-20
 
 ### Added

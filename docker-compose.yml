@@ -5,7 +5,12 @@
 #
 # No variable is required (optional ones: see .env.example).
 # Watchtower checks GHCR every hour and updates ONLY the seogeo container
-# when a new release is published. To build from source instead, use:
+# when a new release is published. The /admin page of the server can also
+# check for updates and ask Watchtower to update right away, through
+# Watchtower's HTTP API: that API is reachable only on the internal compose
+# network (its port is never published) and protected by a random token
+# generated at first start by the watchtower-token service.
+# To build from source instead, use:
 #   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 services:
   seogeo:
@@ -14,9 +19,14 @@ services:
       - "8080:8080"
     volumes:
       - seogeo-data:/data
+      - watchtower-api:/run/watchtower:ro
     env_file:
       - path: .env
         required: false
+    environment:
+      # Token of the Watchtower HTTP API used by the /admin "Update now" button
+      # (a file path, read like Watchtower does). Never sent to the browser.
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN:-/run/watchtower/token}
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     restart: unless-stopped
@@ -28,9 +38,28 @@ services:
     command: --label-enable --cleanup
     environment:
       WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-3600}
+      # HTTP API for the /admin page (port 8080 inside this container, not
+      # published): POST /v1/update triggers an update, /v1/status reports
+      # the last run. Periodic polls are kept, so hourly updates still happen.
+      WATCHTOWER_HTTP_API_ENDPOINTS: update,metrics
+      WATCHTOWER_HTTP_API_PERIODIC_POLLS: "true"
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN:-/run/watchtower/token}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - watchtower-api:/run/watchtower:ro
+    depends_on:
+      watchtower-token:
+        condition: service_completed_successfully
     restart: unless-stopped
+
+  # One-shot job: generates the random Watchtower API token shared by seogeo
+  # and watchtower (kept in the watchtower-api volume, readable only by them).
+  watchtower-token:
+    image: mirror.gcr.io/library/busybox:1.37
+    command: ["sh", "-c", "umask 077; f=/run/watchtower/token; [ -s $$f ] || head -c 32 /dev/urandom | od -An -tx1 | tr -dc 0-9a-f > $$f; chown 10001:10001 $$f"]
+    volumes:
+      - watchtower-api:/run/watchtower
+    restart: "no"
 
   # ---------------------------------------------------------------------------
   # Optional: public HTTPS URL with a Cloudflare Tunnel (needed by claude.ai).
@@ -61,3 +90,4 @@ services:
 
 volumes:
   seogeo-data:
+  watchtower-api:

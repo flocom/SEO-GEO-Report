@@ -2,13 +2,14 @@
 
 🇬🇧 [English version](README.md)
 
-Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools), **trafic** (Google Analytics 4), **Google Shopping** (Google Merchant Center, si vous vendez des produits) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
+Des rapports de visibilité **SEO** (Google Search Console, Bing Webmaster Tools), **trafic** (Google Analytics 4), **Google Shopping** (Google Merchant Center, si vous vendez des produits), **visibilité locale** (fiche Google Business Profile) et **GEO** (visibilité dans les assistants IA : ChatGPT, Perplexity, Gemini, AI Overviews…), bilingues FR/EN et très visuels, générés **avec Claude**.
 
 - Vous exportez vos données (ou vous les collez / faites une capture), Claude les comprend, remplit le rapport et rédige l'analyse.
 - Le serveur produit un **rapport HTML hébergé** (lien partageable), un **fichier HTML autonome** à télécharger et un **PDF** A4.
 - **L'outil ne se connecte jamais à Google** : il ne fait que mettre en forme les données fournies.
 - Fonctionne comme **serveur MCP** : connecteur personnalisé claude.ai (connexion OAuth automatique), Claude Desktop, Claude Code, ou en ligne de commande.
 - Pour les sites marchands, les données **Google Merchant Center** ajoutent une section « Google Shopping » : clics et impressions des produits (fiches gratuites et annonces Shopping), meilleurs produits, santé du flux produits (produits approuvés, limités, refusés et problèmes à corriger en priorité) et compétitivité prix ; la partie 1 reçoit une carte « Clics Google Shopping ». Sans données Merchant Center, rien ne s'affiche.
+- Pour les commerces et établissements locaux, les données **Google Business Profile** (ex Google My Business) ajoutent une section « Fiche Google » : ce qu'est la fiche expliqué simplement, vues par jour, où les clients vous ont trouvé (recherche Google ou Google Maps, mobile ou ordinateur), ce qu'ils ont fait (appels, itinéraires, clics vers le site, messages, réservations), recherches locales qui affichent la fiche, avis (note moyenne en étoiles, répartition des notes, nouveaux avis, taux de réponse, derniers avis tels que rédigés) et complétude de la fiche ; plusieurs établissements sont comparés dans un tableau. La partie 1 reçoit une carte « Actions sur la fiche Google ». Sans données Business Profile, rien ne s'affiche.
 - Le favicon du site est récupéré automatiquement et intégré au rapport ; l'image Docker se met à jour toute seule (Watchtower).
 
 ![Aperçu du rapport](docs/screenshot-overview.png)
@@ -34,11 +35,34 @@ C'est tout : **aucune variable n'est obligatoire**. Au premier démarrage, un mo
 
 Ouvrez <http://localhost:8080> : la page d'accueil affiche l'URL MCP détectée et les instructions de connexion.
 
-Les variables optionnelles sont décrites dans [`.env.example`](.env.example) (copiez-le en `.env` si besoin) : `ACCESS_PASSWORD`, `PUBLIC_URL`, `PORT`, `AUTH_DISABLED`, `MCP_APPS`, `CHROME_PATH`, `UPDATE_CHECK`, `FAVICON_ALLOW_PRIVATE`, `WATCHTOWER_POLL_INTERVAL`, `OAUTH_REDIRECT_ALLOWLIST`.
+Les variables optionnelles sont décrites dans [`.env.example`](.env.example) (copiez-le en `.env` si besoin) : `ACCESS_PASSWORD`, `PUBLIC_URL`, `PORT`, `AUTH_DISABLED`, `MCP_APPS`, `CHROME_PATH`, `UPDATE_CHECK`, `FAVICON_ALLOW_PRIVATE`, `WATCHTOWER_POLL_INTERVAL`, `WATCHTOWER_HTTP_API_TOKEN`, `WATCHTOWER_URL`, `OAUTH_REDIRECT_ALLOWLIST`.
 
 ### Mises à jour automatiques
 
 Le `docker-compose.yml` inclut [Watchtower](https://github.com/nicholas-fedor/watchtower) (fork maintenu) : toutes les heures (`WATCHTOWER_POLL_INTERVAL`, en secondes), il vérifie si une nouvelle image `ghcr.io/flocom/seo-geo-report:latest` a été publiée et redémarre **uniquement** le conteneur seogeo (label `com.centurylinklabs.watchtower.enable=true`). Les données du volume sont conservées. Le serveur vérifie aussi les nouvelles versions sur GitHub toutes les 6 h et l'indique sur la page d'accueil et dans les logs (`UPDATE_CHECK=false` pour désactiver). Mise à jour manuelle : `docker compose pull && docker compose up -d`.
+
+### Page /admin : vérifier et mettre à jour en un clic
+
+Ouvrez `https://<votre-serveur>/admin` (lien aussi sur la page d'accueil) et connectez-vous avec le **mot de passe d'accès**. La page, en français ou en anglais, affiche :
+
+- la version installée, le build et la durée de fonctionnement ;
+- la dernière version publiée sur GitHub (tag, date, notes de version, lien) et l'état : **À jour** / **Mise à jour disponible**, avec l'heure de la dernière vérification ;
+- si les mises à jour automatiques (Watchtower) sont configurées et joignables.
+
+Boutons :
+
+- **Rechercher les mises à jour** interroge GitHub immédiatement (au plus une fois par minute).
+- **Mettre à jour maintenant** demande à Watchtower de télécharger la nouvelle image et de redémarrer le service (1 à 3 minutes ; rapports et mot de passe conservés). La page suit le redémarrage toute seule et affiche « Mis à jour vers vX ». Si aucune nouvelle version n'est annoncée, le bouton devient **Forcer la mise à jour** (nouveau téléchargement du même tag).
+
+Fonctionnement : le conteneur seogeo n'a jamais accès au socket Docker. Il appelle l'API HTTP de Watchtower (`POST /v1/update`), activée dans le `docker-compose.yml` fourni en conservant les vérifications horaires, joignable **uniquement sur le réseau interne de compose** (port non publié) et protégée par un jeton aléatoire généré au premier démarrage par le service ponctuel `watchtower-token` et partagé via le volume `watchtower-api`. Rien à configurer. En option : `WATCHTOWER_HTTP_API_TOKEN` (votre propre jeton, ou un chemin de fichier, pour les deux services) et `WATCHTOWER_URL` (par défaut `http://watchtower:8080`), voir [`.env.example`](.env.example).
+
+Quand la mise à jour en un clic n'est pas disponible, la page indique quoi faire :
+
+- **ancien fichier compose** (sans API Watchtower) : reprenez le nouveau `docker-compose.yml`, ou collez l'extrait affiché sur la page ;
+- **compilé depuis les sources** (`docker-compose.build.yml`) : `git pull`, puis `docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build` ;
+- **exécutable hors Docker** : téléchargez la nouvelle version.
+
+Automatisation : `GET /admin/api/status` (JSON) et `POST /admin/api/update` avec `Authorization: Bearer <mot de passe d'accès>`.
 
 ### Détection automatique de l'URL
 
@@ -129,13 +153,13 @@ ou entièrement en local (stdio, via Docker ou le binaire) :
 
 > **Vous** : Fais-moi le rapport SEO & GEO de maison-lumen.fr pour juillet–septembre, comparé au trimestre précédent, en français.
 >
-> **Claude** : *(lit le guide)* Pour cela j'ai besoin de : 1) l'export Search Console (Performances → Résultats de recherche → dates « Comparer » → Exporter) ; 2) l'export GA4 (Acquisition de trafic par groupe de canaux et par source/support, pages de destination) ; 3) si vous vendez des produits, vos exports Google Merchant Center (performances par produit et par jour, produits avec leur état, problèmes, compétitivité prix) ; 4) si vous en avez, quelques tests dans ChatGPT / Perplexity / Gemini : votre site est-il cité ?
+> **Claude** : *(lit le guide)* Pour cela j'ai besoin de : 1) l'export Search Console (Performances → Résultats de recherche → dates « Comparer » → Exporter) ; 2) l'export GA4 (Acquisition de trafic par groupe de canaux et par source/support, pages de destination) ; 3) si vous vendez des produits, vos exports Google Merchant Center (performances par produit et par jour, produits avec leur état, problèmes, compétitivité prix) ; 4) si vous avez une boutique ou un local, les chiffres de votre fiche Google Business Profile (page Performances : vues, appels, itinéraires, clics vers le site, recherches ; avis) ; 5) si vous en avez, quelques tests dans ChatGPT / Perplexity / Gemini : votre site est-il cité ?
 >
 > **Vous** : *(joint le zip Search Console, deux CSV GA4 et colle un tableau de tests)*
 >
 > **Claude** : *(create_report → import_search_console_csv × 6 → import_analytics_csv × 2 → set_geo → set_narrative → validate_report → render_report)* Voici votre rapport : lien en ligne, HTML et PDF. Points clés : clics Google +36 %, trafic depuis les IA ×2,6 (ChatGPT en tête), CTR en baisse sur les pages les plus vues…
 
-Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
+Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_search_console`, `set_bing`, `set_analytics`, `set_merchant_center`, `set_business_profile`, `set_geo`, `set_narrative`, `add_text_section`, `update_text_section`, `remove_text_section`, `set_options`, `import_search_console_csv`, `import_bing_csv`, `import_merchant_center_csv`, `import_business_profile_csv`, `import_analytics_csv`, `validate_report`, `render_report`, `generate_report`, `get_report`, `list_reports`, `duplicate_report`, `delete_report` ; prompt `create_seo_geo_report` ; ressources `seogeo://guide`, `seogeo://schema`, `seogeo://example/fr`, `seogeo://example/en`.
 
 **MCP Apps** : sur les hôtes compatibles, `render_report` / `generate_report` affichent le rapport directement dans la conversation (ressource `ui://seogeo/report-viewer.html`). Désactivable avec `MCP_APPS=false` ; les autres hôtes reçoivent simplement les liens.
 
@@ -163,6 +187,7 @@ seogeo import-gsc export-gsc.zip --into data.json -o data.json
 seogeo import-bing exports-bing/ --into data.json -o data.json   # zip, dossier ou un seul CSV Bing Webmaster Tools
 seogeo import-ga4 canaux.csv sources.csv --into data.json -o data.json
 seogeo import-gmc produits.csv jours.csv statuts.csv problemes.csv --into data.json -o data.json   # exports Merchant Center
+seogeo import-gbp performances.csv mots-cles.csv avis.csv --into data.json -o data.json      # exports Business Profile
 seogeo serve            # serveur HTTP (MCP /mcp, OAuth, hébergement des rapports)
 seogeo mcp              # serveur MCP stdio
 seogeo version
@@ -179,11 +204,14 @@ Un rapport est un document JSON (`seogeo schema` pour le schéma complet, `examp
 - `bing` : données Bing Webmaster Tools : totaux, séries quotidiennes, mots-clés et pages (même structure que `search_console`), `ai_performance` (citations dans Copilot, pages citées, requêtes d'ancrage, citations par jour) ;
 - `analytics` : totaux (tous canaux et recherche organique), séries quotidiennes, canaux, sources/supports (les assistants IA y sont détectés automatiquement), pages de destination ;
 - `merchant_center` (facultatif) : données Google Merchant Center : totaux (clics, impressions, CTR, conversions, valeur), séries quotidiennes, programmes (fiches gratuites, annonces Shopping…), produits, catégories, marques, pays, `product_status` (approuvés / limités / refusés / en attente), `issues` (problèmes du flux), `price_benchmarks` (prix vs prix de référence) ;
+- `business_profile` (facultatif) : fiche Google Business Profile : totaux (vues réparties entre recherche Google / Google Maps et mobile / ordinateur, interactions, appels, clics vers le site, demandes d'itinéraire, messages, réservations, commandes), `locations` (un établissement par ligne), séries quotidiennes, `search_keywords` (avec `below_threshold` pour « <15 »), `reviews` (note moyenne, nombre d'avis, nouveaux avis, taux de réponse, répartition des notes, derniers avis), publications, photos, `profile_completeness`, `checklist` ;
 - `geo` : trafic venant des IA, tests de citations, part de voix, AI Overviews, robots IA ;
 - `narrative` : synthèse, points forts, points d'attention, actions, recommandations, commentaires par section ;
 - `sections` : sections Markdown libres ; `options` : affichage.
 
 Exports Google Merchant Center à fournir (facultatif, avec une période de comparaison) : performances par produit, par jour et par méthode marketing (fiches gratuites / annonces Shopping), éventuellement par catégorie ou pays ; Produits → Tous les produits (téléchargement avec l'état de chaque produit) ; Produits → À traiter (problèmes et nombre de produits concernés) ; Compétitivité prix (votre prix comparé au prix de référence). Les CSV s'importent tels quels, en français ou en anglais.
+
+Fiche Google Business Profile à fournir (facultatif, pour les établissements locaux) : la page **Performances** de la fiche sur la période (vues par recherche Google / Google Maps et mobile / ordinateur, appels, demandes d'itinéraire, clics vers le site, messages, réservations, recherches utilisées pour trouver l'établissement), les avis (note moyenne, nombre d'avis, nouveaux avis, taux de réponse, quelques avis récents) et la liste des informations renseignées. Avec plusieurs établissements, l'export groupé « Statistiques » donne une ligne par code de magasin. Les CSV (performances, métriques quotidiennes, mots-clés, avis) s'importent tels quels, en français ou en anglais. Claude range ces chiffres dans la section dédiée, jamais dans une section de texte libre.
 
 Conventions : **pourcentages en pourcent** (3,2 % → `3.2`), dates `AAAA-MM-JJ`, durées en secondes, chaque indicateur sous la forme `{"current": …, "previous": …}` (la valeur précédente alimente les visuels de progression).
 
@@ -196,4 +224,5 @@ Conventions : **pourcentages en pourcent** (3,2 % → `3.2`), dates `AAAA-MM-JJ`
 - Les en-têtes `X-Forwarded-*` sont pris en compte sans liste de proxys de confiance (pour la détection automatique) ; ils n'influencent que les URLs renvoyées à celui qui les envoie.
 - Le conteneur tourne en utilisateur non-root ; les données sont dans le volume `seogeo-data` (`/data`).
 - La récupération du favicon refuse les adresses privées, locales et de métadonnées cloud (protection SSRF, `FAVICON_ALLOW_PRIVATE=true` pour un intranet), limite la taille des fichiers et rejette les SVG contenant du script ou des références externes.
-- Watchtower a accès au socket Docker : retirez le service `watchtower` si vous préférez mettre à jour manuellement.
+- Watchtower a accès au socket Docker : retirez le service `watchtower` si vous préférez mettre à jour manuellement. Son API HTTP (utilisée par `/admin`) n'est jamais publiée hors du réseau compose et exige un jeton aléatoire, qui n'est jamais envoyé au navigateur.
+- `/admin` est protégé par le mot de passe d'accès (même limitation des tentatives que la connexion OAuth), avec un cookie de session `HttpOnly`, `SameSite=Strict` (8 h, `Secure` en HTTPS), des jetons CSRF et un contrôle d'origine sur chaque action, et des pages `no-store`.

@@ -1,10 +1,13 @@
 package render
 
 import (
+	"html/template"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/flocom/SEO-GEO-Report/internal/charts"
+	"github.com/flocom/SEO-GEO-Report/internal/i18n"
 	"github.com/flocom/SEO-GEO-Report/internal/insights"
 	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
@@ -13,21 +16,71 @@ import (
 // KPI cards
 
 func (b *builder) card(key, labelKey string, value string, m *model.Metric, prevFmt func(float64) string, d *deltaView) kpiCard {
-	c := kpiCard{Key: key, Label: b.t("kpi." + labelKey + ".label"), Value: value, Delta: d}
+	c := kpiCard{Key: key, Label: b.t("kpi." + labelKey + ".label"), Value: value, Delta: d, Icon: kpiIcon(key)}
+	// Plain-language title first, the technical term as a small subtitle.
+	if i18n.Has("kpi." + labelKey + ".plain") {
+		c.Term = c.Label
+		if i18n.Has("kpi." + labelKey + ".term") {
+			c.Term = b.t("kpi." + labelKey + ".term")
+		}
+		c.Label = b.t("kpi." + labelKey + ".plain")
+	}
 	if b.hints {
 		c.Explain = b.t("kpi." + labelKey + ".explain")
+		if isCTRKey(labelKey) && m != nil {
+			c.Explain = b.per100(m.Current)
+		}
 	}
 	if m != nil && m.Previous != nil && prevFmt != nil {
 		c.Prev = b.tf("kpi.prev", prevFmt(*m.Previous))
 	}
 	if st, ok := b.an.KPIs[key]; ok && st.HasDelta && c.Delta != nil {
 		c.Delta.Tone = toneFromInsights(st.Tone)
+		if st.Expected {
+			c.Delta.Tone = "exp"
+			c.Note = st.Note
+		}
 		c.Delta.Arrow = arrowFor(c.Delta.Dir, c.Delta.Tone)
 	}
 	if c.Delta != nil {
 		c.Tone = c.Delta.Tone
 	}
+	// A small before / after visual keeps cards without daily data as full
+	// as their neighbours (not for positions: a longer bar would be worse).
+	if m != nil && m.Previous != nil && !strings.HasSuffix(labelKey, "position") {
+		c.Mini = b.miniBars(m.Current, *m.Previous, c.Tone)
+	}
 	return c
+}
+
+func isCTRKey(k string) bool { return k == "ctr" || strings.HasSuffix(k, "_ctr") }
+
+// per100 explains a click-through rate in words: "Sur 100 affichages,
+// environ 3 clics."
+func (b *builder) per100(ctr float64) string {
+	switch {
+	case ctr <= 0:
+		return b.t("kpi.ctr.explain")
+	case ctr < 1:
+		return b.tf("kpi.ctr.per1000", b.num(ctr*10))
+	}
+	return b.tf("kpi.ctr.per100", b.num(ctr))
+}
+
+// miniBars draws two thin bars (before / now) scaled to the larger value.
+func (b *builder) miniBars(cur, prev float64, tone string) template.HTML {
+	mx := math.Max(cur, prev)
+	if mx <= 0 || cur < 0 || prev < 0 {
+		return ""
+	}
+	if tone == "" {
+		tone = "neu"
+	}
+	row := func(cls, label string, v float64) string {
+		return `<div class="mb ` + cls + `"><span class="mb-l">` + template.HTMLEscapeString(label) + `</span><span class="mb-t"><i style="` + string(barStyle(v, mx)) + `"></i></span></div>`
+	}
+	return template.HTML(`<div class="kpi-mini t-` + tone + `" aria-hidden="true">` + //nolint:gosec // escaped labels, numeric styles
+		row("mb-prev", b.t("mini.before"), prev) + row("mb-now", b.t("mini.now"), cur) + `</div>`)
 }
 
 func (b *builder) sparkline(dates []string, vals []float64, invert bool, f func(float64) string) (h charts.SparkOpts) {
@@ -70,10 +123,45 @@ func ga4Series(pts []model.GA4DailyPoint, f func(model.GA4DailyPoint) float64) [
 }
 
 func (b *builder) withSpark(c kpiCard, dates []string, vals []float64, invert bool, f func(float64) string) kpiCard {
-	if len(vals) >= 3 && nonZero(vals) {
-		c.Spark = charts.Sparkline(b.sparkline(dates, vals, invert, f))
+	if len(vals) < 3 || !nonZero(vals) {
+		return c
 	}
+	// Daily zig-zags of tiny volumes, or of long periods, say little on a
+	// small card: weekly points show the trend.
+	rate := strings.HasSuffix(c.Key, "ctr") || strings.HasSuffix(c.Key, "position")
+	weekly := len(vals) >= 14 && len(vals) > longPeriodDays
+	if !rate && wantWeekly(vals, true) {
+		weekly = true
+	}
+	if rate && len(dates) >= 14 {
+		weekly = weekly || b.lowSearchVolume(c.Key)
+	}
+	if weekly && len(dates) == len(vals) {
+		mode := aggSum
+		if rate {
+			mode = aggMean
+		}
+		w := b.toWeekly(dates, vals, nil, mode)
+		o := b.sparkline(w.labels, w.cur, invert, f)
+		o.LabelFormat = w.tip(b.fmtDateTip)
+		c.Spark = charts.Sparkline(o)
+		return c
+	}
+	c.Spark = charts.Sparkline(b.sparkline(dates, vals, invert, f))
 	return c
+}
+
+// lowSearchVolume reports whether the daily clicks of the engine of a KPI key
+// ("gsc.ctr", "bing.position") are too few to be read day by day.
+func (b *builder) lowSearchVolume(key string) bool {
+	var daily []model.GSCDailyPoint
+	switch {
+	case strings.HasPrefix(key, "gsc.") && b.r.SearchConsole != nil:
+		daily = b.r.SearchConsole.Daily
+	case strings.HasPrefix(key, "bing.") && b.r.Bing != nil:
+		daily = b.r.Bing.Daily
+	}
+	return len(daily) > 0 && lowVolume(gscSeries(daily, func(p model.GSCDailyPoint) float64 { return p.Clicks }))
 }
 
 func (b *builder) gscKPIs() []kpiCard {
@@ -199,7 +287,7 @@ func (b *builder) geoKPIs() []kpiCard {
 // indicators; the Google Shopping clicks card is added on purpose).
 func (b *builder) allKPIs() []kpiCard {
 	var all []kpiCard
-	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs(), b.gmcKPIs()} {
+	for _, cards := range [][]kpiCard{b.gscKPIs(), b.ga4KPIs(), b.geoKPIs(), b.bingKPIs(), b.gmcKPIs(), b.gbpKPIs()} {
 		all = append(all, cards...)
 	}
 	return all
@@ -234,7 +322,7 @@ func (b *builder) summary() *section {
 	}
 	// The headline numbers duplicate the KPI cards that follow; they are only
 	// shown when the KPI section is hidden.
-	for _, k := range []string{"gsc.clicks", "gsc.position", "ga4.sessions", "ga4.organic_sessions", "ga4.key_events", "geo.ai_sessions", "geo.citation_rate", "gsc.impressions", "gmc.clicks"} {
+	for _, k := range []string{"gsc.clicks", "gsc.position", "ga4.sessions", "ga4.organic_sessions", "ga4.key_events", "geo.ai_sessions", "geo.citation_rate", "gsc.impressions", "gmc.clicks", "gbp.interactions", "gbp.views"} {
 		if c, ok := all[k]; ok && len(h.Stats) < 4 && b.r.SectionHidden("kpis") {
 			c.Spark, c.Explain, c.Prev = "", "", ""
 			h.Stats = append(h.Stats, c)
@@ -260,30 +348,24 @@ func (b *builder) summary() *section {
 		s.Blocks = append(s.Blocks, block{Kind: "hero", Span: 12, Hero: h, Hint: b.hint("progress"), HintKind: "chart"})
 	}
 
+	// Channel by channel, then the strongest changes as big numbers.
+	if sc := b.scorecard(); sc.Kind != "" {
+		s.Blocks = append(s.Blocks, sc)
+	}
+	if tl := b.tiles(); tl.Kind != "" {
+		s.Blocks = append(s.Blocks, tl)
+	}
 	if n != nil && n.ExecutiveSummary != "" {
-		s.Blocks = append(s.Blocks, block{Kind: "markdown", Span: 12, Title: b.t("summary.exec"), HTML: Markdown(n.ExecutiveSummary)})
+		s.Blocks = append(s.Blocks, block{Kind: "markdown", Span: 12, Tone: "quote", Title: b.t("summary.exec"), HTML: Markdown(n.ExecutiveSummary)})
 	}
-	if n != nil && (len(n.Highlights) > 0 || len(n.Concerns) > 0) {
-		span := 6
-		if len(n.Highlights) == 0 || len(n.Concerns) == 0 {
-			span = 12
-		}
-		if len(n.Highlights) > 0 {
-			s.Blocks = append(s.Blocks, block{Kind: "list", Span: span, Tone: "pos", Title: b.t("summary.highlights"), Items: mdItems(n.Highlights)})
-		}
-		if len(n.Concerns) > 0 {
-			s.Blocks = append(s.Blocks, block{Kind: "list", Span: span, Tone: "neg", Title: b.t("summary.concerns"), Items: mdItems(n.Concerns)})
-		}
-	}
-	if b.auto && len(b.an.Insights) > 0 {
-		var cs []callout
-		for _, in := range topN(b.an.Insights, 4) {
-			cs = append(cs, b.insightCallout(in))
-		}
-		s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Title: b.t("insights.title"), Sub: b.t("insights.auto"), Callouts: cs})
+	// A few highlights only: the complete lists open part 2.
+	s.Blocks = append(s.Blocks, b.glanceLists()...)
+	// The color code, once, before everything else.
+	if len(s.Blocks) > 0 && b.hasComparison() {
+		s.Blocks = append([]block{b.legend()}, s.Blocks...)
 	}
 	if len(s.Blocks) == 0 {
-		if b.r.SearchConsole == nil && b.r.Bing == nil && b.r.Analytics == nil && b.r.MerchantCenter == nil && b.r.GEO == nil {
+		if b.r.SearchConsole == nil && b.r.Bing == nil && b.r.Analytics == nil && b.r.MerchantCenter == nil && b.r.BusinessProfile == nil && b.r.GEO == nil {
 			s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Callouts: []callout{{Tone: "info", Icon: icoInfo, Title: b.t("empty.title"), Text: b.t("empty.text")}}})
 			return s
 		}
@@ -366,9 +448,18 @@ func (b *builder) kpis() *section {
 		preferred = append(preferred, "gmc.clicks")
 		limit = 7
 	}
+	// Google Business Profile actions (or views) are one more card.
+	if k := gbpPart1Key(all); k != "" {
+		preferred = append(preferred, k)
+		limit++
+	}
 	var cards []kpiCard
 	used := map[string]bool{}
+	gbpKept := gbpPart1Keys(all) // at most 3 Business Profile cards in part 1
 	for _, k := range append(preferred, order...) {
+		if gbpSkipped(k, gbpKept) {
+			continue
+		}
 		if c, ok := all[k]; ok && !used[k] && len(cards) < limit {
 			cards = append(cards, c)
 			used[k] = true
@@ -377,29 +468,33 @@ func (b *builder) kpis() *section {
 	if len(cards) == 0 {
 		return nil
 	}
-	s.Blocks = append(s.Blocks, block{Kind: "kpis", Span: 12, Tone: "hero", KPIs: cards})
+	s.Blocks = append(s.Blocks, block{Kind: "kpis", Span: 12, Tone: "hero", KPIs: cards, Foot: b.expectedLine()})
 
-	// One or two big, simple charts.
+	// One or two big, simple charts. Tiny volumes and long periods are shown
+	// per week: daily zig-zags would read as instability.
 	if sc := b.r.SearchConsole; sc != nil && len(sc.Daily) >= 2 {
-		var dates []string
-		for _, p := range sc.Daily {
-			dates = append(dates, p.Date)
-		}
+		dates := gscDates(sc.Daily)
 		clicks := func(p model.GSCDailyPoint) float64 { return p.Clicks }
-		s.Blocks = add(s.Blocks, b.trend(b.t("chart.clicks_daily"), dates, gscSeries(sc.Daily, clicks), gscSeries(sc.PreviousDaily, clicks), b.fmtCompact(), false, true), 6, b.hint("clicks_daily"))
-	} else if a := b.r.Analytics; a != nil && len(a.Daily) >= 2 {
-		var dates []string
-		for _, p := range a.Daily {
-			dates = append(dates, p.Date)
+		cur := gscSeries(sc.Daily, clicks)
+		wk := wantWeekly(cur, true)
+		hint := b.hint("clicks_glance")
+		if wk {
+			hint = b.hint("clicks_weekly_glance")
 		}
+		s.Blocks = add(s.Blocks, b.trendAuto("clicks", dates, cur, gscSeries(sc.PreviousDaily, clicks), b.fmtCompact(), aggSum, false, true, wk), 6, hint)
+	} else if a := b.r.Analytics; a != nil && len(a.Daily) >= 2 {
+		dates := ga4Dates(a.Daily)
 		sess := func(p model.GA4DailyPoint) float64 { return p.Sessions }
-		s.Blocks = add(s.Blocks, b.trend(b.t("chart.sessions_daily"), dates, ga4Series(a.Daily, sess), ga4Series(a.PreviousDaily, sess), b.fmtCompact(), false, true), 6, b.hint("sessions_glance"))
+		cur := ga4Series(a.Daily, sess)
+		wk := wantWeekly(cur, true)
+		hint := b.hint("sessions_glance")
+		if wk {
+			hint = b.hint("sessions_weekly_glance")
+		}
+		s.Blocks = add(s.Blocks, b.trendAuto("sessions", dates, cur, ga4Series(a.PreviousDaily, sess), b.fmtCompact(), aggSum, false, true, wk), 6, hint)
 	}
 	if a := b.r.Analytics; a != nil && len(a.Channels) > 1 {
-		s.Blocks = add(s.Blocks, b.channelDonut(a.Channels), 6, b.hint("channels"))
-	}
-	if b.hints {
-		s.Blocks = append(s.Blocks, block{Kind: "callouts", Span: 12, Callouts: []callout{{Tone: "info", Icon: icoBulb, Title: b.t("hint.title_kpi"), Text: b.t("hint.kpis")}}})
+		s.Blocks = add(s.Blocks, b.channelDonut(a.Channels), 6, b.hint("channels_glance"))
 	}
 	return s
 }

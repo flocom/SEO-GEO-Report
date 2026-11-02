@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/flocom/SEO-GEO-Report/internal/charts"
+	"github.com/flocom/SEO-GEO-Report/internal/i18n"
 	"github.com/flocom/SEO-GEO-Report/internal/insights"
 	"github.com/flocom/SEO-GEO-Report/internal/model"
 )
@@ -53,21 +54,35 @@ func (b *builder) analytics() *section {
 			dates = append(dates, p.Date)
 		}
 		sess := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.Sessions })
+		org := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.OrganicSessions })
+		ai := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.AISessions })
+		prev := alignPrev(len(sess), ga4Series(a.PreviousDaily, func(p model.GA4DailyPoint) float64 { return p.Sessions }))
+		labels, tip, title, sub := dates, b.fmtDateTip, b.t("chart.sessions_daily"), ""
+		// Tiny volumes (a few visits a day) read better week by week.
+		if wantWeekly(sess, false) {
+			bk := weekBuckets(len(sess))
+			w := b.toWeekly(dates, sess, nil, aggSum)
+			labels, tip, title, sub = w.labels, w.tip(b.fmtDateTip), b.t("chart.sessions_weekly"), b.t("chart.weekly_sub")
+			sess, org, ai = w.cur, aggregateWeekly(org, bk, aggSum), aggregateWeekly(ai, bk, aggSum)
+			if prev != nil {
+				prev = aggregateWeekly(prev, bk, aggSum)
+			}
+		}
 		series := []charts.Series{{Name: b.t("lbl.all_sessions"), Values: sess, Color: b.accent, Area: true}}
-		if org := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.OrganicSessions }); nonZero(org) {
+		if nonZero(org) {
 			series = append(series, charts.Series{Name: b.t("lbl.organic_sessions"), Values: org, Color: charts.Palette[2]})
 		}
-		if ai := ga4Series(a.Daily, func(p model.GA4DailyPoint) float64 { return p.AISessions }); nonZero(ai) {
+		if nonZero(ai) {
 			series = append(series, charts.Series{Name: b.t("lbl.ai_sessions"), Values: ai, Color: colorAI})
 		}
-		if prev := alignPrev(len(sess), ga4Series(a.PreviousDaily, func(p model.GA4DailyPoint) float64 { return p.Sessions })); prev != nil && nonZero(prev) {
+		if prev != nil && nonZero(prev) {
 			series = append(series, charts.Series{Name: b.t("lbl.prev_sessions"), Values: prev, Color: charts.ColorPrevious, Dashed: true})
 		}
 		if nonZero(sess) {
 			svg := func(w, h float64) template.HTML {
-				return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: dates, XFormat: b.fmtDateTick, TooltipXFormat: b.fmtDateTip, Series: series, YFormat: b.fmtCompact(), Title: b.t("chart.sessions_daily")})
+				return charts.Line(charts.LineOpts{Width: w, Height: h, Labels: labels, XFormat: b.fmtDateTick, TooltipXFormat: tip, Series: series, YFormat: b.fmtCompact(), Title: title})
 			}
-			s.Blocks = add(s.Blocks, block{Kind: "chart", Title: b.t("chart.sessions_daily"), mk: svg}, 12, b.hint("sessions_daily"))
+			s.Blocks = add(s.Blocks, block{Kind: "chart", Title: title, Sub: sub, mk: svg}, 12, b.hint("sessions_daily"))
 		}
 	}
 
@@ -136,7 +151,7 @@ func (b *builder) channels() *section {
 		rows := sortedCopy(a.Channels, func(r model.ChannelRow) float64 { return r.Sessions })
 		var items []charts.BarItem
 		for i, c := range rows {
-			items = append(items, charts.BarItem{Label: c.Channel, Value: c.Sessions, Previous: c.PrevSessions, Color: b.channelColor(i, c.Channel)})
+			items = append(items, charts.BarItem{Label: b.channel(c.Channel), Value: c.Sessions, Previous: c.PrevSessions, Color: b.channelColor(i, c.Channel)})
 		}
 		s.Blocks = add(s.Blocks, b.channelDonut(a.Channels), 6, b.hint("channels"))
 		bars := func(w, h float64) template.HTML {
@@ -167,7 +182,7 @@ func (b *builder) channelDonut(ch []model.ChannelRow) block {
 	for i, c := range rows {
 		switch {
 		case i < 7:
-			slices = append(slices, charts.Slice{Label: c.Channel, Value: c.Sessions, Color: b.channelColor(i, c.Channel)})
+			slices = append(slices, charts.Slice{Label: b.channel(c.Channel), Value: c.Sessions, Color: b.channelColor(i, c.Channel)})
 		case len(slices) == 7:
 			slices = append(slices, charts.Slice{Label: b.t("lbl.others"), Value: c.Sessions, Color: charts.ColorPrevious})
 		default:
@@ -183,6 +198,10 @@ func (b *builder) channelDonut(ch []model.ChannelRow) block {
 	}
 	return block{Kind: "chart", Title: b.t("chart.channels"), Sub: b.t("chart.channels.sub"), mk: donut}
 }
+
+// channel is the display name of a GA4 channel group in the report language
+// (GA4 exports them in English: "Organic Search" -> "Recherche naturelle").
+func (b *builder) channel(name string) string { return i18n.ChannelName(b.lang, name) }
 
 func compact(b *builder, v float64) string {
 	if v >= 10000 {
@@ -279,7 +298,7 @@ func (b *builder) trafficTable(keyLabel string, rows []trafficRow, withUsers boo
 func (b *builder) channelTable(ch []model.ChannelRow) *table {
 	var rows []trafficRow
 	for _, c := range ch {
-		rows = append(rows, trafficRow{key: c.Channel, sessions: c.Sessions, prev: c.PrevSessions, users: c.Users, eng: c.EngagementRate, events: c.KeyEvents, revenue: c.Revenue, hl: isOrganic(c.Channel)})
+		rows = append(rows, trafficRow{key: b.channel(c.Channel), title: c.Channel, sessions: c.Sessions, prev: c.PrevSessions, users: c.Users, eng: c.EngagementRate, events: c.KeyEvents, revenue: c.Revenue, hl: isOrganic(c.Channel)})
 	}
 	return b.trafficTable(b.t("col.channel"), rows, true)
 }

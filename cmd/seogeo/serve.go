@@ -16,6 +16,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/flocom/SEO-GEO-Report/internal/admin"
 	"github.com/flocom/SEO-GEO-Report/internal/favicon"
 	"github.com/flocom/SEO-GEO-Report/internal/mcpserver"
 	"github.com/flocom/SEO-GEO-Report/internal/oauth"
@@ -97,6 +98,25 @@ func cmdServe(args []string) error {
 	if envBool("UPDATE_CHECK", true) {
 		updates = update.New(version, logger)
 	}
+	// /admin: check for updates and update in one click through the
+	// Watchtower HTTP API (the container never needs the Docker socket).
+	adminChecker := updates
+	if adminChecker == nil { // UPDATE_CHECK=false: manual checks only
+		adminChecker = update.New(version, logger)
+	}
+	adminPage := admin.New(admin.Config{
+		Auth:      auth,
+		Updates:   adminChecker,
+		AutoCheck: updates != nil,
+		Watchtower: &admin.Watchtower{
+			URL:   envOr("WATCHTOWER_URL", admin.DefaultWatchtowerURL),
+			Token: os.Getenv("WATCHTOWER_HTTP_API_TOKEN"),
+		},
+		Version:    version,
+		Started:    time.Now(),
+		SessionKey: admin.LoadSessionKey(*dataDir, password),
+		Logger:     logger,
+	})
 	svc := mcpserver.NewService(mcpserver.Config{
 		Store:     st,
 		PublicURL: publicURL,
@@ -104,6 +124,7 @@ func cmdServe(args []string) error {
 		Version:   version,
 		Favicons:  fav,
 		Updates:   updates,
+		Admin:     adminPage,
 	})
 	handler := mcpserver.NewHTTPHandler(svc, auth, logger)
 
@@ -152,6 +173,7 @@ func banner(log *slog.Logger, port, dataDir, publicURL string, authDisabled bool
 		b.WriteString("             (the public URL is detected automatically from each request)\n")
 	}
 	fmt.Fprintf(&b, "  Data:      %s\n", dataDir)
+	b.WriteString("  Updates:   /admin page (check for updates, update in one click)\n")
 	if chrome, err := pdf.FindChrome(); err == nil {
 		fmt.Fprintf(&b, "  PDF:       enabled (%s)\n", chrome)
 	} else {

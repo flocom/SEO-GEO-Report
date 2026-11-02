@@ -13,7 +13,7 @@ const (
 	neutralPct      = 2.0 // |relative change| below 2 % is neutral
 	neutralPosition = 0.3 // |position change| below 0.3 is neutral
 	maxInsights     = 15  // core insights (Search Console, GA4, GEO)
-	maxOptional     = 3   // extra insights per optional source (Bing, Merchant Center)
+	maxOptional     = 3   // extra insights per optional source (Bing, Merchant Center, Business Profile)
 	topMovers       = 5
 )
 
@@ -66,11 +66,13 @@ func analyze(r *model.Report) Analysis {
 		}
 		a.Positions = positions(sc)
 		a.Winners, a.Losers = movers(sc.Queries)
+		markExpected(&a, r.Lang(), sc.Totals, a.Positions, KeyGSCCTR, KeyGSCPosition)
 	}
 
 	// --- Bing Webmaster Tools KPIs
 	if r.Bing != nil {
 		bingKPIs(&a, r.Bing)
+		markExpected(&a, r.Lang(), r.Bing.Totals, nil, KeyBingCTR, KeyBingPosition)
 	}
 
 	// --- GA4 KPIs
@@ -98,6 +100,11 @@ func analyze(r *model.Report) Analysis {
 	// --- Google Merchant Center KPIs
 	if r.MerchantCenter != nil {
 		gmcKPIs(&a, r.MerchantCenter)
+	}
+
+	// --- Google Business Profile KPIs
+	if r.BusinessProfile != nil {
+		gbpKPIs(&a, r.BusinessProfile)
 	}
 
 	// --- GEO
@@ -464,17 +471,21 @@ func movers(rows []model.GSCRow) (winners, losers []model.GSCRow) {
 // Each available component i yields a relative change d_i in percent:
 //
 //	clicks, impressions, organic sessions, AI sessions, key events,
-//	citation rate, Bing clicks, Bing AI citations, Merchant Center clicks:
+//	citation rate, Bing clicks, Bing AI citations, Merchant Center clicks,
+//	Business Profile interactions (views when interactions are missing):
 //	                (current - previous) / previous × 100
 //	                (+100 when previous is 0 and current > 0)
-//	average position: (previous - current) / previous × 100 (lower is better)
+//	average position: (previous - current) / previous × 100 (lower is better),
+//	                left out when its decline is the expected dilution effect
+//	                (KPIStatus.Expected)
 //
 // The change is squashed with s_i = tanh(d_i / 50), so that +50 % ≈ +0.76 and
 // outliers (e.g. +900 % AI sessions) saturate at ±1 instead of dominating.
 // With the weights w below (clicks 0.25, impressions 0.10, position 0.15,
 // organic sessions 0.15, AI sessions 0.10, citation rate 0.10, key events
 // 0.15, Bing clicks 0.10, Bing AI citations 0.05, Merchant Center clicks
-// 0.05), renormalised over the available components:
+// 0.05, Business Profile interactions 0.05), renormalised over the available
+// components:
 //
 //	progress = 50 + 50 × Σ(w_i × s_i) / Σ(w_i)
 //
@@ -491,8 +502,12 @@ func progressIndex(r *model.Report, a *Analysis) *float64 {
 		comps = append(comps,
 			comp{0.25, &sc.Totals.Clicks, false},
 			comp{0.10, &sc.Totals.Impressions, false},
-			comp{0.15, sc.Totals.Position, true},
 		)
+		// A worse position caused by many new appearances (dilution) is the
+		// expected side effect of the impressions growth: it is not a decline.
+		if !a.Expected(KeyGSCPosition) {
+			comps = append(comps, comp{0.15, sc.Totals.Position, true})
+		}
 	}
 	if ga := r.Analytics; ga != nil {
 		comps = append(comps, comp{0.15, organicSessions(ga), false}, comp{0.15, ga.Totals.KeyEvents, false})
@@ -513,6 +528,11 @@ func progressIndex(r *model.Report, a *Analysis) *float64 {
 	// grow through organic search, and Shopping is partly paid.
 	if mc := r.MerchantCenter; mc != nil && active(mc.Totals.Clicks) {
 		comps = append(comps, comp{0.05, &mc.Totals.Clicks, false})
+	}
+	// Business Profile interactions (calls, directions, website clicks) weigh
+	// as little: local visibility complements the website.
+	if m := gbpMain(r.BusinessProfile); m != nil && active(*m) {
+		comps = append(comps, comp{0.05, m, false})
 	}
 
 	var sumW, sum float64

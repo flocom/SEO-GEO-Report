@@ -6,7 +6,9 @@ package update
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -21,12 +23,19 @@ const Repo = "flocom/SEO-GEO-Report"
 // DefaultInterval between two checks.
 const DefaultInterval = 6 * time.Hour
 
+// MinForceInterval is the minimum delay between two forced checks
+// (ForceCheck), to stay well below the GitHub API anonymous rate limit
+// (60 requests per hour and per IP).
+const MinForceInterval = time.Minute
+
 // Release is the latest published release.
 type Release struct {
-	Tag     string    `json:"tag_name"`
-	URL     string    `json:"html_url"`
-	Name    string    `json:"name"`
-	Checked time.Time `json:"-"`
+	Tag         string    `json:"tag_name"`
+	URL         string    `json:"html_url"`
+	Name        string    `json:"name"`
+	Body        string    `json:"body"`
+	PublishedAt time.Time `json:"published_at"`
+	Checked     time.Time `json:"-"`
 }
 
 // Checker polls the GitHub releases API.
@@ -38,8 +47,10 @@ type Checker struct {
 	Client *http.Client
 	Logger *slog.Logger
 
-	mu     sync.Mutex
-	latest *Release
+	mu        sync.Mutex
+	latest    *Release
+	lastCheck time.Time // last attempt, successful or not
+	lastErr   error
 }
 
 // New returns a checker for the running version.
@@ -68,6 +79,46 @@ func (c *Checker) Start(ctx context.Context) {
 
 // CheckNow queries GitHub once. Errors are logged at debug level only.
 func (c *Checker) CheckNow(ctx context.Context) {
+	_ = c.check(ctx)
+}
+
+// ErrTooSoon is returned by ForceCheck when the previous check is too recent.
+var ErrTooSoon = errors.New("update: checked too recently")
+
+// ForceCheck queries GitHub now, bypassing the periodic interval, unless the
+// previous attempt is less than MinForceInterval old: it then returns
+// ErrTooSoon and the remaining wait. Other errors come from the GitHub API.
+func (c *Checker) ForceCheck(ctx context.Context) (time.Duration, error) {
+	c.mu.Lock()
+	if !c.lastCheck.IsZero() {
+		if wait := MinForceInterval - time.Since(c.lastCheck); wait > 0 {
+			c.mu.Unlock()
+			return wait, ErrTooSoon
+		}
+	}
+	c.lastCheck = time.Now() // reserve the slot against concurrent clicks
+	c.mu.Unlock()
+	return 0, c.check(ctx)
+}
+
+// LastCheck returns the time of the last check attempt (zero if none) and its
+// error (nil when it succeeded).
+func (c *Checker) LastCheck() (time.Time, error) {
+	if c == nil {
+		return time.Time{}, nil
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.lastCheck, c.lastErr
+}
+
+func (c *Checker) check(ctx context.Context) (err error) {
+	defer func() {
+		c.mu.Lock()
+		c.lastCheck = time.Now()
+		c.lastErr = err
+		c.mu.Unlock()
+	}()
 	api := c.APIURL
 	if api == "" {
 		api = "https://api.github.com/repos/" + Repo + "/releases/latest"
@@ -78,23 +129,26 @@ func (c *Checker) CheckNow(ctx context.Context) {
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, api, nil)
 	if err != nil {
-		return
+		return err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
 	req.Header.Set("User-Agent", "github.com/flocom/SEO-GEO-Report/"+c.Current)
 	resp, err := client.Do(req)
 	if err != nil {
 		c.debug("update check failed", "err", err)
-		return
+		return err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		c.debug("update check failed", "status", resp.Status)
-		return
+		return fmt.Errorf("GitHub API: %s", resp.Status)
 	}
 	var rel Release
-	if err := json.NewDecoder(resp.Body).Decode(&rel); err != nil || rel.Tag == "" {
-		return
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&rel); err != nil {
+		return fmt.Errorf("GitHub API: %w", err)
+	}
+	if rel.Tag == "" {
+		return errors.New("GitHub API: release without tag")
 	}
 	rel.Checked = time.Now()
 	c.mu.Lock()
@@ -102,8 +156,9 @@ func (c *Checker) CheckNow(ctx context.Context) {
 	c.latest = &rel
 	c.mu.Unlock()
 	if Newer(rel.Tag, c.Current) && (prev == nil || prev.Tag != rel.Tag) && c.Logger != nil {
-		c.Logger.Warn(fmt.Sprintf("New version %s available (running %s): %s — with the provided docker-compose.yml, Watchtower installs it automatically within the hour; otherwise run: docker compose pull && docker compose up -d", rel.Tag, c.Current, rel.URL))
+		c.Logger.Warn(fmt.Sprintf("New version %s available (running %s): %s — with the provided docker-compose.yml, Watchtower installs it automatically within the hour (or now from the /admin page); otherwise run: docker compose pull && docker compose up -d", rel.Tag, c.Current, rel.URL))
 	}
+	return nil
 }
 
 func (c *Checker) debug(msg string, args ...any) {

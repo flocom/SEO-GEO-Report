@@ -121,6 +121,8 @@ func toneName(t string) string {
 		return "positive"
 	case "neg":
 		return "negative"
+	case "exp":
+		return "warning"
 	}
 	return "neutral"
 }
@@ -154,34 +156,127 @@ func direction(change, rel float64, lowerBetter bool) (string, string) {
 	return dir, "neg"
 }
 
-// deltaRel shows a relative change ("+12,3 %") with the absolute change as
-// secondary text.
+// ---------------------------------------------------------------------------
+// Human-readable changes
+//
+// A percentage is unreadable on small or multiplied figures: "+500 %" for a
+// move from 1 to 6 visits, "+279 %" for impressions multiplied by 3.8. Every
+// change shown in the report (KPI cards, scorecard, tiles, table and chart
+// badges) goes through humanChange, which picks the clearest wording:
+//
+//   - previous = 0, current > 0: "Nouveau" / "New" (absolute change aside);
+//   - otherwise the rule of insights.ChangeKind: a multiplier ("×3,8",
+//     "×47") from ×3, the absolute change ("+5") on small bases, else the
+//     relative change ("+12,3 %"), then always between −100 % and +200 %.
+//
+// The percentage stays available in the hover text (Title).
+
+// change is a human-readable change between two values.
+type change struct {
+	Kind  string // "pct", "abs", "ratio" or "new"
+	Main  string // "+12,3 %", "+5", "×3,8", "Nouveau"
+	Abs   string // signed absolute change, "+39" (empty without formatter)
+	Pct   string // signed relative change, "+61,9 %" (empty for "new")
+	Delta float64
+	Rel   float64 // relative change in percent (0 for "new")
+}
+
+// humanChange describes the change from prev to cur; abs formats absolute
+// values (nil = plain numbers). ok is false when there is nothing to show.
+func (b *builder) humanChange(cur, prev float64, abs func(float64) string) (change, bool) {
+	if math.IsNaN(cur) || math.IsNaN(prev) || math.IsInf(cur, 0) || math.IsInf(prev, 0) {
+		return change{}, false
+	}
+	if abs == nil {
+		abs = b.num
+	}
+	d := cur - prev
+	c := change{Delta: d, Abs: signed(abs(d), d)}
+	if prev == 0 {
+		if d == 0 {
+			return change{}, false
+		}
+		c.Kind, c.Main = "new", b.t("delta.new")
+		if d < 0 {
+			c.Kind, c.Main = "abs", c.Abs
+		}
+		return c, true
+	}
+	c.Rel = d / math.Abs(prev) * 100
+	digits := 1
+	if math.Abs(c.Rel) >= 100 {
+		digits = 0
+	}
+	c.Pct = i18n.SignedPercent(b.lang, c.Rel, digits)
+	switch insights.ChangeKind(cur, prev) {
+	case "ratio":
+		c.Kind, c.Main = "ratio", b.ratio(cur/prev)
+	case "abs":
+		c.Kind, c.Main = "abs", c.Abs
+	default:
+		c.Kind, c.Main = "pct", c.Pct
+	}
+	return c, true
+}
+
+// ratio formats a multiplier: "×3,8" below 10, "×47" above.
+func (b *builder) ratio(r float64) string { return insights.FormatRatio(r, b.lang) }
+
+// changeShort is the short change text of chart badges ("+5", "×3,8").
+func (b *builder) changeShort(cur, prev float64) string {
+	c, ok := b.humanChange(cur, prev, b.compactNum)
+	if !ok {
+		return ""
+	}
+	return c.Main
+}
+
+// compactNum formats counts compactly from 10 000 ("12,3 k").
+func (b *builder) compactNum(v float64) string {
+	if math.Abs(v) >= 10000 {
+		return i18n.Compact(b.lang, v)
+	}
+	return b.num(v)
+}
+
+// deltaRel shows the change of a count with humanChange: the main text is a
+// percentage, a multiplier or an absolute change, the secondary text the
+// absolute change when it is not already the main text, and the hover text
+// the detail ("+500 % · 1 → 6").
 func (b *builder) deltaRel(m model.Metric, lowerBetter bool, abs func(float64) string) *deltaView {
-	d, ok := m.Delta()
+	if m.Previous == nil {
+		return nil
+	}
+	if abs == nil {
+		abs = b.num
+	}
+	c, ok := b.humanChange(m.Current, *m.Previous, abs)
 	if !ok {
 		return nil
 	}
-	rel, okRel := m.DeltaPct()
-	if !okRel {
-		if d == 0 {
-			return nil
-		}
-		if abs == nil {
-			abs = b.num // "New" needs the absolute change
-		}
-		dir, tone := direction(d, 100, lowerBetter)
-		return &deltaView{Text: b.t("delta.new"), Sub: signed(abs(d), d), Tone: tone, Dir: dir, Arrow: arrowFor(dir, tone)}
+	rel := c.Rel
+	if c.Kind == "new" {
+		rel = 100
 	}
-	dir, tone := direction(d, rel, lowerBetter)
-	digits := 1
-	if math.Abs(rel) >= 100 {
-		digits = 0
+	dir, tone := direction(c.Delta, rel, lowerBetter)
+	dv := &deltaView{Text: c.Main, Tone: tone, Dir: dir, Arrow: arrowFor(dir, tone)}
+	if c.Kind != "abs" {
+		dv.Sub = c.Abs
 	}
-	dv := &deltaView{Text: i18n.SignedPercent(b.lang, rel, digits), Tone: tone, Dir: dir, Arrow: arrowFor(dir, tone)}
-	if abs != nil {
-		dv.Sub = signed(abs(d), d)
-	}
+	dv.Title = b.changeTitle(c, m, abs)
 	return dv
+}
+
+// changeTitle is the hover text of a change: "+500 % · 1 → 6".
+func (b *builder) changeTitle(c change, m model.Metric, abs func(float64) string) string {
+	parts := []string{}
+	if c.Pct != "" {
+		parts = append(parts, c.Pct)
+	}
+	if m.Previous != nil {
+		parts = append(parts, abs(*m.Previous)+" → "+abs(m.Current))
+	}
+	return strings.Join(parts, " · ")
 }
 
 // deltaPts shows the change of a percentage in points.
@@ -480,6 +575,9 @@ func (b *builder) bars(o charts.BarsOpts) template.HTML {
 	}
 	if o.PreviousLabel == "" {
 		o.PreviousLabel = b.t("label.previous")
+	}
+	if o.ChangeFormat == nil {
+		o.ChangeFormat = b.changeShort
 	}
 	return charts.Bars(o)
 }

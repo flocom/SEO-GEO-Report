@@ -257,11 +257,12 @@ func (b *builder) glossary() *section {
 		return nil
 	}
 	entries := i18n.Glossary(b.lang)
-	if b.r.MerchantCenter == nil {
-		// Shopping terms only matter to sites that sell through Merchant Center.
+	if b.r.MerchantCenter == nil || b.r.BusinessProfile.IsEmpty() {
+		// Shopping terms only matter to sites that sell through Merchant
+		// Center, local terms to businesses with a Google Business Profile.
 		kept := entries[:0]
 		for _, e := range entries {
-			if !gmcGlossary[e.Key] {
+			if (b.r.MerchantCenter != nil || !gmcGlossary[e.Key]) && b.gbpGlossaryKept(e.Key) {
 				kept = append(kept, e)
 			}
 		}

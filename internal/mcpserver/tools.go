@@ -156,7 +156,7 @@ type generateInput struct {
 
 type duplicateInput struct {
 	ReportID         string        `json:"report_id" jsonschema:"Report to copy"`
-	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics, merchant_center and geo data (default false: cleared for the next period)"`
+	KeepData         bool          `json:"keep_data,omitempty" jsonschema:"Keep search_console, bing, analytics, merchant_center, business_profile and geo data (default false: cleared for the next period)"`
 	KeepNarrative    bool          `json:"keep_narrative,omitempty" jsonschema:"Keep all narrative texts (default false: only pending actions and recommendations are kept)"`
 	Period           *model.Period `json:"period,omitempty" jsonschema:"New analysed period"`
 	ComparisonPeriod *model.Period `json:"comparison_period,omitempty" jsonschema:"New comparison period"`
@@ -207,14 +207,14 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "get_report_guide",
 		Title:       "Read the report guide",
-		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console, GA4, Bing and Merchant Center exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
+		Description: "Call this FIRST. Returns the workflow to build a SEO & GEO report with this server, the field conventions (percentages in percent: 3.2 = 3.2 %; dates YYYY-MM-DD; metrics as {current, previous}), the list of section ids, what to ask the user (which Google Search Console, GA4, Bing, Merchant Center and Google Business Profile exports, which AI citation checks), narrative tips and a compact JSON example. This server never fetches data itself: all numbers come from the user.",
 		Annotations: readOnly,
 	}, s.toolGuide)
 
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_report",
 		Title:       "Create a report draft",
-		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_merchant_center / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
+		Description: "Create a new report draft and return its report_id. Requires meta.site_name and meta.period {start, end} (YYYY-MM-DD); set meta.language (fr or en, default fr) and meta.comparison_period (previous period or same period last year) so progress can be shown. Then fill data with set_search_console / set_bing / set_analytics / set_merchant_center / set_business_profile / set_geo (or import_*_csv), write texts with set_narrative and call render_report.",
 		Annotations: additive,
 	}, s.toolCreate)
 
@@ -264,6 +264,8 @@ func (s *Service) registerTools(srv *mcp.Server) {
 		Annotations: idempotent,
 	}, s.toolSetGMC)
 
+	s.registerGBPTools(srv)
+
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:  "set_geo",
 		Title: "Set GEO (AI visibility) data",
@@ -285,7 +287,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "add_text_section",
 		Title:       "Add a free text section",
-		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, geo, technical, actions, recommendations), start or end. Returns the section id.",
+		Description: "Add a custom Markdown section (methodology, competitor analysis, notes...). Place it with after = a built-in section id (summary, kpis, search_console, queries, pages, countries_devices, bing, analytics, channels, landing_pages, merchant_center, business_profile, geo, technical, actions, recommendations), start or end. Returns the section id. Never use it for data that has a native section: Google Business Profile, Bing Webmaster Tools and Merchant Center figures go to set_business_profile, set_bing and set_merchant_center.",
 		Annotations: additive,
 	}, s.toolAddSection)
 
@@ -360,7 +362,7 @@ func (s *Service) registerTools(srv *mcp.Server) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "generate_report",
 		Title:       "Generate a report in one call",
-		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, merchant_center, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
+		Description: "One-shot: store a complete report (same JSON structure as the seogeo://schema resource: meta, search_console, bing, analytics, merchant_center, business_profile, geo, narrative, sections, options) and render it. Returns the report_id (editable afterwards with the set_* tools), the HTML / download / PDF links and a summary of KPIs and insights. Use it when you already have all the data; otherwise prefer create_report + set_* tools.",
 		Annotations: additive,
 		Meta:        viewerMeta,
 	}, s.toolGenerate)
@@ -539,6 +541,7 @@ func (s *Service) toolCreate(_ context.Context, req *mcp.CallToolRequest, in cre
 		"set_bing (or import_bing_csv) with Bing Webmaster Tools numbers, if the user has them",
 		"set_analytics (or import_analytics_csv) with GA4 numbers",
 		"set_merchant_center (or import_merchant_center_csv) with Google Merchant Center numbers, if the site sells products in Google Shopping",
+		"set_business_profile (or import_business_profile_csv) with Google Business Profile numbers (views, calls, directions, reviews), if the business has a local Google profile",
 		"set_geo with AI visibility data (citation checks, AI referrals, share of voice)",
 		"set_narrative with the executive summary, highlights, actions and recommendations",
 		"validate_report then render_report",

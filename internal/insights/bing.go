@@ -54,9 +54,9 @@ func bingInsights(w *writer, r *model.Report) {
 		switch toneOf(c, false) {
 		case Positive:
 			w.add(Positive, sec, 50+bump(pct)/2,
-				"Les clics depuis Bing progressent de %s : %s contre %s sur la période de comparaison.",
-				"Clicks from Bing grew by %s: %s vs %s in the comparison period.",
-				w.p(pct), w.n(c.Current), w.n(*c.Previous))
+				"Les clics depuis Bing progressent %s : %s contre %s sur la période de comparaison.",
+				"Clicks from Bing grew %s: %s vs %s in the comparison period.",
+				w.by(pct, c.Current, *c.Previous), w.n(c.Current), w.n(*c.Previous))
 		case Negative:
 			w.add(Negative, sec, 50+bump(pct)/2,
 				"Les clics depuis Bing reculent de %s : %s contre %s sur la période de comparaison.",
@@ -103,6 +103,13 @@ func bingInsights(w *writer, r *model.Report) {
 				"Average position in Bing improved from %s to %s.",
 				w.pos(*p.Previous), w.pos(p.Current))
 		case Negative:
+			if isDilution(t, nil) {
+				w.add(Neutral, sec, 30,
+					"La position moyenne dans Bing passe de %s à %s : c'est normal, le site apparaît sur beaucoup de nouvelles recherches, souvent plus bas au début.",
+					"Average position in Bing moved from %s to %s: this is expected, the site now appears on many new searches, often lower down at first.",
+					w.pos(*p.Previous), w.pos(p.Current))
+				break
+			}
 			w.add(Negative, sec, 33+math.Min(math.Abs(p.Current-*p.Previous), 10),
 				"La position moyenne dans Bing recule, de %s à %s.",
 				"Average position in Bing slipped from %s to %s.",

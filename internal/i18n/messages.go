@@ -47,8 +47,8 @@ var messages = map[string][2]string{
 		"The big number is the value for the period. Just below, the change versus the previous period: green is good news, red needs attention, grey means stable. For average position, a lower number is good news (closer to the top spot). The small line shows the day-by-day trend.",
 	},
 	"hint.progress": {
-		"L’indice résume en un seul chiffre l’évolution de vos principaux indicateurs (clics, sessions, visibilité IA…). 50 signifie « stable », au-dessus c’est une progression, en dessous un recul.",
-		"The index sums up the change of your main indicators (clicks, sessions, AI visibility…) in a single number. 50 means “stable”, above is progress, below is decline.",
+		"Un seul chiffre pour l’ensemble de vos indicateurs : 50 = stable, au-dessus ça progresse, en dessous ça recule.",
+		"One number for all your indicators: 50 = stable, above means progress, below means decline.",
 	},
 	"hint.clicks_daily": {
 		"Chaque point est le nombre de clics reçus depuis Google ce jour-là. La ligne pointillée grise montre la période précédente : si la courbe colorée est au-dessus, vous faites mieux qu’avant.",
@@ -308,16 +308,16 @@ var messages = map[string][2]string{
 	"glance.done":            {"Ce qui a été fait", "What we did"},
 	"glance.next":            {"Prochaines étapes", "What’s next"},
 	"hint.sessions_glance": {
-		"Chaque point est le nombre de visites sur votre site ce jour-là. La ligne pointillée grise montre la période précédente.",
-		"Each point is the number of visits to your site that day. The dashed grey line shows the previous period.",
+		"Les visites jour par jour ; la ligne grise montre la période précédente.",
+		"Visits day by day; the grey line shows the previous period.",
 	},
 	"hint.ai_platforms_glance": {
-		"Chaque barre correspond à un assistant IA et au nombre de visiteurs qu’il vous a envoyés. Le pourcentage coloré indique l’évolution.",
-		"Each bar is an AI assistant and the number of visitors it sent you. The colored percentage shows the change.",
+		"Une barre par assistant IA : le nombre de visiteurs qu’il vous a envoyés et son évolution.",
+		"One bar per AI assistant: the visitors it sent you and the change.",
 	},
 	"hint.citations_glance": {
-		"Nous avons posé des questions types aux assistants IA. Plus l’aiguille est à droite, plus votre site est cité comme source dans leurs réponses.",
-		"We asked typical questions to AI assistants. The further right the needle, the more often your site is cited as a source in their answers.",
+		"Plus l’aiguille est à droite, plus les IA citent votre site dans leurs réponses aux questions testées.",
+		"The further right the needle, the more AI assistants cite your site when answering the tested questions.",
 	},
 
 	// Sections
