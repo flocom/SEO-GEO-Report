@@ -12,8 +12,7 @@ var pageTmpl = template.Must(template.New("page").Parse(`<!doctype html>
 <meta name="robots" content="noindex">
 <title>{{.Resource}} — Connexion / Sign in</title>
 <style>
-:root{--bg:#f1f5f9;--card:#fff;--fg:#0f172a;--muted:#64748b;--accent:#2563eb;--err:#dc2626;--line:#e2e8f0}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111827;--fg:#e5e7eb;--muted:#94a3b8;--line:#1f2937}}
+:root{color-scheme:only light;--bg:#f1f5f9;--card:#fff;--fg:#0f172a;--muted:#64748b;--accent:#2563eb;--err:#dc2626;--line:#e2e8f0}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--fg);
 font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:420px;width:100%;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
