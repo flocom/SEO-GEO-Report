@@ -7,7 +7,7 @@ import (
 
 // Small stroke icons (24×24 grid, currentColor), inlined in the page.
 func icon(paths string) template.HTML {
-	return template.HTML(`<svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">` + paths + `</svg>`)
+	return template.HTML(`<svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">` + paths + `</svg>`)
 }
 
 var (
@@ -100,6 +100,9 @@ var (
 	icoUser     = icon(`<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>`)
 	icoDB       = icon(`<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>`)
 	icoDot      = icon(`<circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/>`)
+	icoChevron  = icon(`<path d="M6 9l6 6 6-6"/>`)
+	icoPDF      = icon(`<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/>`)
+	icoHTML     = icon(`<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18"/><path d="M10 12l-2 2 2 2M14 12l2 2-2 2"/>`)
 )
 
 // namedIcon is exposed to templates as {{icon "name"}}.
@@ -135,6 +138,12 @@ func namedIcon(name string) template.HTML {
 		return icoDot
 	case "info":
 		return icoInfo
+	case "chevron":
+		return icoChevron
+	case "pdf":
+		return icoPDF
+	case "html":
+		return icoHTML
 	}
 	return ""
 }

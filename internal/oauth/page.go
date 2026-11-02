@@ -12,21 +12,21 @@ var pageTmpl = template.Must(template.New("page").Parse(`<!doctype html>
 <meta name="robots" content="noindex">
 <title>{{.Resource}} — Connexion / Sign in</title>
 <style>
-:root{color-scheme:only light;--bg:#f1f5f9;--card:#fff;--fg:#0f172a;--muted:#64748b;--accent:#2563eb;--err:#dc2626;--line:#e2e8f0}
+:root{color-scheme:only light;--bg:#f7f8fa;--card:#fff;--fg:#0e1117;--muted:#636a75;--accent:#2563eb;--err:#dc2626;--line:#e3e5e9}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--fg);
-font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:420px;width:100%;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+font:15px/1.5 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;max-width:420px;width:100%;padding:30px;box-shadow:0 16px 40px -12px rgba(16,24,40,.18),0 2px 6px rgba(16,24,40,.06)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;margin-bottom:6px}
 .logo svg{flex:none}
-h1{font-size:20px;margin:14px 0 4px}.en{color:var(--muted);font-size:13px;margin:0 0 14px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:16px 0 4px}.en{color:var(--muted);font-size:13px;margin:0 0 14px}
 .client{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:13px;margin:12px 0 18px;word-break:break-all}
 .client b{font-size:14px}
 label{display:block;font-weight:600;margin-bottom:6px}
 input[type=password]{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px}
-input[type=password]:focus{outline:2px solid var(--accent);outline-offset:1px}
+input[type=password]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
 .row{display:flex;gap:10px;margin-top:16px}
-button{flex:1;padding:11px;border-radius:10px;border:0;font-weight:600;font-size:15px;cursor:pointer}
-.ok{background:var(--accent);color:#fff}.no{background:transparent;color:var(--muted);border:1px solid var(--line)}
+button{flex:1;padding:11px;border-radius:999px;border:0;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
+.ok{background:var(--fg);color:#fff}.ok:hover{background:#262b33}.no{background:transparent;color:var(--muted);border:1px solid var(--line)}
 .err{color:var(--err);font-weight:600;margin:10px 0 0}
 .foot{color:var(--muted);font-size:12px;margin-top:18px}
 </style></head><body><main class="card">

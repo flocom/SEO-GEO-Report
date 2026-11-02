@@ -5,6 +5,34 @@ All notable changes to this project are documented here. The format follows [Kee
 ## [Unreleased]
 
 ### Changed
+- Redesigned report. A slim top bar stays at the top of the screen while
+  scrolling: site identity, an "Essential | Advanced" pill toggle (equal
+  segments, sliding thumb, one helper line that follows the selection, still
+  pure CSS and keyboard accessible) and a single "Download" menu (PDF of the
+  essential version, PDF of the full version, interactive HTML file; the PDF
+  of the version on screen is highlighted) instead of three buttons.
+- New cover: a panel tinted with the brand color and a thin brand band,
+  a two-line title, the period, comparison and "prepared for / by" as one
+  row, the data sources as chips, and a two-column table of contents. On
+  paper the cover fills the first page.
+- One typeface everywhere: Inter (SIL Open Font License 1.1), embedded in
+  the page as a 54 KB subset (Latin, Latin-1, Latin Extended-A and the
+  symbols the report uses), so the report and its PDF look the same on every
+  system and in the Docker Chromium. Headings drop the system serif. Type and
+  spacing scales defined as CSS variables; tabular figures.
+- Softer, consistent components: cards with hairline borders and a faint
+  shadow, numbered section badges, tinted part banners, KPI cards, scorecard
+  change pills, tiles, tables with a rounded header band and comfortable
+  rows, pill badges, insight markers, recommendations as cards; chart
+  semantic colors aligned with the stylesheet.
+- The home, sign-in and /admin pages use the same type, colors and pill
+  buttons.
+
+### Fixed
+- The full PDF was shrunk to about 75 % by Chromium (the multi-column
+  glossary overflowed sideways on paper): it now prints at full size.
+- A sliver of the next section's number badge could print at the bottom of
+  the previous page.
 - Light theme only: the report, the home, login and /admin pages no longer
   switch to a dark theme, and declare `color-scheme: only light` so browsers
   do not darken them automatically.

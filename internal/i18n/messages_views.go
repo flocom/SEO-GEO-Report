@@ -7,12 +7,13 @@ package i18n
 // French strings use a no-break space ( ) before ":" and "?".
 
 var viewMessages = map[string][2]string{
-	// Selector (segmented control at the top of the cover).
+	// Selector (pill toggle of the top bar). view.label names it for
+	// screen readers; the .sub texts are the helper line under the toggle.
 	"view.label":         {"Version du rapport", "Report version"},
 	"view.essential":     {"Essentiel", "Essential"},
-	"view.essential.sub": {"Les résultats clés en 5 minutes, sans jargon", "The key results in 5 minutes, no jargon"},
+	"view.essential.sub": {"Les résultats clés en 5 minutes", "The key results in 5 minutes"},
 	"view.advanced":      {"Avancé", "Advanced"},
-	"view.advanced.sub":  {"L’analyse complète : tableaux, sources, technique", "The full analysis: tables, sources, technical"},
+	"view.advanced.sub":  {"Toute l’analyse détaillée", "The full, detailed analysis"},
 
 	// Shown in the cover kicker, on screen and on paper.
 	"view.essential.kicker": {"Version essentielle", "Essential version"},
@@ -24,9 +25,15 @@ var viewMessages = map[string][2]string{
 		"Your results on Google and in AI assistants (ChatGPT, Perplexity, Gemini), explained simply: what is growing, what is slipping and what comes next.",
 	},
 
-	// Download buttons when both PDFs are available.
-	"cover.pdf_ess":       {"PDF essentiel", "Essential PDF"},
-	"cover.pdf_adv":       {"PDF complet", "Full PDF"},
+	// Download menu of the top bar.
+	"dl.button":           {"Télécharger", "Download"},
+	"dl.current":          {"Affichée", "On screen"},
+	"cover.pdf_ess":       {"PDF — version essentielle", "PDF — essential version"},
+	"cover.pdf_adv":       {"PDF — version complète", "PDF — full version"},
+	"cover.pdf_ess.sub":   {"Quelques pages, les résultats clés", "A few pages, the key results"},
+	"cover.pdf_adv.sub":   {"Le rapport intégral, toutes les sections", "The whole report, every section"},
+	"cover.pdf.sub":       {"Pour imprimer ou partager", "To print or share"},
+	"cover.html.sub":      {"Les deux versions, consultables hors ligne", "Both versions, readable offline"},
 	"cover.pdf_ess.title": {"Télécharger la version essentielle en PDF (quelques pages)", "Download the essential version as a PDF (a few pages)"},
 	"cover.pdf_adv.title": {"Télécharger le rapport complet en PDF", "Download the full report as a PDF"},
 	"cover.html.title": {

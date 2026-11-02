@@ -289,21 +289,21 @@ var homeTmpl = template.Must(template.New("home").Parse(`<!doctype html>
 <meta name="robots" content="noindex"><title>SEO &amp; GEO Report — MCP</title>
 <link rel="icon" href="/favicon.ico" type="image/svg+xml">
 <style>
-:root{color-scheme:only light;--bg:#f8fafc;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb;--warn:#b45309;--code:#f1f5f9}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{color-scheme:only light;--bg:#f7f8fa;--card:#fff;--fg:#0e1117;--muted:#636a75;--line:#e3e5e9;--accent:#2563eb;--warn:#b45309;--code:#eff1f4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
-.top{display:flex;align-items:center;gap:12px}.top h1{margin:0;font-size:24px}
+.top{display:flex;align-items:center;gap:12px}.top h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}
 .lead{color:var(--muted);margin:6px 0 24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
-h2{font-size:17px;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:16px 0;box-shadow:0 1px 2px rgba(16,24,40,.045)}
+h2{font-size:16px;font-weight:650;letter-spacing:-.01em;margin:0 0 10px}
 .url{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 code,pre{background:var(--code);border-radius:8px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
 code{padding:2px 6px}pre{padding:12px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0}
 .big{font-size:16px;padding:8px 12px;word-break:break-all}
-button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px;cursor:pointer;font:inherit}
+button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer;font:inherit;font-weight:600}button:hover{border-color:var(--muted)}
 ol{padding-left:20px;margin:8px 0}li{margin:4px 0}
 .warn{color:var(--warn);font-weight:600}.muted{color:var(--muted);font-size:13px}
-.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;border:1px solid var(--line);margin-right:6px}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;background:var(--card);border:1px solid var(--line);margin-right:6px;color:var(--fg)}
 </style></head><body><main>
 <div class="top"><svg width="36" height="36" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7" fill="#2563eb"/><path d="M6 19l5-6 4 3 6-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
 <h1>SEO &amp; GEO Report</h1></div>

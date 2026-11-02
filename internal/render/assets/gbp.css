@@ -1,7 +1,7 @@
 /* ---------------------------------------------- local profile (GBP) */
 .gbp-rating { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 6px 0 2px; text-align: center; }
 .gbp-rating-main { display: flex; align-items: baseline; gap: 8px; }
-.gbp-rating-value { font-family: var(--serif); font-size: 64px; line-height: 1; font-weight: 500; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.gbp-rating-value { font-size: 64px; line-height: 1; font-weight: 700; letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .gbp-rating-of { font-size: 15px; color: var(--muted); }
 .gbp-stars { position: relative; display: inline-block; width: 150px; height: 30px; line-height: 0; }
 .chart .gbp-stars svg, .gbp-stars svg { display: block; width: 150px; height: 30px; max-width: none; margin: 0; overflow: visible; }

@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"embed"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -35,6 +36,26 @@ var gbpCSS string
 //
 //go:embed assets/views.css
 var viewsCSS string
+
+// interWOFF2 is Inter 4.1 (SIL Open Font License 1.1, see
+// assets/fonts/LICENSE-Inter.txt), variable weight 400-800 with its optical
+// size axis, subset to Latin, Latin-1, Latin Extended-A and the punctuation,
+// arrows and shapes the report uses. Embedding it gives the same typography
+// on every system and in the Chromium PDF. Built with fonttools:
+//
+//	fonttools varLib.instancer InterVariable.ttf wght=400:800 -o inst.ttf
+//	pyftsubset inst.ttf --flavor=woff2 --no-hinting --desubroutinize \
+//	  --layout-features=kern,liga,calt,ccmp,locl,mark,mkmk,tnum,case \
+//	  --unicodes=U+0020-007E,U+00A0-017F,U+0192,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,\
+//	U+2190-2193,U+2197,U+2198,U+2212,U+2248,U+2260,U+2264,U+2265,U+25B2,U+25B6,U+25BC,U+25CF,U+25CB,U+2713
+//
+//go:embed assets/fonts/InterVariable-subset.woff2
+var interWOFF2 []byte
+
+// fontCSS declares the embedded font (a data: URL: the page stays
+// self-contained).
+var fontCSS = `@font-face{font-family:"Inter";font-style:normal;font-weight:400 800;font-display:swap;` +
+	`src:url(data:font/woff2;base64,` + base64.StdEncoding.EncodeToString(interWOFF2) + `) format("woff2")}`
 
 // baseTemplates is parsed once; each render clones it to bind the language.
 var baseTemplates = template.Must(template.New("report").Funcs(templateFuncs("fr")).ParseFS(templateFS, "templates/*.gohtml"))
@@ -127,7 +148,7 @@ func render(src *model.Report, opts Options) (out []byte, err error) {
 	}
 	p := &page{
 		Lang:     lang,
-		CSS:      template.CSS(reportCSS + "\n" + gbpCSS + "\n" + viewsCSS), //nolint:gosec // embedded assets
+		CSS:      template.CSS(fontCSS + "\n" + reportCSS + "\n" + gbpCSS + "\n" + viewsCSS), //nolint:gosec // embedded assets
 		ThemeCSS: themeCSS(b.accent),
 		Cover:    b.cover(opts),
 		View:     view,
