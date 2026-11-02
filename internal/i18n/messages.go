@@ -18,7 +18,7 @@ var messages = map[string][2]string{
 	"cover.sources":       {"Sources de données", "Data sources"},
 	"cover.days.one":      {"%s jour", "%s day"},
 	"cover.days.other":    {"%s jours", "%s days"},
-	"cover.html":          {"Télécharger (HTML)", "Download (HTML)"},
+	"cover.html":          {"Fichier HTML interactif", "Interactive HTML file"},
 	"cover.pdf":           {"Télécharger en PDF", "Download PDF"},
 	"src.gsc":             {"Google Search Console", "Google Search Console"},
 	"src.bing":            {"Bing Webmaster Tools", "Bing Webmaster Tools"},

@@ -187,13 +187,14 @@ func Stacked(o StackedOpts) template.HTML { return stacked(o) }
 func Sparkline(o SparkOpts) template.HTML { return sparkline(o) }
 
 // Palette is the default categorical palette (colorblind-friendly order).
-var Palette = []string{"#2f5f96", "#cf8a2a", "#26927a", "#c2533c", "#7a5aa6", "#3b97bd", "#bf5b88", "#87993a"}
+var Palette = []string{"#3364a8", "#e0921f", "#1f9a7f", "#d1543d", "#7b5cc0", "#3a9bc4", "#c75b8f", "#8a9c3a"}
 
-// Semantic colors.
+// Semantic colors, the same tones as the report stylesheet (--pos-solid,
+// --neg-solid, --neu-solid, --warn-solid).
 const (
-	ColorPositive = "#2f8a57"
-	ColorNegative = "#c2412d"
+	ColorPositive = "#1f9460"
+	ColorNegative = "#d1402f"
 	ColorNeutral  = "#6b7280"
-	ColorPrevious = "#a3a9b2"
-	ColorWarning  = "#cf8a2a"
+	ColorPrevious = "#a0a6b0"
+	ColorWarning  = "#e0921f"
 )

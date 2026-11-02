@@ -161,12 +161,12 @@ func (s *Service) registerResources(srv *mcp.Server) {
 const viewerHTML = `<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root{color-scheme:only light;--bg:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#2563eb}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{color-scheme:only light;--bg:#fff;--fg:#0e1117;--muted:#636a75;--line:#e3e5e9;--accent:#2563eb}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}
 h1{font-size:15px;margin:0}small{color:var(--muted)}
 .btns{display:flex;gap:6px;flex-wrap:wrap}
-a.b,button{appearance:none;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer;text-decoration:none}
+a.b,button{appearance:none;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:6px 10px;font:inherit;cursor:pointer;text-decoration:none}
 .primary{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
 iframe{display:block;width:100%;height:900px;border:0;background:#fff}
 #msg{padding:16px;color:var(--muted)}ul{margin:6px 0;padding-left:18px}

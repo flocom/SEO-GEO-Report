@@ -49,7 +49,7 @@ func TestBusinessProfileSection(t *testing.T) {
 		if strings.Contains(sec, "Détail par établissement") || strings.Contains(sec, "Details by location") {
 			t.Errorf("%s: one location, no location table", lang)
 		}
-		if !strings.Contains(s, "Google Merchant Center, Google Business Profile") {
+		if !strings.Contains(s, `<li class="chip">Google Merchant Center</li><li class="chip">Google Business Profile</li>`) {
 			t.Errorf("%s: cover sources miss Google Business Profile", lang)
 		}
 		// Part 1: the profile actions card, eight cards on one desktop row.

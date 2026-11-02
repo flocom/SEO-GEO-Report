@@ -173,7 +173,7 @@ or fully local over stdio:
 
 The page holds both versions of the report. `render_report` and `generate_report` return `view_essential_url`, `view_advanced_url`, `pdf_essential_url`, `pdf_advanced_url` and `html_download_url`; `html_url` and `pdf_url` still work and open the default version (`options.default_view`: `essential` by default, or `advanced`; the tools also take a `view` parameter).
 
-PDFs are rendered by headless Chromium, which ships in the image with Noto, DejaVu and emoji fonts. They are cached per language and version, and regenerated when the report changes. Outside Docker, Chromium or Google Chrome is auto-detected (`CHROME_PATH` to force one). Without it, the HTML export still works and the PDF error is explained.
+PDFs are rendered by headless Chromium, which ships in the image with Noto, DejaVu and emoji fonts (the report text itself uses the Inter font embedded in the page, so it looks the same everywhere). They are cached per language and version, and regenerated when the report changes. Outside Docker, Chromium or Google Chrome is auto-detected (`CHROME_PATH` to force one). Without it, the HTML export still works and the PDF error is explained.
 
 ## Command line
 
@@ -314,3 +314,5 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [chang
 ## License
 
 [MIT](LICENSE) © 2026 flocom
+
+The reports embed a subset of the [Inter](https://rsms.me/inter/) typeface (© The Inter Project Authors), licensed under the SIL Open Font License 1.1: see [internal/render/assets/fonts/LICENSE-Inter.txt](internal/render/assets/fonts/LICENSE-Inter.txt).

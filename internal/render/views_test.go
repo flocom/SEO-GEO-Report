@@ -130,7 +130,7 @@ func TestDefaultView(t *testing.T) {
 func TestViewDownloadButtons(t *testing.T) {
 	r := example.Demo("en")
 	s := mustRender(t, r, Options{PDFURL: "/r/x.pdf", PDFEssentialURL: "/r/x.pdf?view=essential", PDFAdvancedURL: "/r/x.pdf?view=advanced", HTMLDownloadURL: "/r/x/download"})
-	for _, want := range []string{`btn-pdf-ess" href="/r/x.pdf?view=essential"`, `btn-pdf-adv" href="/r/x.pdf?view=advanced"`, "Essential PDF", "Full PDF", `href="/r/x/download"`,
+	for _, want := range []string{`btn-pdf-ess" href="/r/x.pdf?view=essential"`, `btn-pdf-adv" href="/r/x.pdf?view=advanced"`, "PDF — essential version", "PDF — full version", `href="/r/x/download"`,
 		`class="next-pdf" href="/r/x.pdf?view=advanced"`} {
 		if !strings.Contains(s, want) {
 			t.Errorf("output misses %q", want)
@@ -143,6 +143,11 @@ func TestViewDownloadButtons(t *testing.T) {
 	s = mustRender(t, r, Options{PDFURL: "/r/x.pdf", PDFEssentialURL: "/r/x.pdf?view=essential"})
 	if !strings.Contains(s, ">Download PDF<") || strings.Contains(s, `btn-pdf-ess" href`) {
 		t.Error("with PDFURL only, the single PDF button is expected")
+	}
+	// A single download: a plain button, no menu.
+	s = mustRender(t, r, Options{PDFURL: "/r/x.pdf"})
+	if !strings.Contains(s, `class="dl-btn dl-solo" href="/r/x.pdf"`) || strings.Contains(s, `<details class="dl">`) {
+		t.Error("with one download, a plain button is expected")
 	}
 }
 

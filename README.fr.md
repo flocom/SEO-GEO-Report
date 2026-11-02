@@ -174,7 +174,7 @@ Outils MCP exposés : `get_report_guide`, `create_report`, `update_meta`, `set_s
 
 La page contient les deux versions du rapport. `render_report` et `generate_report` renvoient `view_essential_url`, `view_advanced_url`, `pdf_essential_url`, `pdf_advanced_url` et `html_download_url` ; `html_url` et `pdf_url` fonctionnent toujours et ouvrent la version par défaut (`options.default_view` : `essential` par défaut, ou `advanced` ; les outils acceptent aussi un paramètre `view`).
 
-Le PDF est produit par Chromium sans interface (inclus dans l'image Docker avec les polices Noto / DejaVu / emoji), mis en cache dans le dossier de données (un fichier par langue et par version) et régénéré quand le rapport change. Hors Docker, Chromium ou Google Chrome est détecté automatiquement (`CHROME_PATH` pour forcer) ; s'il est absent, l'export HTML fonctionne toujours et l'erreur PDF est expliquée. `render_report` accepte `format` = `html` (défaut), `pdf` ou `both`, et `include_html` / `include_pdf` pour joindre le document à la réponse.
+Le PDF est produit par Chromium sans interface (inclus dans l'image Docker avec les polices Noto / DejaVu / emoji ; le texte du rapport utilise la police Inter intégrée à la page, identique partout), mis en cache dans le dossier de données (un fichier par langue et par version) et régénéré quand le rapport change. Hors Docker, Chromium ou Google Chrome est détecté automatiquement (`CHROME_PATH` pour forcer) ; s'il est absent, l'export HTML fonctionne toujours et l'erreur PDF est expliquée. `render_report` accepte `format` = `html` (défaut), `pdf` ou `both`, et `include_html` / `include_pdf` pour joindre le document à la réponse.
 
 ## Ligne de commande
 
@@ -230,3 +230,9 @@ Conventions : **pourcentages en pourcent** (3,2 % → `3.2`), dates `AAAA-MM-JJ`
 - La récupération du favicon refuse les adresses privées, locales et de métadonnées cloud (protection SSRF, `FAVICON_ALLOW_PRIVATE=true` pour un intranet), limite la taille des fichiers et rejette les SVG contenant du script ou des références externes.
 - Watchtower a accès au socket Docker : retirez le service `watchtower` si vous préférez mettre à jour manuellement. Son API HTTP (utilisée par `/admin`) n'est jamais publiée hors du réseau compose et exige un jeton aléatoire, qui n'est jamais envoyé au navigateur.
 - `/admin` est protégé par le mot de passe d'accès (même limitation des tentatives que la connexion OAuth), avec un cookie de session `HttpOnly`, `SameSite=Strict` (8 h, `Secure` en HTTPS), des jetons CSRF et un contrôle d'origine sur chaque action, et des pages `no-store`.
+
+## Licence
+
+[MIT](LICENSE) © 2026 flocom
+
+Les rapports intègrent un sous-ensemble de la police [Inter](https://rsms.me/inter/) (© The Inter Project Authors), sous licence SIL Open Font License 1.1 : voir [internal/render/assets/fonts/LICENSE-Inter.txt](internal/render/assets/fonts/LICENSE-Inter.txt).

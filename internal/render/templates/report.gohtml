@@ -16,11 +16,13 @@
 <body>
 {{- /* Version switch without JavaScript: these radio buttons are siblings of
      .doc, so views.css can hide the .adv-only / .ess-only parts with
-     "#view-essential:checked ~ .doc .adv-only". Their labels are the
-     segmented control of the cover. */}}
+     "#view-essential:checked ~ .doc .adv-only". Their labels form the
+     pill toggle of the top bar. */}}
 <input class="view-radio" type="radio" name="seogeo-view" id="view-essential" value="essential" aria-labelledby="vs-label vs-ess-name" aria-describedby="vs-ess-sub"{{if ne .View "advanced"}} checked{{end}}>
 <input class="view-radio" type="radio" name="seogeo-view" id="view-advanced" value="advanced" aria-labelledby="vs-label vs-adv-name" aria-describedby="vs-adv-sub"{{if eq .View "advanced"}} checked{{end}}>
 <div class="doc">
+{{template "topbar" .}}
+<div class="sheet">
 {{template "cover" .}}
 <main>
 {{- range .Sections}}
@@ -35,62 +37,99 @@
   <span class="foot-brand">{{t "footer.with"}}</span>
 </footer>
 </div>
+</div>
 <script>{{template "viewjs"}}</script>
 </body>
 </html>
 {{- end}}
 
+{{define "identity"}}
+{{- if .Cover.Logo}}<img class="logo" src="{{.Cover.Logo}}" alt="{{.Cover.SiteName}}">
+{{- else if .Cover.Favicon}}<img class="logo-fav" src="{{.Cover.Favicon}}" alt="">
+{{- else}}<span class="logo-mono" aria-hidden="true">{{.Cover.Initials}}</span>{{end}}
+<span class="brand-text">
+  {{- if .Cover.SiteName}}<span class="brand-name">{{if and .Cover.Logo .Cover.Favicon}}<img class="fav-inline" src="{{.Cover.Favicon}}" alt="">{{end}}{{.Cover.SiteName}}</span>{{end}}
+  {{- if .Cover.SiteURL}}<span class="brand-url">{{.Cover.SiteURL}}</span>{{end}}
+</span>
+{{- end}}
+
+{{- /* Top bar (screen only): identity, version toggle and download menu. It
+     sticks to the top of the window while scrolling (position: sticky). The
+     toggle is made of the labels of the radio buttons above .doc; the
+     download menu is a <details> element, so neither needs JavaScript. */}}
+{{define "topbar"}}
+<div class="topbar no-print">
+  <div class="topbar-in">
+    <a class="tb-id" href="#top">{{template "identity" .}}</a>
+    <div class="view-switch">
+      <p class="sr-only" id="vs-label">{{t "view.label"}}</p>
+      <div class="vs-seg">
+        <span class="vs-thumb" aria-hidden="true"></span>
+        <label class="vs-opt vs-ess" for="view-essential"><span class="vs-name" id="vs-ess-name">{{t "view.essential"}}</span></label>
+        <label class="vs-opt vs-adv" for="view-advanced"><span class="vs-name" id="vs-adv-name">{{t "view.advanced"}}</span></label>
+      </div>
+      <p class="vs-help"><span class="vs-sub vs-sub-ess" id="vs-ess-sub">{{t "view.essential.sub"}}</span><span class="vs-sub vs-sub-adv" id="vs-adv-sub">{{t "view.advanced.sub"}}</span></p>
+    </div>
+    <div class="tb-actions">{{template "download" .Cover}}</div>
+  </div>
+</div>
+{{end}}
+
+{{define "download"}}
+{{- if .PDFEss}}
+<details class="dl">
+  <summary class="dl-btn">{{icon "download"}}<span class="dl-label">{{t "dl.button"}}</span>{{icon "chevron"}}</summary>
+  <div class="dl-menu">
+    <a class="dl-item dl-pdf btn-pdf-ess" href="{{.PDFEss}}" title="{{t "cover.pdf_ess.title"}}" download><span class="dl-ico">{{icon "pdf"}}</span><span class="dl-text"><strong>{{t "cover.pdf_ess"}}</strong><small>{{t "cover.pdf_ess.sub"}}</small></span><span class="dl-cur">{{t "dl.current"}}</span></a>
+    <a class="dl-item dl-pdf btn-pdf-adv" href="{{.PDFAdv}}" title="{{t "cover.pdf_adv.title"}}" download><span class="dl-ico">{{icon "pdf"}}</span><span class="dl-text"><strong>{{t "cover.pdf_adv"}}</strong><small>{{t "cover.pdf_adv.sub"}}</small></span><span class="dl-cur">{{t "dl.current"}}</span></a>
+    {{- if .HTMLDL}}
+    <a class="dl-item dl-html" href="{{.HTMLDL}}" title="{{t "cover.html.title"}}" download><span class="dl-ico">{{icon "html"}}</span><span class="dl-text"><strong>{{t "cover.html"}}</strong><small>{{t "cover.html.sub"}}</small></span></a>
+    {{- end}}
+  </div>
+</details>
+{{- else if and .PDF .HTMLDL}}
+<details class="dl">
+  <summary class="dl-btn">{{icon "download"}}<span class="dl-label">{{t "dl.button"}}</span>{{icon "chevron"}}</summary>
+  <div class="dl-menu">
+    <a class="dl-item dl-pdf" href="{{.PDF}}" download><span class="dl-ico">{{icon "pdf"}}</span><span class="dl-text"><strong>{{t "cover.pdf"}}</strong><small>{{t "cover.pdf.sub"}}</small></span></a>
+    <a class="dl-item dl-html" href="{{.HTMLDL}}" title="{{t "cover.html.title"}}" download><span class="dl-ico">{{icon "html"}}</span><span class="dl-text"><strong>{{t "cover.html"}}</strong><small>{{t "cover.html.sub"}}</small></span></a>
+  </div>
+</details>
+{{- else if .PDF}}
+<a class="dl-btn dl-solo" href="{{.PDF}}" download>{{icon "download"}}<span class="dl-label">{{t "cover.pdf"}}</span></a>
+{{- else if .HTMLDL}}
+<a class="dl-btn dl-solo" href="{{.HTMLDL}}" title="{{t "cover.html.title"}}" download>{{icon "download"}}<span class="dl-label">{{t "cover.html"}}</span></a>
+{{- end}}
+{{- end}}
+
 {{define "cover"}}
 <header class="cover" id="top">
-  <div class="cover-bar">
-    <div class="brand">
-      {{- if .Cover.Logo}}<img class="logo" src="{{.Cover.Logo}}" alt="{{.Cover.SiteName}}">
-      {{- else if .Cover.Favicon}}<img class="logo-fav" src="{{.Cover.Favicon}}" alt="">
-      {{- else}}<span class="logo-mono" aria-hidden="true">{{.Cover.Initials}}</span>{{end}}
-      <div class="brand-text">
-        {{- if .Cover.SiteName}}<div class="brand-name">{{if and .Cover.Logo .Cover.Favicon}}<img class="fav-inline" src="{{.Cover.Favicon}}" alt="">{{end}}{{.Cover.SiteName}}</div>{{end}}
-        {{- if .Cover.SiteURL}}{{if .Cover.SiteHref}}<a class="brand-url" href="{{.Cover.SiteHref}}">{{.Cover.SiteURL}}</a>{{else}}<span class="brand-url">{{.Cover.SiteURL}}</span>{{end}}{{end}}
-      </div>
-    </div>
-    {{- if or .Cover.PDF .Cover.PDFEss .Cover.HTMLDL}}
-    <div class="cover-actions no-print">
-      {{- if .Cover.HTMLDL}}<a class="btn-pdf btn-ghost" href="{{.Cover.HTMLDL}}" title="{{t "cover.html.title"}}" download>{{icon "file"}}<span>{{t "cover.html"}}</span></a>{{end}}
-      {{- if .Cover.PDFEss}}
-      <a class="btn-pdf btn-view btn-pdf-ess" href="{{.Cover.PDFEss}}" title="{{t "cover.pdf_ess.title"}}" download>{{icon "download"}}<span>{{t "cover.pdf_ess"}}</span></a>
-      <a class="btn-pdf btn-view btn-pdf-adv" href="{{.Cover.PDFAdv}}" title="{{t "cover.pdf_adv.title"}}" download>{{icon "download"}}<span>{{t "cover.pdf_adv"}}</span></a>
-      {{- else if .Cover.PDF}}<a class="btn-pdf" href="{{.Cover.PDF}}" download>{{icon "download"}}<span>{{t "cover.pdf"}}</span></a>{{end}}
-    </div>
-    {{- end}}
-  </div>
-  <div class="view-switch no-print">
-    <p class="vs-label" id="vs-label">{{t "view.label"}}</p>
-    <div class="vs-seg">
-      <label class="vs-opt vs-ess" for="view-essential"><span class="vs-name" id="vs-ess-name">{{t "view.essential"}}</span><span class="vs-sub" id="vs-ess-sub">{{t "view.essential.sub"}}</span></label>
-      <label class="vs-opt vs-adv" for="view-advanced"><span class="vs-name" id="vs-adv-name">{{t "view.advanced"}}</span><span class="vs-sub" id="vs-adv-sub">{{t "view.advanced.sub"}}</span></label>
-    </div>
-  </div>
-  <div class="cover-main">
-    <p class="cover-kicker">{{t "cover.eyebrow"}}<span class="ess-only"> · {{t "view.essential.kicker"}}</span><span class="adv-only"> · {{t "view.advanced.kicker"}}</span></p>
+  <div class="cover-panel">
+    <div class="cover-id print-only">{{template "identity" .}}</div>
+    <p class="cover-kicker"><span>{{t "cover.eyebrow"}}<span class="ess-only"> · {{t "view.essential.kicker"}}</span><span class="adv-only"> · {{t "view.advanced.kicker"}}</span></span></p>
     <h1>{{.Cover.Title}}</h1>
     <p class="cover-lead"><span class="ess-only">{{t "cover.lead_ess"}}</span><span class="adv-only">{{t "cover.lead"}}</span></p>
+    {{- $n := 2}}{{if .Cover.PreparedFor}}{{$n = add $n 1}}{{end}}{{if .Cover.PreparedBy}}{{$n = add $n 1}}{{end}}
+    {{- $g := bal "meta" $n}}
+    <dl class="cover-meta bal" style="{{$g.Style}}">
+      {{- $i := 0}}
+      <div class="cm" style="{{$g.At $i}}"><dt>{{icon "calendar"}}{{t "cover.period"}}</dt><dd>{{.Cover.Period}}{{if .Cover.PeriodDays}} <span class="cm-sub">· {{.Cover.PeriodDays}}</span>{{end}}</dd></div>
+      {{- $i = add $i 1}}
+      <div class="cm" style="{{$g.At $i}}"><dt>{{icon "compare"}}{{t "cover.comparison"}}</dt><dd>{{if .Cover.Comparison}}{{.Cover.Comparison}}{{else}}<span class="cm-sub">{{t "cover.no_comparison"}}</span>{{end}}</dd></div>
+      {{- if .Cover.PreparedFor}}{{$i = add $i 1}}
+      <div class="cm" style="{{$g.At $i}}"><dt>{{icon "user"}}{{t "cover.prepared_for"}}</dt><dd>{{.Cover.PreparedFor}}</dd></div>
+      {{- end}}
+      {{- if .Cover.PreparedBy}}{{$i = add $i 1}}
+      <div class="cm" style="{{$g.At $i}}"><dt>{{icon "pen"}}{{t "cover.prepared_by"}}</dt><dd>{{.Cover.PreparedBy}}</dd></div>
+      {{- end}}
+    </dl>
+    {{- if .Cover.Sources}}
+    <div class="cover-sources">
+      <p class="cs-label">{{t "cover.sources"}}</p>
+      <ul class="chips">{{range .Cover.Sources}}<li class="chip">{{.}}</li>{{end}}</ul>
+    </div>
+    {{- end}}
   </div>
-  {{- $n := 2}}{{if .Cover.PreparedFor}}{{$n = add $n 1}}{{end}}{{if .Cover.PreparedBy}}{{$n = add $n 1}}{{end}}{{if .Cover.Sources}}{{$n = add $n 1}}{{end}}
-  {{- $g := bal "meta" $n}}
-  <dl class="cover-meta bal" style="{{$g.Style}}">
-    {{- $i := 0}}
-    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.period"}}</dt><dd>{{.Cover.Period}}{{if .Cover.PeriodDays}} <span class="cm-sub">· {{.Cover.PeriodDays}}</span>{{end}}</dd></div>
-    {{- $i = add $i 1}}
-    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.comparison"}}</dt><dd>{{if .Cover.Comparison}}{{.Cover.Comparison}}{{else}}<span class="cm-sub">{{t "cover.no_comparison"}}</span>{{end}}</dd></div>
-    {{- if .Cover.PreparedFor}}{{$i = add $i 1}}
-    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.prepared_for"}}</dt><dd>{{.Cover.PreparedFor}}</dd></div>
-    {{- end}}
-    {{- if .Cover.PreparedBy}}{{$i = add $i 1}}
-    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.prepared_by"}}</dt><dd>{{.Cover.PreparedBy}}</dd></div>
-    {{- end}}
-    {{- if .Cover.Sources}}{{$i = add $i 1}}
-    <div class="cm" style="{{$g.At $i}}"><dt>{{t "cover.sources"}}</dt><dd>{{range $k, $s := .Cover.Sources}}{{if $k}}, {{end}}{{$s}}{{end}}</dd></div>
-    {{- end}}
-  </dl>
   {{- if .TOC}}
   <nav class="toc" aria-label="{{t "toc.title"}}">
     <h2>{{t "toc.title"}}</h2>
@@ -204,5 +243,9 @@ document.addEventListener("click",function(ev){var x=ev.target;
 var a=x.closest&&x.closest('a[href^="#"]');if(a){reveal(decodeURIComponent(a.getAttribute("href").slice(1)));return}
 var l=x.closest&&x.closest("label[data-goto]");
 if(l){setTimeout(function(){var g=document.getElementById(l.getAttribute("data-goto"));if(g)g.scrollIntoView({behavior:"smooth"})},0)}});
+document.addEventListener("click",function(ev){var d=document.querySelector("details.dl[open]");
+if(d&&(!d.contains(ev.target)||(ev.target.closest&&ev.target.closest(".dl-item"))))d.open=false});
+document.addEventListener("keydown",function(ev){var d=document.querySelector("details.dl[open]");
+if(d&&ev.key==="Escape"){d.open=false;var s=d.querySelector("summary");if(s)s.focus()}});
 window.addEventListener("hashchange",function(){var t=reveal(decodeURIComponent(location.hash.slice(1)));if(t)t.scrollIntoView()});
 })();{{end}}

@@ -59,7 +59,7 @@ func TestRichFR(t *testing.T) {
 	r := richReport("fr")
 	s := mustRender(t, r, Options{PDFURL: "/report.pdf", HTMLDownloadURL: "/report.html"})
 	for _, want := range []string{`lang="fr"`, "En bref", "Performance dans Google", "Visibilité dans les IA (GEO)", "Note de l’analyste",
-		"Glossaire", "Sommaire", "Télécharger en PDF", "Télécharger (HTML)", `href="/report.pdf"`, "48 210", "1\u00a0juil. – 30\u00a0sept. 2026", "Méthodologie", "<table>", "--accent:#7c3aed"} {
+		"Glossaire", "Sommaire", "Télécharger en PDF", "Fichier HTML interactif", `<details class="dl">`, `href="/report.pdf"`, "48 210", "1\u00a0juil. – 30\u00a0sept. 2026", "Méthodologie", "<table>", "--accent:#7c3aed"} {
 		if !strings.Contains(s, want) {
 			t.Errorf("FR output misses %q", want)
 		}
@@ -290,7 +290,9 @@ func TestWritePreview(t *testing.T) {
 	write("empty.html", &model.Report{Meta: model.Meta{SiteName: "Vide", Period: model.Period{Start: "2026-07-01", End: "2026-07-31"}}}, Options{})
 	for _, lang := range []string{"fr", "en"} {
 		if d := example.Demo(lang); d != nil && (d.SearchConsole != nil || d.Analytics != nil) {
-			write("demo-"+lang+".html", d, Options{})
+			// Hosted-like links, so the preview shows the download menu.
+			write("demo-"+lang+".html", d, Options{PDFURL: "demo-" + lang + "-full.pdf", PDFEssentialURL: "demo-" + lang + "-essential.pdf",
+				PDFAdvancedURL: "demo-" + lang + "-full.pdf", HTMLDownloadURL: "demo-" + lang + ".html"})
 		}
 	}
 }
